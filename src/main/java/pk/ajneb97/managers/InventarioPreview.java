@@ -1,5 +1,6 @@
 package pk.ajneb97.managers;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,8 +11,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.md_5.bungee.api.ChatColor;
 import pk.ajneb97.InventarioJugador;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.otros.MensajesUtils;

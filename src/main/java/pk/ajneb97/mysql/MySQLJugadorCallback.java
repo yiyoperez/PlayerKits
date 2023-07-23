@@ -4,5 +4,5 @@ import pk.ajneb97.model.JugadorDatos;
 
 public interface MySQLJugadorCallback {
 
-	public void alTerminar(JugadorDatos j);
+    void alTerminar(JugadorDatos j);
 }
