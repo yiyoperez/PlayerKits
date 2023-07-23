@@ -61,12 +61,16 @@ public class PlayerKits extends JavaPlugin {
     private String nbtSeparationChar;
 
     public void onEnable() {
+        registerKits();
+        registerConfig();
+        registerMessages();
+        registerPlayers();
+
         registerEvents();
         registerCommands();
-        registerConfig();
-        registerKits();
-        registerPlayers();
+
         setupEconomy();
+
         if (primeraVez) {
             rellenarInventarioConfig();
         }
