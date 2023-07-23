@@ -37,8 +37,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import pk.ajneb97.inventory.InventarioJugador;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.inventory.InventarioJugador;
 import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
 
@@ -644,26 +644,27 @@ public class KitManager {
 
     public static void claimKit(Player jugador, String kit, PlayerKits plugin, boolean message, boolean ignoreValues, boolean comprandoKit) {
         FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
         JugadorManager jManager = plugin.getJugadorManager();
-        String prefix = config.getString("Messages.prefix");
+        String prefix = config.getString("prefix");
         if (!ignoreValues) {
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
                 if (jManager.isOneTime(jugador, kit)) {
-                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.oneTimeError")));
+                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("oneTimeError")));
                     errorSonido(jugador, config);
                     return;
                 }
             }
             if (configKits.contains("Kits." + kit + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
-                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.kitNoPermissions")));
+                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitNoPermissions")));
                 errorSonido(jugador, config);
                 return;
             }
             if (configKits.contains("Kits." + kit + ".cooldown")) {
                 String cooldown = Utils.getCooldown(kit, jugador, configKits, config, jManager);
                 if (!cooldown.equals("ready")) {
-                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cooldownError").replace("%time%", cooldown)));
+                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldownError").replace("%time%", cooldown)));
                     errorSonido(jugador, config);
                     return;
                 }
@@ -675,7 +676,7 @@ public class KitManager {
                     Economy econ = plugin.getEconomy();
                     double balance = econ.getBalance(jugador);
                     if (balance < price) {
-                        jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
+                        jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
                                 .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
                         errorSonido(jugador, config);
                         return;
@@ -763,7 +764,7 @@ public class KitManager {
 
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
-            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noSpaceError")));
+            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noSpaceError")));
             errorSonido(jugador, config);
             return;
         }
@@ -840,18 +841,15 @@ public class KitManager {
         }
 
         if (message) {
-            String kitReceived = config.getString("Messages.kitReceived").replace("%name%", kit);
+            String kitReceived = messages.getString("kitReceived").replace("%name%", kit);
             if (!kitReceived.equals("") && !kitReceived.isEmpty()) {
                 jugador.sendMessage(MessageUtils.getMensajeColor(prefix + kitReceived));
             }
-
         }
 
         if (config.getString("Config.close_inventory_on_claim").equals("true")) {
             jugador.closeInventory();
         }
-
-
     }
 
     public static void errorSonido(Player jugador, FileConfiguration config) {
