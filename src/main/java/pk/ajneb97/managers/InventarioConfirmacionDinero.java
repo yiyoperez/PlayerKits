@@ -61,9 +61,7 @@ public class InventarioConfirmacionDinero implements Listener {
         meta = item.getItemMeta();
         meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryConfirmationName")));
         List<String> lore = config.getStringList("Messages.moneyInventoryConfirmationLore");
-        for (int i = 0; i < lore.size(); i++) {
-            lore.set(i, MessageUtils.getMensajeColor(lore.get(i).replace("%price%", dinero + "")));
-        }
+        lore.replaceAll(s -> MessageUtils.getMensajeColor(s.replace("%price%", dinero + "")));
         meta.setLore(lore);
         item.setItemMeta(meta);
         inv.setItem(4, item);
@@ -103,7 +101,7 @@ public class InventarioConfirmacionDinero implements Listener {
                         double balance = econ.getBalance(jugador);
                         if (balance < price) {
                             jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
-                                    .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
+                                    .replace("%current_money%", String.valueOf(balance)).replace("%required_money%", String.valueOf(price))));
                         } else {
                             KitManager.claimKit(jugador, kit, plugin, true, false, true);
                             int pag = inv.getPagina();

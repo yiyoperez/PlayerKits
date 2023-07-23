@@ -14,7 +14,7 @@ public class MessageUtils {
 
             while (match.find()) {
                 String color = texto.substring(match.start(), match.end());
-                texto = texto.replace(color, ChatColor.of(color) + "");
+                texto = texto.replace(color, String.valueOf(ChatColor.of(color)));
 
                 match = pattern.matcher(texto);
             }

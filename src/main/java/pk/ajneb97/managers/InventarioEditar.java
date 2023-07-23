@@ -745,7 +745,7 @@ public class InventarioEditar implements Listener {
     //Guardar display item
     public static void guardarDisplayItem(Inventory inv, String tipoDisplay, FileConfiguration kits, String kit) {
         ItemStack item = inv.getItem(11);
-        String path = "";
+        String path;
         if (tipoDisplay.equals("normal")) {
             path = "Kits." + kit;
         } else {
@@ -766,14 +766,14 @@ public class InventarioEditar implements Listener {
             if (datavalue != 0) {
                 kits.set(path + ".display_item", item.getType() + ":" + datavalue);
             } else {
-                kits.set(path + ".display_item", item.getType() + "");
+                kits.set(path + ".display_item", String.valueOf(item.getType()));
             }
 
             kits.set(path + ".display_item_leathercolor", null);
             if (id.equals(Material.LEATHER_BOOTS) || id.equals(Material.LEATHER_CHESTPLATE)
                     || id.equals(Material.LEATHER_HELMET) || id.equals(Material.LEATHER_LEGGINGS)) {
                 LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-                kits.set(path + ".display_item_leathercolor", meta.getColor().asRGB() + "");
+                kits.set(path + ".display_item_leathercolor", String.valueOf(meta.getColor().asRGB()));
             }
 
             if (Utils.isNew()) {
@@ -984,7 +984,7 @@ public class InventarioEditar implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            // Dont even wanna keep comenting.
+            // Don't even wanna keep comenting.
             if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;

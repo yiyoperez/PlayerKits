@@ -39,7 +39,7 @@ public class Checks {
             String stringDataValue = idsplit[1];
             short DataValue = Short.parseShort(stringDataValue);
             Material mat = Material.getMaterial(idsplit[0].toUpperCase());
-            ItemStack item = new ItemStack(mat, 1, (short) DataValue);
+            ItemStack item = new ItemStack(mat, 1, DataValue);
         } else {
             ItemStack item = new ItemStack(Material.getMaterial(key), 1);
         }

@@ -270,21 +270,21 @@ public class Comando implements CommandExecutor, TabCompleter {
         for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
             if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
                 if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
-                    player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitNoPermissions").replace("%number%", c + "").replace("%kit%", key)));
+                    player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitNoPermissions").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
                 } else {
                     if (kits.contains("Kits." + key + ".one_time") && kits.getString("Kits." + key + ".one_time").equals("true") && jManager.isOneTime(player, key)) {
-                        player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitOneTime").replace("%number%", c + "").replace("%kit%", key)));
+                        player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitOneTime").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
                     } else {
                         boolean cooldownReady = true;
                         if (kits.contains("Kits." + key + ".cooldown")) {
                             String cooldown = Utils.getCooldown(key, player, kits, config, jManager);
                             if (!cooldown.equals("ready")) {
                                 cooldownReady = false;
-                                player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitInCooldown").replace("%number%", c + "").replace("%kit%", key).replace("%time%", cooldown)));
+                                player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitInCooldown").replace("%number%", String.valueOf(c)).replace("%kit%", key).replace("%time%", cooldown)));
                             }
                         }
                         if (cooldownReady) {
-                            player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKit").replace("%number%", c + "").replace("%kit%", key)));
+                            player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKit").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
                         }
                     }
                 }

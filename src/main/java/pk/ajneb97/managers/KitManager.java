@@ -100,7 +100,7 @@ public class KitManager {
         Material id = item.getType();
         int datavalue = 0;
         int amount = item.getAmount();
-        String idtext = id + "";
+        String idtext = String.valueOf(id);
         if (Utils.isLegacy()) {
             if (id == Material.POTION) {
                 datavalue = item.getDurability();
@@ -125,13 +125,13 @@ public class KitManager {
                 if (!Bukkit.getVersion().contains("1.8")) {
                     if (!Bukkit.getVersion().contains("1.9")) {
                         if (meta.hasColor()) {
-                            kitConfig.set(path + ".potion-color", meta.getColor().asRGB() + "");
+                            kitConfig.set(path + ".potion-color", String.valueOf(meta.getColor().asRGB()));
                         }
                     }
                     PotionData data = meta.getBasePotionData();
-                    kitConfig.set(path + ".potion-type", data.getType() + "");
-                    kitConfig.set(path + ".potion-upgraded", data.isUpgraded() + "");
-                    kitConfig.set(path + ".potion-extended", data.isExtended() + "");
+                    kitConfig.set(path + ".potion-type", String.valueOf(data.getType()));
+                    kitConfig.set(path + ".potion-upgraded", String.valueOf(data.isUpgraded()));
+                    kitConfig.set(path + ".potion-extended", String.valueOf(data.isExtended()));
                 }
             }
         }
@@ -210,7 +210,7 @@ public class KitManager {
                 effectList.add(linea);
             }
             kitConfig.set(path + ".firework-effects", effectList);
-            kitConfig.set(path + ".firework-power", meta.getPower() + "");
+            kitConfig.set(path + ".firework-power", String.valueOf(meta.getPower()));
         }
 
         boolean esBanner = false;
@@ -286,10 +286,10 @@ public class KitManager {
         if (datavalue != 0 && Utils.isLegacy()) {
             idtext = idtext + ":" + datavalue;
         }
-        kitConfig.set(path + ".id", idtext + "");
-        kitConfig.set(path + ".amount", amount + "");
+        kitConfig.set(path + ".id", idtext);
+        kitConfig.set(path + ".amount", String.valueOf(amount));
         if (!Utils.isLegacy()) {
-            kitConfig.set(path + ".durability", item.getDurability() + "");
+            kitConfig.set(path + ".durability", String.valueOf(item.getDurability()));
         }
         if (item.hasItemMeta()) {
             if (item.getItemMeta().hasDisplayName()) {
@@ -298,9 +298,7 @@ public class KitManager {
             }
             if (item.getItemMeta().hasLore()) {
                 List<String> lore = item.getItemMeta().getLore();
-                for (int i = 0; i < lore.size(); i++) {
-                    lore.set(i, lore.get(i).replaceAll("\\xa7", "&"));
-                }
+                lore.replaceAll(s -> s.replaceAll("\\xa7", "&"));
                 kitConfig.set(path + ".lore", lore);
             }
             if (item.getItemMeta().hasEnchants()) {
@@ -340,7 +338,7 @@ public class KitManager {
             }
             if (Utils.isNew()) {
                 if (item.getItemMeta().hasCustomModelData()) {
-                    kitConfig.set(path + ".custom_model_data", item.getItemMeta().getCustomModelData() + "");
+                    kitConfig.set(path + ".custom_model_data", String.valueOf(item.getItemMeta().getCustomModelData()));
                 }
             }
 
@@ -862,12 +860,8 @@ public class KitManager {
 
     public static boolean getArmadura(ItemStack item) {
         String name = item.getType().name();
-        if (name.contains("_HELMET") || name.contains("_CHESTPLATE") ||
-                name.contains("_LEGGINGS") || name.contains("_BOOTS")) {
-            return true;
-        } else {
-            return false;
-        }
+        return name.contains("_HELMET") || name.contains("_CHESTPLATE") ||
+                name.contains("_LEGGINGS") || name.contains("_BOOTS");
     }
 
     public static void ejecutarComandos(FileConfiguration configKits, String kit, Player jugador) {

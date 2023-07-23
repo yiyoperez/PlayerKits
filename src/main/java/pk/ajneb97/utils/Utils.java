@@ -108,9 +108,7 @@ public class Utils {
         }
         if (kits.contains(path + ".display_lore")) {
             List<String> lore = kits.getStringList(path + ".display_lore");
-            for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, MessageUtils.getMensajeColor(lore.get(i)));
-            }
+            lore.replaceAll(MessageUtils::getMensajeColor);
             meta.setLore(lore);
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);

@@ -7,7 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.model.JugadorDatos;
-import pk.ajneb97.model.KitJugador;
 import pk.ajneb97.mysql.MySQL;
 import pk.ajneb97.mysql.MySQLJugadorCallback;
 

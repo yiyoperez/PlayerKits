@@ -51,7 +51,7 @@ public class PlayerKits extends JavaPlugin {
     private JugadorManager jugadorManager;
 
     private ConexionMySQL conexionDatabase;
-    public static String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
+    public static final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
 
     private PlayerDataSaveTask playerDataSaveTask;
 
