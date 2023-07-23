@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pk.ajneb97.api.ExpansionPlayerKits;
 import pk.ajneb97.api.PlayerKitsAPI;
 import pk.ajneb97.commands.Comando;
-import pk.ajneb97.inventory.InventarioJugador;
+import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.inventory.KitEditando;
 import pk.ajneb97.managers.InventarioConfirmacionDinero;
 import pk.ajneb97.managers.InventarioEditar;
@@ -44,14 +44,14 @@ public class PlayerKits extends JavaPlugin {
     private FileConfiguration messages;
 
     private KitEditando kitEditando;
-    public static String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
-    RegisteredServiceProvider<Economy> rsp = null;
-    private static Economy econ = null;
-    private ArrayList<InventarioJugador> inventarioJugadores = new ArrayList<>();
+    RegisteredServiceProvider<Economy> rsp;
+    private static Economy economy = null;
+    private final ArrayList<PlayerInventory> playerInventories = new ArrayList<>();
 
     private JugadorManager jugadorManager;
 
     private ConexionMySQL conexionDatabase;
+    public static String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
 
     private PlayerDataSaveTask playerDataSaveTask;
 
@@ -105,12 +105,12 @@ public class PlayerKits extends JavaPlugin {
         pm.registerEvents(new InventarioConfirmacionDinero(this), this);
     }
 
-    public void agregarInventarioJugador(InventarioJugador inv) {
-        this.inventarioJugadores.add(inv);
+    public void agregarInventarioJugador(PlayerInventory inv) {
+        this.playerInventories.add(inv);
     }
 
-    public InventarioJugador getInventarioJugador(String jugador) {
-        for (InventarioJugador inv : inventarioJugadores) {
+    public PlayerInventory getInventarioJugador(String jugador) {
+        for (PlayerInventory inv : playerInventories) {
             if (inv.getJugador().getName().equals(jugador)) {
                 return inv;
             }
@@ -119,9 +119,9 @@ public class PlayerKits extends JavaPlugin {
     }
 
     public void removerInventarioJugador(String jugador) {
-        for (int i = 0; i < inventarioJugadores.size(); i++) {
-            if (inventarioJugadores.get(i).getJugador().getName().equals(jugador)) {
-                inventarioJugadores.remove(i);
+        for (int i = 0; i < playerInventories.size(); i++) {
+            if (playerInventories.get(i).getJugador().getName().equals(jugador)) {
+                playerInventories.remove(i);
             }
         }
     }
@@ -259,12 +259,12 @@ public class PlayerKits extends JavaPlugin {
         if (rsp == null) {
             return false;
         }
-        econ = rsp.getProvider();
-        return econ != null;
+        economy = rsp.getProvider();
+        return economy != null;
     }
 
     public Economy getEconomy() {
-        return econ;
+        return economy;
     }
 
     public Connection getConnection() {
