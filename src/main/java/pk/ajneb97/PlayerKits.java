@@ -387,7 +387,7 @@ public class PlayerKits extends JavaPlugin {
         FileConfiguration config = getConfig();
 
         // Not sure if it works.
-        if (!config.getKeys(true).isEmpty()) return;
+        if (config.getKeys(true).isEmpty()) return;
 
         config.set("Config.kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
         config.set("Config.kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
