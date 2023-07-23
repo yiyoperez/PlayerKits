@@ -77,7 +77,7 @@ public class Comando implements CommandExecutor, TabCompleter {
             return false;
         }
 
-        //TODO: This option stuck the player if is an admin, it doesn't let him use subcommands.
+        //TODO: This option gets stuck player is an admin, it doesn't let him use subcommands.
         if (quickClaimMethod(player, args)) return true;
 
         String subCommand = args[0].toLowerCase();
@@ -91,23 +91,26 @@ public class Comando implements CommandExecutor, TabCompleter {
             case "delete":
                 deleteArgument(player, args);
                 break;
-            case "reset":
-                resetArgument(sender, player, args);
-                break;
-            case "claim":
-                claimArgument(player, args);
+            case "edit":
+                editArgument(player, args);
                 break;
             case "list":
                 listArgument(player);
                 break;
-            case "reload":
-                reloadArgument(player);
+            case "claim":
+                claimArgument(player, args);
                 break;
-            case "edit":
-                editArgument(player, args);
+            case "preview":
+                previewArgument(player, args);
                 break;
             case "give":
                 giveArgument(sender, player, args);
+                break;
+            case "reset":
+                resetArgument(sender, player, args);
+                break;
+            case "reload":
+                reloadArgument(player);
                 break;
             default:
                 helpArgument(player);
@@ -197,17 +200,6 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void reloadArgument(Player player) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            plugin.reloadConfig();
-            plugin.reloadKits();
-            plugin.reloadPlayerDataSaveTask();
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
     private void listArgument(Player player) {
         if (player.isOp() || player.hasPermission("playerkits.admin") || player.hasPermission("playerkits.list")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandList")));
@@ -262,55 +254,6 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void resetArgument(CommandSender sender, Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            reset(sender, args, prefix, config, kits);
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
-    private void deleteArgument(Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            if (args.length >= 2) {
-                String kit = getKit(kits, args[1]);
-                if (kit != null) {
-                    kits.set("Kits." + kit, null);
-                    plugin.saveKits();
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitRemoved").replace("%name%", kit)));
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandDeleteError")));
-            }
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
-    private void createArgument(Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            if (args.length >= 2) {
-                String kit = getKit(kits, args[1]);
-                if (kit == null) {
-                    if (KitManager.save(args[1], kits, config, player)) {
-                        plugin.saveKits();
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitCreated").replace("%name%", args[1])));
-                    } else {
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("inventoryEmpty")));
-                    }
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", kit)));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandCreateError")));
-            }
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
     private void openArgument(CommandSender sender, Player player, String[] args) {
         if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
@@ -351,6 +294,47 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
     }
 
+    private void createArgument(Player player, String[] args) {
+        if (player.isOp() || player.hasPermission("playerkits.admin")) {
+            if (args.length >= 2) {
+                String kit = getKit(kits, args[1]);
+                if (kit == null) {
+                    if (KitManager.save(args[1], kits, config, player)) {
+                        plugin.saveKits();
+                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitCreated").replace("%name%", args[1])));
+                    } else {
+                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("inventoryEmpty")));
+                    }
+                } else {
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", kit)));
+                }
+            } else {
+                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandCreateError")));
+            }
+        } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+        }
+    }
+
+    private void deleteArgument(Player player, String[] args) {
+        if (player.isOp() || player.hasPermission("playerkits.admin")) {
+            if (args.length >= 2) {
+                String kit = getKit(kits, args[1]);
+                if (kit != null) {
+                    kits.set("Kits." + kit, null);
+                    plugin.saveKits();
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitRemoved").replace("%name%", kit)));
+                } else {
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+                }
+            } else {
+                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandDeleteError")));
+            }
+        } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+        }
+    }
+
     public void give(CommandSender sender, String[] args, String prefix, FileConfiguration config, FileConfiguration kits) {
         if (args.length >= 3) {
             String kit = getKit(kits, args[1]);
@@ -367,6 +351,14 @@ public class Comando implements CommandExecutor, TabCompleter {
             }
         } else {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandGiveError")));
+        }
+    }
+
+    private void resetArgument(CommandSender sender, Player player, String[] args) {
+        if (player.isOp() || player.hasPermission("playerkits.admin")) {
+            reset(sender, args, prefix, config, kits);
+        } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
         }
     }
 
@@ -389,6 +381,18 @@ public class Comando implements CommandExecutor, TabCompleter {
         } else {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetFail").replace("%kit%", args[1]).replace("%player%", nombreJugador)));
         }
+    }
+
+    private void reloadArgument(Player player) {
+        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
+        }
+
+        plugin.reloadConfig();
+        plugin.reloadKits();
+        plugin.reloadPlayerDataSaveTask();
+        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
     }
 
     public String getKit(FileConfiguration kits, String kitName) {
