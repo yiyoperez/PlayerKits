@@ -19,16 +19,16 @@ public class ConexionMySQL {
     public void setupMySql(PlayerKits plugin, FileConfiguration config) {
         try {
             host = config.getString("Config.mysql_database.host");
-            port = Integer.valueOf(config.getString("Config.mysql_database.port"));
+            port = config.getInt("Config.mysql_database.port");
             database = config.getString("Config.mysql_database.database");
             username = config.getString("Config.mysql_database.username");
             password = config.getString("Config.mysql_database.password");
             connection = new ConexionHikari(host, port, database, username, password);
             connection.getHikari().getConnection();
             MySQL.createTable(plugin);
-            Bukkit.getConsoleSender().sendMessage(plugin.pluginPrefix + ChatColor.GREEN + "Successfully connected to the Database.");
+            Bukkit.getConsoleSender().sendMessage(PlayerKits.pluginPrefix + ChatColor.GREEN + "Successfully connected to the Database.");
         } catch (Exception e) {
-            Bukkit.getConsoleSender().sendMessage(plugin.pluginPrefix + ChatColor.RED + "Error while connecting to the Database.");
+            Bukkit.getConsoleSender().sendMessage(PlayerKits.pluginPrefix + ChatColor.RED + "Error while connecting to the Database.");
         }
 
     }

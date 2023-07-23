@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class PlayerListener implements Listener {
 
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
 
     public PlayerListener(PlayerKits plugin) {
         this.plugin = plugin;

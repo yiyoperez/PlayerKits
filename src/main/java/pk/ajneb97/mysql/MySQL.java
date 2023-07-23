@@ -15,11 +15,7 @@ import java.util.ArrayList;
 public class MySQL {
 
     public static boolean isEnabled(FileConfiguration config) {
-        if (config.getString("Config.mysql_database.enabled").equals("true")) {
-            return true;
-        } else {
-            return false;
-        }
+        return config.getString("Config.mysql_database.enabled").equals("true");
     }
 
     public static void createTable(PlayerKits plugin) {
@@ -64,15 +60,9 @@ public class MySQL {
                     ResultSet resultado = statement.executeQuery();
                     while (resultado.next()) {
                         int buyed = resultado.getInt("BUYED");
-                        boolean buyedBool = false;
-                        if (buyed == 1) {
-                            buyedBool = true;
-                        }
+                        boolean buyedBool = buyed == 1;
                         int oneTime = resultado.getInt("ONE_TIME");
-                        boolean oneTimeBool = false;
-                        if (oneTime == 1) {
-                            oneTimeBool = true;
-                        }
+                        boolean oneTimeBool = oneTime == 1;
                         long cooldown = resultado.getLong("COOLDOWN");
                         String kit = resultado.getString("KIT_NAME");
                         kitsJugador.add(new KitJugador(kit, oneTimeBool, cooldown, buyedBool));
@@ -114,15 +104,9 @@ public class MySQL {
                     ResultSet resultado = statement.executeQuery();
                     while (resultado.next()) {
                         int buyed = resultado.getInt("BUYED");
-                        boolean buyedBool = false;
-                        if (buyed == 1) {
-                            buyedBool = true;
-                        }
+                        boolean buyedBool = buyed == 1;
                         int oneTime = resultado.getInt("ONE_TIME");
-                        boolean oneTimeBool = false;
-                        if (oneTime == 1) {
-                            oneTimeBool = true;
-                        }
+                        boolean oneTimeBool = oneTime == 1;
                         long cooldown = resultado.getLong("COOLDOWN");
                         String kit = resultado.getString("KIT_NAME");
                         kitsJugador.add(new KitJugador(kit, oneTimeBool, cooldown, buyedBool));

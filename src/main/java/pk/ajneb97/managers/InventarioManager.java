@@ -23,7 +23,7 @@ import java.util.List;
 public class InventarioManager {
 
     private int taskID;
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
 
     public InventarioManager(PlayerKits plugin) {
         this.plugin = plugin;
@@ -56,7 +56,7 @@ public class InventarioManager {
         if (inv != null && ChatColor.stripColor(jugador.getOpenInventory().getTitle()).equals(pathInventoryM)) {
             if (config.contains("Config.Inventory")) {
                 for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
-                    int slot = Integer.valueOf(key);
+                    int slot = Integer.parseInt(key);
 
                     ItemStack item = Utils.getItem(config.getString("Config.Inventory." + key + ".id"), 1, "");
                     ItemMeta meta = item.getItemMeta();
@@ -81,7 +81,7 @@ public class InventarioManager {
                     meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
                     if (Utils.isNew()) {
                         if (config.contains("Config.Inventory." + key + ".custom_model_data")) {
-                            int customModelData = Integer.valueOf(config.getString("Config.Inventory." + key + ".custom_model_data"));
+                            int customModelData = config.getInt("Config.Inventory." + key + ".custom_model_data");
                             meta.setCustomModelData(customModelData);
                         }
                     }
@@ -109,10 +109,10 @@ public class InventarioManager {
             if (configKits.contains("Kits")) {
                 for (String key : configKits.getConfigurationSection("Kits").getKeys(false)) {
                     if (configKits.contains("Kits." + key + ".slot")) {
-                        int slot = Integer.valueOf(configKits.getString("Kits." + key + ".slot"));
+                        int slot = configKits.getInt("Kits." + key + ".slot");
                         int page = 1;
                         if (configKits.contains("Kits." + key + ".page")) {
-                            page = Integer.valueOf(configKits.getString("Kits." + key + ".page"));
+                            page = configKits.getInt("Kits." + key + ".page");
                         }
                         if (page == pagina) {
                             if (configKits.contains("Kits." + key + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
@@ -155,7 +155,7 @@ public class InventarioManager {
 
                                     if (configKits.contains("Kits." + key + ".display_item_leathercolor")) {
                                         LeatherArmorMeta meta2 = (LeatherArmorMeta) meta;
-                                        int color = Integer.valueOf(configKits.getString("Kits." + key + ".display_item_leathercolor"));
+                                        int color = configKits.getInt("Kits." + key + ".display_item_leathercolor");
                                         meta2.setColor(Color.fromRGB(color));
                                         item.setItemMeta(meta2);
                                     }
@@ -181,7 +181,7 @@ public class InventarioManager {
         if (kitsConfig.contains("Kits")) {
             for (String key : kitsConfig.getConfigurationSection("Kits").getKeys(false)) {
                 if (kitsConfig.contains("Kits." + key + ".page")) {
-                    int paginaActual = Integer.valueOf(kitsConfig.getString("Kits." + key + ".page"));
+                    int paginaActual = kitsConfig.getInt("Kits." + key + ".page");
                     if (paginaActual > paginaMaxima) {
                         paginaMaxima = paginaActual;
                     }
@@ -192,7 +192,7 @@ public class InventarioManager {
     }
 
     public static void abrirInventarioMain(FileConfiguration config, PlayerKits plugin, Player jugador, int pagina) {
-        int size = Integer.valueOf(config.getString("Config.inventorySize"));
+        int size = Integer.valueOf(config.getInt("inventory.size"));
         Inventory inv = Bukkit.createInventory(null, size, MessageUtils.getMensajeColor(getInventoryPageName(config, pagina)));
         jugador.openInventory(inv);
         InventarioManager invM = new InventarioManager(plugin);

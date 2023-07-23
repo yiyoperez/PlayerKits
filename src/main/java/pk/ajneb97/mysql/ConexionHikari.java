@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class ConexionHikari {
 
-    private HikariDataSource hikari;
+    private final HikariDataSource hikari;
 
     public ConexionHikari(String ip, int port, String database, String username, String password) {
         HikariConfig config = new HikariConfig();

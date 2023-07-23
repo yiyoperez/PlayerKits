@@ -12,7 +12,7 @@ public class PlayerKitsAPI {
     private static PlayerKits plugin;
 
     public PlayerKitsAPI(PlayerKits plugin) {
-        this.plugin = plugin;
+        PlayerKitsAPI.plugin = plugin;
     }
 
     public static String getCooldown(Player player, String kit) {

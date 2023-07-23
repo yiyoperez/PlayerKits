@@ -5,7 +5,7 @@ import pk.ajneb97.PlayerKits;
 
 public class PlayerDataSaveTask {
 
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
     private boolean stop;
 
     public PlayerDataSaveTask(PlayerKits plugin) {

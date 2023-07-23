@@ -20,6 +20,7 @@ public class Checks {
         //Check config.yml
         if (section != null) {
             for (String key : section.getKeys(false)) {
+                //TODO: wtf does this check.
                 if (!comprobarMaterial(config.getString("Config.Inventory." + key + ".id"), jugador, mensaje)) {
                     return false;
                 }

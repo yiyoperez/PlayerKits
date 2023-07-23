@@ -20,7 +20,7 @@ import java.util.List;
 
 public class InventarioConfirmacionDinero implements Listener {
 
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
 
     public InventarioConfirmacionDinero(PlayerKits plugin) {
         this.plugin = plugin;
@@ -96,7 +96,7 @@ public class InventarioConfirmacionDinero implements Listener {
                         if (slot >= 0 && slot <= 3) {
                             FileConfiguration configKits = plugin.getKits();
                             String kit = tipoInventario.replace("buying: ", "");
-                            double price = Double.valueOf(configKits.getString("Kits." + kit + ".price"));
+                            double price = configKits.getDouble("Kits." + kit + ".price");
                             Economy econ = plugin.getEconomy();
                             double balance = econ.getBalance(jugador);
                             if (balance < price) {

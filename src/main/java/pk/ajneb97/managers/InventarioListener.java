@@ -11,18 +11,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.utils.MessageUtils;
 
 public class InventarioListener implements Listener {
 
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
 
     public InventarioListener(PlayerKits plugin) {
         this.plugin = plugin;
     }
-
 
     @EventHandler
     public void clickInventario(InventoryClickEvent event) {
@@ -48,7 +47,7 @@ public class InventarioListener implements Listener {
                         int paginasTotales = InventarioManager.getPaginasTotales(configKits);
                         if (config.contains("Config.Inventory")) {
                             for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
-                                int slotNuevo = Integer.valueOf(key);
+                                int slotNuevo = Integer.parseInt(key);
                                 if (slot == slotNuevo) {
 
                                     if (config.contains("Config.Inventory." + key + ".type")) {
@@ -58,7 +57,7 @@ public class InventarioListener implements Listener {
                                                     String[] separados = config.getString("Config.kit_page_sound").split(";");
                                                     try {
                                                         Sound sound = Sound.valueOf(separados[0]);
-                                                        jugador.playSound(jugador.getLocation(), sound, Float.valueOf(separados[1]), Float.valueOf(separados[2]));
+                                                        jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
                                                     } catch (Exception ex) {
                                                         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                                                     }
@@ -73,7 +72,7 @@ public class InventarioListener implements Listener {
                                                     String[] separados = config.getString("Config.kit_page_sound").split(";");
                                                     try {
                                                         Sound sound = Sound.valueOf(separados[0]);
-                                                        jugador.playSound(jugador.getLocation(), sound, Float.valueOf(separados[1]), Float.valueOf(separados[2]));
+                                                        jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
                                                     } catch (Exception ex) {
                                                         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                                                     }
@@ -97,13 +96,13 @@ public class InventarioListener implements Listener {
                         if (configKits.contains("Kits")) {
                             for (String key : configKits.getConfigurationSection("Kits").getKeys(false)) {
                                 if (configKits.contains("Kits." + key + ".slot")) {
-                                    if (slot == Integer.valueOf(configKits.getString("Kits." + key + ".slot"))) {
+                                    if (slot == configKits.getInt("Kits." + key + ".slot")) {
                                         int page = 1;
                                         if (configKits.contains("Kits." + key + ".page")) {
-                                            page = Integer.valueOf(configKits.getString("Kits." + key + ".page"));
+                                            page = configKits.getInt("Kits." + key + ".page");
                                         }
                                         if (page == pagina) {
-                                            if (event.getClick().equals(ClickType.RIGHT) && config.getString("Config.kit_preview").equals("true")) {
+                                            if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
                                                 //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
                                                 boolean hasPermission = true;
                                                 if (configKits.contains("Kits." + key + ".permission")) {

@@ -40,8 +40,7 @@ public class Utils {
         if (!kitConfig.contains("Kits." + kit + ".cooldown")) {
             return "no_existe";
         }
-        String cooldownconfig = kitConfig.getString("Kits." + kit + ".cooldown");
-        long cooldown = Long.valueOf(cooldownconfig);
+        long cooldown = kitConfig.getLong("Kits." + kit + ".cooldown");
         long cooldownmil = cooldown * 1000;
 
         long espera = millis - timecooldown;
@@ -85,7 +84,7 @@ public class Utils {
         if (id.contains(":")) {
             idsplit = id.split(":");
             String stringDataValue = idsplit[1];
-            DataValue = Integer.valueOf(stringDataValue);
+            DataValue = Integer.parseInt(stringDataValue);
             Material mat = Material.getMaterial(idsplit[0].toUpperCase());
             stack = new ItemStack(mat, amount, (short) DataValue);
         } else {
@@ -118,7 +117,7 @@ public class Utils {
         item.setItemMeta(meta);
         if (kits.contains(path + ".display_item_leathercolor")) {
             LeatherArmorMeta meta2 = (LeatherArmorMeta) meta;
-            int color = Integer.valueOf(kits.getString(path + ".display_item_leathercolor"));
+            int color = kits.getInt(path + ".display_item_leathercolor");
             meta2.setColor(Color.fromRGB(color));
             item.setItemMeta(meta2);
         }
@@ -142,19 +141,19 @@ public class Utils {
         if (kitConfig.contains("Kits")) {
             for (String path : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
                 if (kitConfig.contains("Kits." + path + ".slot")) {
-                    int slotOcupado = Integer.valueOf(kitConfig.getString("Kits." + path + ".slot"));
+                    int slotOcupado = kitConfig.getInt("Kits." + path + ".slot");
                     slotsOcupados.add(slotOcupado);
                 }
             }
         }
         if (config.contains("Config.Inventory")) {
             for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
-                int slotOcupado = Integer.valueOf(key);
+                int slotOcupado = Integer.parseInt(key);
                 slotsOcupados.add(slotOcupado);
             }
         }
 
-        int slotsMaximos = Integer.valueOf(config.getString("Config.inventorySize"));
+        int slotsMaximos = config.getInt("inventory.size");
         for (int i = 0; i < slotsMaximos; i++) {
             if (!slotsOcupados.contains(i)) {
                 return i;
@@ -169,6 +168,7 @@ public class Utils {
     }
 
     // TODO: Fix NMS stuff.
+    // This will be a pain.
 
     public static void guardarSkullDisplay(ItemStack item, FileConfiguration config, String path) {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();

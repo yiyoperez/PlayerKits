@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class JugadorManager {
 
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
     private ArrayList<JugadorDatos> jugadores;
 
     public JugadorManager(PlayerKits plugin) {

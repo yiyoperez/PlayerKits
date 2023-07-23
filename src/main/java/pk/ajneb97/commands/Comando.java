@@ -24,7 +24,7 @@ import java.util.List;
 
 public class Comando implements CommandExecutor, TabCompleter {
 
-    private String prefix;
+    private final String prefix;
     private final FileConfiguration kits;
     private final FileConfiguration config;
     private final FileConfiguration messages;
@@ -171,7 +171,7 @@ public class Comando implements CommandExecutor, TabCompleter {
         int pag = 1;
         if (args.length >= 3) {
             try {
-                pag = Integer.valueOf(args[2]);
+                pag = Integer.parseInt(args[2]);
                 int pagsTotales = InventarioManager.getPaginasTotales(kits);
                 if (pag > pagsTotales) {
                     sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("errorPage")));
@@ -431,11 +431,11 @@ public class Comando implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> completions = new ArrayList<String>();
+        List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
             //Mostrar todos los comandos
-            List<String> commands = new ArrayList<String>();
+            List<String> commands = new ArrayList<>();
             commands.add("preview");
             if (config.getBoolean("claim_kit_short_command")) {
                 String argKit = args[0];
@@ -480,7 +480,7 @@ public class Comando implements CommandExecutor, TabCompleter {
         if (sender.isOp() || sender.hasPermission("playerkits.admin")) {
             if (args.length == 1) {
                 //Mostrar todos los comandos
-                List<String> commands = new ArrayList<String>();
+                List<String> commands = new ArrayList<>();
                 commands.add("open");
                 commands.add("create");
                 commands.add("delete");

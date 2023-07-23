@@ -27,7 +27,7 @@ import java.util.List;
 
 public class InventarioEditar implements Listener {
 
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
 
     public InventarioEditar(PlayerKits plugin) {
         this.plugin = plugin;
@@ -41,7 +41,7 @@ public class InventarioEditar implements Listener {
         ItemStack item = new ItemStack(Material.DROPPER);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lSlot"));
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the position of the display"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7item of this kit in the Inventory."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
@@ -57,13 +57,13 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.GHAST_TEAR);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lCooldown"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the cooldown of"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7the kit."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
         int cooldown = 0;
         if (kits.contains("Kits." + kit + ".cooldown")) {
-            cooldown = Integer.valueOf(kits.getString("Kits." + kit + ".cooldown"));
+            cooldown = kits.getInt("Kits." + kit + ".cooldown");
         }
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Current Cooldown: &a" + cooldown + "(s)"));
         meta.setLore(lore);
@@ -73,7 +73,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.REDSTONE_BLOCK);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lPermission"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the permission of"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7the kit."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
@@ -105,7 +105,7 @@ public class InventarioEditar implements Listener {
         }
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lFirst Join"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define if players should"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7receive this kit when they join for"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7the first time."));
@@ -135,7 +135,7 @@ public class InventarioEditar implements Listener {
         }
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lOne Time"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define if players should"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7claim this kit just one time."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
@@ -163,7 +163,7 @@ public class InventarioEditar implements Listener {
         }
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lAuto Armor"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to set if kit armor should"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7be equipped automatically when"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7claiming the kit."));
@@ -176,7 +176,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.BEACON);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lNo Buy Item"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to edit the kit display item when"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7player has not buyed it."));
         meta.setLore(lore);
@@ -186,7 +186,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.BARRIER);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lNo Permission Item"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to edit the kit display item when"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7player doesn't have permissions to claim"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7the kit."));
@@ -197,14 +197,14 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.IRON_SWORD);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lDisplay Item"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to edit the kit display item."));
         meta.setLore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(meta);
         inv.setItem(39, item);
 
-        List<String> items = new ArrayList<String>();
+        List<String> items = new ArrayList<>();
         FileConfiguration config = plugin.getConfig();
         if (kits.contains("Kits." + kit + ".Items")) {
             for (String n : kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
@@ -217,25 +217,25 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.DIAMOND);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lKit Items"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to edit the kit items."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Current Items:"));
-        for (int i = 0; i < items.size(); i++) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', "&8- &a") + items.get(i));
+        for (String s : items) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', "&8- &a") + s);
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
         inv.setItem(14, item);
 
-        List<String> comandos = new ArrayList<String>();
+        List<String> comandos = new ArrayList<>();
         if (kits.contains("Kits." + kit + ".Commands")) {
             comandos = kits.getStringList("Kits." + kit + ".Commands");
         }
         item = new ItemStack(Material.IRON_INGOT);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lKit Commands"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to edit which commands should"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7the kit execute to the player when"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7receiving it."));
@@ -244,8 +244,8 @@ public class InventarioEditar implements Listener {
         if (comandos.isEmpty()) {
             lore.add(ChatColor.translateAlternateColorCodes('&', "&cNONE"));
         } else {
-            for (int i = 0; i < comandos.size(); i++) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', "&8- &a") + comandos.get(i));
+            for (String comando : comandos) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', "&8- &a") + comando);
             }
         }
 
@@ -256,7 +256,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.PAPER);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lPrice"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the price of"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7the kit."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
@@ -272,7 +272,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.ENDER_PEARL);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lPage"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the page of the of"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7this kit in the Inventory."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
@@ -304,7 +304,7 @@ public class InventarioEditar implements Listener {
         }
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lOne Time Buy"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to set if the kit should be"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7buyed just one time. This option"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7requires a price for the kit."));
@@ -335,7 +335,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.EMERALD);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aSave Items"));
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7If you made any changes in this inventory"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7it is very important to click this item"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7before closing it or going back."));
@@ -359,7 +359,7 @@ public class InventarioEditar implements Listener {
             item = new ItemStack(Material.BOOK);
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&aInformation"));
-            lore = new ArrayList<String>();
+            lore = new ArrayList<>();
             lore.add(ChatColor.translateAlternateColorCodes('&', "&7If you want to set an item on the offhand"));
             lore.add(ChatColor.translateAlternateColorCodes('&', "&7just right click it."));
             meta.setLore(lore);
@@ -374,7 +374,7 @@ public class InventarioEditar implements Listener {
                 String path = "Kits." + kit + ".Items." + n;
                 item = KitManager.getItem(kits, path, plugin.getConfig(), jugador);
 
-                List<String> loreOffhand = new ArrayList<String>();
+                List<String> loreOffhand = new ArrayList<>();
                 ItemMeta metaNuevo = item.getItemMeta();
                 if (!Bukkit.getVersion().contains("1.8") && kits.contains(path + ".offhand") && kits.getString(path + ".offhand").equals("true")) {
                     loreOffhand.add(ChatColor.translateAlternateColorCodes('&', " "));
@@ -392,7 +392,7 @@ public class InventarioEditar implements Listener {
                 }
 
                 if (kits.contains(path + ".preview_slot")) {
-                    inv.setItem(Integer.valueOf(kits.getString(path + ".preview_slot")), item);
+                    inv.setItem(kits.getInt(path + ".preview_slot"), item);
                 } else {
                     inv.setItem(slot, item);
                     slot++;
@@ -484,7 +484,7 @@ public class InventarioEditar implements Listener {
                                         lore.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove from OFFHAND&8]"));
                                     }
                                 } else {
-                                    lore = new ArrayList<String>();
+                                    lore = new ArrayList<>();
                                     lore.add(ChatColor.translateAlternateColorCodes('&', " "));
                                     lore.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove from OFFHAND&8]"));
                                 }
@@ -526,7 +526,6 @@ public class InventarioEditar implements Listener {
         }
         inv.setItem(9, item);
         inv.setItem(13, item);
-        ;
         inv.setItem(17, item);
 
         if (!Utils.isLegacy()) {
@@ -568,7 +567,7 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.NAME_TAG);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lDisplay Name"));
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the display item name."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Current Name: &a" + name));
@@ -576,7 +575,7 @@ public class InventarioEditar implements Listener {
         item.setItemMeta(meta);
         inv.setItem(14, item);
 
-        List<String> displayLore = new ArrayList<String>();
+        List<String> displayLore = new ArrayList<>();
         if (tipoDisplay.equals("normal")) {
             if (kits.contains("Kits." + kit + ".display_lore")) {
                 displayLore = kits.getStringList("Kits." + kit + ".display_lore");
@@ -593,15 +592,15 @@ public class InventarioEditar implements Listener {
         item = new ItemStack(Material.PAPER);
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lDisplay Lore"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define the display item lore."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Current Lore:"));
         if (displayLore.isEmpty()) {
             lore.add(ChatColor.translateAlternateColorCodes('&', "&cNONE"));
         } else {
-            for (int i = 0; i < displayLore.size(); i++) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', displayLore.get(i)));
+            for (String s : displayLore) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', s));
             }
         }
         meta.setLore(lore);
@@ -633,7 +632,7 @@ public class InventarioEditar implements Listener {
         }
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&eSet &6&lDisplay Item Glowing"));
-        lore = new ArrayList<String>();
+        lore = new ArrayList<>();
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7Click to define if the display item"));
         lore.add(ChatColor.translateAlternateColorCodes('&', "&7should display an enchantment."));
         lore.add(ChatColor.translateAlternateColorCodes('&', ""));
@@ -826,7 +825,7 @@ public class InventarioEditar implements Listener {
             inv.setItem(i, item);
         }
 
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         if (tipoDisplay.equals("normal")) {
             if (kits.contains("Kits." + kit + ".display_lore")) {
                 lore = kits.getStringList("Kits." + kit + ".display_lore");
@@ -840,7 +839,7 @@ public class InventarioEditar implements Listener {
             item = new ItemStack(Material.PAPER, 1);
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&9Line &e#" + (i + 1)));
-            List<String> lore2 = new ArrayList<String>();
+            List<String> lore2 = new ArrayList<>();
             lore2.add(ChatColor.translateAlternateColorCodes('&', "&7") + lore.get(i));
             lore2.add(ChatColor.translateAlternateColorCodes('&', ""));
             lore2.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove&8]"));
@@ -887,7 +886,7 @@ public class InventarioEditar implements Listener {
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the lore line to add."));
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'empty' to add an empty line&8)"));
                         } else if (slot >= 0 && slot <= 44 && event.getClick().equals(ClickType.RIGHT)) {
-                            List<String> lore = new ArrayList<String>();
+                            List<String> lore = new ArrayList<>();
                             if (tipoDisplay.equals("normal")) {
                                 if (kits.contains("Kits." + kitEditando.getKit() + ".display_lore")) {
                                     lore = kits.getStringList("Kits." + kitEditando.getKit() + ".display_lore");
@@ -951,7 +950,7 @@ public class InventarioEditar implements Listener {
             inv.setItem(i, item);
         }
 
-        List<String> comandos = new ArrayList<String>();
+        List<String> comandos = new ArrayList<>();
         if (kits.contains("Kits." + kit + ".Commands")) {
             comandos = kits.getStringList("Kits." + kit + ".Commands");
         }
@@ -959,7 +958,7 @@ public class InventarioEditar implements Listener {
             item = new ItemStack(Material.PAPER, 1);
             meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&9Command &e#" + (i + 1)));
-            List<String> lore = new ArrayList<String>();
+            List<String> lore = new ArrayList<>();
             lore.add(ChatColor.translateAlternateColorCodes('&', "&7") + comandos.get(i));
             lore.add(ChatColor.translateAlternateColorCodes('&', ""));
             lore.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove&8]"));
@@ -1007,7 +1006,7 @@ public class InventarioEditar implements Listener {
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Player variable is: &e%player%&8)"));
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write the command without the '/'&8)"));
                         } else if (slot >= 0 && slot <= 44 && event.getClick().equals(ClickType.RIGHT)) {
-                            List<String> comandos = new ArrayList<String>();
+                            List<String> comandos = new ArrayList<>();
                             if (kits.contains("Kits." + kitEditando.getKit() + ".Commands")) {
                                 comandos = kits.getStringList("Kits." + kitEditando.getKit() + ".Commands");
                             }
@@ -1096,7 +1095,7 @@ public class InventarioEditar implements Listener {
                             KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
                             kit.setPaso("slot");
                             plugin.setKitEditando(kit);
-                            int max = Integer.valueOf(config.getString("Config.inventorySize")) - 1;
+                            int max = config.getInt("inventory.size") - 1;
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the new slot of the Kit."));
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Use a number between 0 and " + max + "&8)"));
                             jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not show the kit&8)"));
@@ -1216,9 +1215,9 @@ public class InventarioEditar implements Listener {
             String prefix = ChatColor.translateAlternateColorCodes('&', config.getString("Messages.prefix"));
             String paso = kit.getPaso();
             if (paso.equals("slot")) {
-                int max = Integer.valueOf(config.getString("Config.inventorySize")) - 1;
+                int max = config.getInt("inventory.size") - 1;
                 try {
-                    int num = Integer.valueOf(message);
+                    int num = Integer.parseInt(message);
                     if (num >= 0 && num <= max) {
                         jugador.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aSlot defined to: &e" + num));
                         kits.set("Kits." + kit.getKit() + ".slot", num);
@@ -1247,7 +1246,7 @@ public class InventarioEditar implements Listener {
                 }
             } else if (paso.equals("page")) {
                 try {
-                    int num = Integer.valueOf(message);
+                    int num = Integer.parseInt(message);
                     if (num >= 1) {
                         jugador.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aPage defined to: &e" + num));
                         kits.set("Kits." + kit.getKit() + ".page", num);
@@ -1265,7 +1264,7 @@ public class InventarioEditar implements Listener {
                 }
             } else if (paso.equals("cooldown")) {
                 try {
-                    int num = Integer.valueOf(message);
+                    int num = Integer.parseInt(message);
                     if (num >= 0) {
                         jugador.sendMessage(prefix + ChatColor.translateAlternateColorCodes('&', "&aCooldown defined to: &e" + num));
                         kits.set("Kits." + kit.getKit() + ".cooldown", num);
@@ -1295,7 +1294,7 @@ public class InventarioEditar implements Listener {
                     }
                 }, 3L);
             } else if (paso.equals("comando")) {
-                List<String> comandos = new ArrayList<String>();
+                List<String> comandos = new ArrayList<>();
                 if (kits.contains("Kits." + kit.getKit() + ".Commands")) {
                     comandos = kits.getStringList("Kits." + kit.getKit() + ".Commands");
                 }
@@ -1336,7 +1335,7 @@ public class InventarioEditar implements Listener {
                     }
                 }, 3L);
             } else if (paso.equals("lore")) {
-                List<String> lore = new ArrayList<String>();
+                List<String> lore = new ArrayList<>();
                 final String tipoDisplay = kit.getTipoDisplay();
                 if (tipoDisplay.equals("normal")) {
                     if (kits.contains("Kits." + kit.getKit() + ".display_lore")) {

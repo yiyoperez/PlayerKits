@@ -52,10 +52,10 @@ public class KitManager {
     public static boolean save(String kitName, FileConfiguration configKits, FileConfiguration config, Player jugador) {
         ItemStack[] contents = jugador.getInventory().getContents();
         int c = 1;
-        for (int i = 0; i < contents.length; i++) {
-            if (contents[i] != null && !contents[i].getType().equals(Material.AIR)) {
+        for (ItemStack content : contents) {
+            if (content != null && !content.getType().equals(Material.AIR)) {
                 String path = "Kits." + kitName + ".Items." + c;
-                KitManager.saveItem(contents[i], configKits, path, config);
+                KitManager.saveItem(content, configKits, path, config);
                 c++;
             }
         }
@@ -114,10 +114,10 @@ public class KitManager {
                 if (meta.hasCustomEffects()) {
                     List<PotionEffect> efectos = meta.getCustomEffects();
                     List<String> lista = new ArrayList<String>();
-                    for (int i = 0; i < efectos.size(); i++) {
-                        String tipo = efectos.get(i).getType().getName();
-                        int amplifier = efectos.get(i).getAmplifier();
-                        int duracion = efectos.get(i).getDuration();
+                    for (PotionEffect efecto : efectos) {
+                        String tipo = efecto.getType().getName();
+                        int amplifier = efecto.getAmplifier();
+                        int duracion = efecto.getDuration();
                         lista.add(tipo + ";" + amplifier + ";" + duracion);
                     }
                     kitConfig.set(path + ".potion-effects", lista);
@@ -153,7 +153,7 @@ public class KitManager {
             Map<Enchantment, Integer> enchants = meta.getStoredEnchants();
             List<String> enchantsList = new ArrayList<String>();
             for (Map.Entry<Enchantment, Integer> entry : enchants.entrySet()) {
-                enchantsList.add(entry.getKey().getName() + ";" + entry.getValue().intValue());
+                enchantsList.add(entry.getKey().getName() + ";" + entry.getValue());
             }
             kitConfig.set(path + ".book-enchants", enchantsList);
         }
@@ -267,21 +267,21 @@ public class KitManager {
         }
 
 
-        Utils u = new Utils();
+        //todo ???
         if (!Utils.isLegacy()) {
             if (id == Material.getMaterial("PLAYER_HEAD")) {
-                u.guardarSkull(item, kitConfig, path, "");
+                Utils.guardarSkull(item, kitConfig, path, "");
             }
         } else {
             if (id == Material.valueOf("SKULL_ITEM") && datavalue == 3) {
-                u.guardarSkull(item, kitConfig, path, "");
+                Utils.guardarSkull(item, kitConfig, path, "");
                 idtext = "SKULL_ITEM";
             }
 
         }
 
-        u.guardarAttributes(item, kitConfig, path);
-        u.guardarNBT(item, kitConfig, path);
+        Utils.guardarAttributes(item, kitConfig, path);
+        Utils.guardarNBT(item, kitConfig, path);
 
         if (datavalue != 0 && Utils.isLegacy()) {
             idtext = idtext + ":" + datavalue;
@@ -334,7 +334,7 @@ public class KitManager {
             }
 
 
-            if (u.getUnbreakable(item) == true) {
+            if (Utils.getUnbreakable(item)) {
                 kitConfig.set(path + ".unbreakable", "true");
             } else {
                 kitConfig.set(path + ".unbreakable", "false");
@@ -359,10 +359,7 @@ public class KitManager {
         int IDint = 0;
         int DataValue = 0;
         String[] idsplit = new String[2];
-        boolean placeholderAPI = false;
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            placeholderAPI = true;
-        }
+        boolean placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         idsplit = id.split(":");
         List<String> lore = new ArrayList<String>();
         if (kitConfig.contains(path + ".lore")) {
@@ -384,34 +381,34 @@ public class KitManager {
         String pathamount = path + ".amount";
         int pathamountInt = 1;
         if (kitConfig.contains(pathamount)) {
-            pathamountInt = Integer.valueOf(kitConfig.getString(pathamount));
+            pathamountInt = kitConfig.getInt(pathamount);
         }
         ItemStack crafteos = Utils.getItem(id, pathamountInt, "");
         String pathdurability = path + ".durability";
         if (!Utils.isLegacy() && kitConfig.contains(pathdurability)) {
-            crafteos.setDurability(Short.valueOf(kitConfig.getString(pathdurability)));
+            crafteos.setDurability((short) kitConfig.getDouble(pathdurability));
         }
         if ((crafteos.getType().name().contains("POTION") || crafteos.getType().name().contains("TIPPED_ARROW"))) {
             if (crafteos.getItemMeta() instanceof PotionMeta) {
                 PotionMeta meta = (PotionMeta) crafteos.getItemMeta();
                 if (!Bukkit.getVersion().contains("1.8")) {
-                    boolean isUpgraded = Boolean.valueOf(kitConfig.getString(path + ".potion-upgraded"));
-                    boolean isExtended = Boolean.valueOf(kitConfig.getString(path + ".potion-extended"));
+                    boolean isUpgraded = kitConfig.getBoolean(path + ".potion-upgraded");
+                    boolean isExtended = kitConfig.getBoolean(path + ".potion-extended");
                     PotionType type = PotionType.valueOf(kitConfig.getString(path + ".potion-type"));
                     meta.setBasePotionData(new PotionData(type, isExtended, isUpgraded));
                     String pathColor = path + ".potion-color";
                     if (kitConfig.contains(pathColor)) {
-                        meta.setColor(Color.fromRGB(Integer.valueOf(kitConfig.getString(pathColor))));
+                        meta.setColor(Color.fromRGB(kitConfig.getInt(pathColor)));
                     }
                 }
                 String pathefectos = path + ".potion-effects";
                 if (kitConfig.contains(pathefectos)) {
                     List<String> efectos = kitConfig.getStringList(pathefectos);
-                    for (int i = 0; i < efectos.size(); i++) {
-                        String[] separados = efectos.get(i).split(";");
+                    for (String efecto : efectos) {
+                        String[] separados = efecto.split(";");
                         String tipoPocion = separados[0];
-                        int amplifier = Integer.valueOf(separados[1]);
-                        int duracion = Integer.valueOf(separados[2]);
+                        int amplifier = Integer.parseInt(separados[1]);
+                        int duracion = Integer.parseInt(separados[2]);
                         meta.addCustomEffect(new PotionEffect(PotionEffectType.getByName(tipoPocion), duracion, amplifier), false);
                     }
                 }
@@ -435,7 +432,7 @@ public class KitManager {
 
         String colorpath = path + ".color";
         if (kitConfig.contains(colorpath)) {
-            int color = Integer.valueOf(kitConfig.getString(colorpath));
+            int color = kitConfig.getInt(colorpath);
             LeatherArmorMeta meta = (LeatherArmorMeta) crafteos.getItemMeta();
             meta.setColor(Color.fromRGB(color));
             crafteos.setItemMeta(meta);
@@ -444,10 +441,10 @@ public class KitManager {
         if (kitConfig.contains(book_enchants)) {
             List<String> bookEnchantsList = kitConfig.getStringList(book_enchants);
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) crafteos.getItemMeta();
-            for (int i = 0; i < bookEnchantsList.size(); i++) {
-                String[] sep = bookEnchantsList.get(i).split(";");
+            for (String s : bookEnchantsList) {
+                String[] sep = s.split(";");
                 String nombre = sep[0];
-                int nivel = Integer.valueOf(sep[1]);
+                int nivel = Integer.parseInt(sep[1]);
                 meta.addStoredEnchant(Enchantment.getByName(nombre), nivel, true);
             }
             crafteos.setItemMeta(meta);
@@ -486,19 +483,19 @@ public class KitManager {
         if (kitConfig.contains(firework_effects)) {
             List<String> fireworkEffectsList = kitConfig.getStringList(firework_effects);
             FireworkMeta meta = (FireworkMeta) crafteos.getItemMeta();
-            for (int i = 0; i < fireworkEffectsList.size(); i++) {
-                String[] sep = fireworkEffectsList.get(i).split(";");
+            for (String s : fireworkEffectsList) {
+                String[] sep = s.split(";");
                 String type = sep[0];
                 String[] colores = sep[1].split(",");
                 List<Color> coloresList = new ArrayList<Color>();
-                for (int c = 0; c < colores.length; c++) {
-                    coloresList.add(Color.fromRGB(Integer.valueOf(colores[c])));
+                for (String colore : colores) {
+                    coloresList.add(Color.fromRGB(Integer.valueOf(colore)));
                 }
                 List<Color> coloresListFade = new ArrayList<Color>();
                 if (!sep[2].equals("")) {
                     String[] coloresFade = sep[2].split(",");
-                    for (int c = 0; c < coloresFade.length; c++) {
-                        coloresListFade.add(Color.fromRGB(Integer.valueOf(coloresFade[c])));
+                    for (String value : coloresFade) {
+                        coloresListFade.add(Color.fromRGB(Integer.valueOf(value)));
                     }
                 }
 
@@ -538,8 +535,8 @@ public class KitManager {
                 String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
                 if (!patternsPath.equals("")) {
                     String[] patternsSeparados = patternsPath.split(";");
-                    for (int i = 0; i < patternsSeparados.length; i++) {
-                        String[] lineaSep = patternsSeparados[i].split(":");
+                    for (String patternsSeparado : patternsSeparados) {
+                        String[] lineaSep = patternsSeparado.split(":");
                         String tipoB = lineaSep[1];
                         String colorB = lineaSep[0];
                         patterns.add(new Pattern(DyeColor.valueOf(colorB), PatternType.valueOf(tipoB)));
@@ -566,8 +563,8 @@ public class KitManager {
                 String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
                 if (!patternsPath.equals("")) {
                     String[] patternsSeparados = patternsPath.split(";");
-                    for (int i = 0; i < patternsSeparados.length; i++) {
-                        String[] lineaSep = patternsSeparados[i].split(":");
+                    for (String patternsSeparado : patternsSeparados) {
+                        String[] lineaSep = patternsSeparado.split(":");
                         String tipoB = lineaSep[1];
                         String colorB = lineaSep[0];
                         banner.addPattern(new Pattern(DyeColor.valueOf(colorB), PatternType.valueOf(tipoB)));
@@ -597,25 +594,25 @@ public class KitManager {
         }
 
         crafteosMeta.setLore(lore);
-        for (int i = 0; i < enchants.size(); i++) {
+        //Todo: check boxing.
+        for (String enchant : enchants) {
             String[] split = new String[2];
-            split = enchants.get(i).split(";");
+            split = enchant.split(";");
             int level = 0;
             if (split[1].contains("-")) {
                 //Random r = new Random();
                 String[] corte = new String[2];
                 corte = split[1].split("-");
-                int min = Integer.valueOf(corte[0]);
                 //int max = Integer.valueOf(corte[1]);
                 //level = r.nextInt(max-min)+min;
-                level = min;
+                level = Integer.valueOf(corte[0]);
             } else {
                 level = Integer.valueOf(split[1]);
             }
             crafteosMeta.addEnchant(Enchantment.getByName(split[0]), level, true);
         }
-        for (int i = 0; i < flags.size(); i++) {
-            crafteosMeta.addItemFlags(ItemFlag.valueOf(flags.get(i)));
+        for (String flag : flags) {
+            crafteosMeta.addItemFlags(ItemFlag.valueOf(flag));
         }
         if (Utils.isNew()) {
             if (kitConfig.contains(path + ".custom_model_data")) {
@@ -678,7 +675,6 @@ public class KitManager {
                         jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
                                 .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
                         errorSonido(jugador, config);
-                        return;
                     } else {
                         //Abrir inventario confirmacion
                         PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
@@ -687,8 +683,8 @@ public class KitManager {
                             pag = inv.getPagina();
                         }
                         InventarioConfirmacionDinero.crearInventario(jugador, plugin, price, kit, pag);
-                        return;
                     }
+                    return;
                 }
             }
         }
@@ -703,8 +699,8 @@ public class KitManager {
             contents = jugador.getInventory().getStorageContents();
         }
         int espaciosUsados = 0;
-        for (int i = 0; i < contents.length; i++) {
-            if (contents[i] != null && !contents[i].getType().equals(Material.AIR)) {
+        for (ItemStack content : contents) {
+            if (content != null && !content.getType().equals(Material.AIR)) {
                 espaciosUsados++;
             }
         }
@@ -815,6 +811,7 @@ public class KitManager {
                 String path = "Kits." + kit + ".Items." + i;
                 ItemStack item = KitManager.getItem(configKits, path, config, jugador);
 
+                // TODO: pleaseeee
                 if (itemCabeza != null && i.equals(itemCabeza)) {
                     invJ.setHelmet(item);
                 } else if (itemPechera != null && i.equals(itemPechera)) {
@@ -878,12 +875,12 @@ public class KitManager {
         if (configKits.contains("Kits." + kit + ".Commands")) {
             List<String> comandos = configKits.getStringList("Kits." + kit + ".Commands");
             CommandSender consola = Bukkit.getServer().getConsoleSender();
-            for (int i = 0; i < comandos.size(); i++) {
-                if (comandos.get(i).startsWith("msg %player% ")) {
-                    String mensaje = comandos.get(i).replace("msg %player% ", "");
+            for (String comando : comandos) {
+                if (comando.startsWith("msg %player% ")) {
+                    String mensaje = comando.replace("msg %player% ", "");
                     jugador.sendMessage(MessageUtils.getMensajeColor(mensaje));
                 } else {
-                    String comandoAEnviar = comandos.get(i).replace("%player%", jugador.getName());
+                    String comandoAEnviar = comando.replace("%player%", jugador.getName());
                     Bukkit.dispatchCommand(consola, comandoAEnviar);
                 }
             }

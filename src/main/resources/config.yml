@@ -3,12 +3,16 @@ claim_kit_short_command: false
 nbt_alternative_data_save: false
 preview_inventory_requires_permission: false
 
+inventory:
+  size: 45
+
+preview-inventory:
+  enabled: true
+  size: 54
+  back-item: true
+  back-item-slot: 45
+
 Config:
-    inventorySize: 45
-    previewInventorySize: 54
-    preview_inventory_back_item_slot: 45
-    kit_preview: true
-    kit_preview_back_item: true
     hide_kits_with_permissions: false
     close_inventory_on_claim: false
     drop_items_if_full_inventory: false
