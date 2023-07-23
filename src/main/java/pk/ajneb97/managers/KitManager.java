@@ -647,7 +647,7 @@ public class KitManager {
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
         JugadorManager jManager = plugin.getJugadorManager();
-        String prefix = config.getString("prefix");
+        String prefix = messages.getString("prefix");
         if (!ignoreValues) {
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
                 if (jManager.isOneTime(jugador, kit)) {
