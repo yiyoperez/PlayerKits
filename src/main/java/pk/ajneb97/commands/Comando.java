@@ -52,8 +52,10 @@ public class Comando implements CommandExecutor, TabCompleter {
                     break;
                 case "give":
                     give(sender, args, prefix, config, kits);
+                    break;
                 case "open":
                     open(sender, args, prefix, config, kits);
+                    break;
                 case "reset":
                     reset(sender, args, prefix, config, kits);
                     break;
