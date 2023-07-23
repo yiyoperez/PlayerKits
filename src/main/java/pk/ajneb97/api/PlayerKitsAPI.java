@@ -30,6 +30,7 @@ public class PlayerKitsAPI {
     }
 
     public static String getNBTSeparationCharacter() {
-        return plugin.getNbtSeparationChar();
+        FileConfiguration config = plugin.getConfig();
+        return config.getBoolean("nbt_alternative_data_save") ? "|" : ";";
     }
 }

@@ -38,7 +38,6 @@ public class Comando implements CommandExecutor, TabCompleter {
                     plugin.reloadConfig();
                     plugin.reloadKits();
                     plugin.reloadPlayerDataSaveTask();
-                    plugin.setNbtSeparationChar();
                     sender.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.configReload")));
                 } else if (args[0].equalsIgnoreCase("give")) {
                     //kit give <kit> <jugador>
@@ -204,7 +203,6 @@ public class Comando implements CommandExecutor, TabCompleter {
                     plugin.reloadConfig();
                     plugin.reloadKits();
                     plugin.reloadPlayerDataSaveTask();
-                    plugin.setNbtSeparationChar();
                     jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.configReload")));
                 } else {
                     jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.noPermissions")));

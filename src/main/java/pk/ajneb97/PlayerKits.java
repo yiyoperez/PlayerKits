@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +54,6 @@ public class PlayerKits extends JavaPlugin {
     private ConexionMySQL conexionDatabase;
 
     private PlayerDataSaveTask playerDataSaveTask;
-
-    private String nbtSeparationChar;
 
     public void onEnable() {
         registerKits();
@@ -89,7 +84,6 @@ public class PlayerKits extends JavaPlugin {
         }
 
         reloadPlayerDataSaveTask();
-        setNbtSeparationChar();
         Bukkit.getConsoleSender().sendMessage(pluginPrefix + ChatColor.YELLOW + "Has been enabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
         Bukkit.getConsoleSender().sendMessage(pluginPrefix + ChatColor.YELLOW + "Thanks for using my plugin!  " + ChatColor.WHITE + "~Ajneb97");
     }
@@ -288,18 +282,6 @@ public class PlayerKits extends JavaPlugin {
         return jugadorManager;
     }
 
-
-    public String getNbtSeparationChar() {
-        return nbtSeparationChar;
-    }
-
-    public void setNbtSeparationChar() {
-        if (getConfig().getBoolean("Config.nbt_alternative_data_save")) {
-            nbtSeparationChar = "|";
-        } else {
-            nbtSeparationChar = ";";
-        }
-    }
 
     //TODO: Find a better way to replace this.
     /*public void checkMessagesUpdate() {
