@@ -22,7 +22,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
@@ -38,7 +37,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.InventarioJugador;
+import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
 
@@ -682,7 +681,7 @@ public class KitManager {
                         return;
                     } else {
                         //Abrir inventario confirmacion
-                        InventarioJugador inv = plugin.getInventarioJugador(jugador.getName());
+                        PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
                         int pag = -1;
                         if (inv != null) {
                             pag = inv.getPagina();
@@ -710,7 +709,7 @@ public class KitManager {
             }
         }
 
-        PlayerInventory invJ = jugador.getInventory();
+        org.bukkit.inventory.PlayerInventory invJ = jugador.getInventory();
         int espaciosLibres = 36 - espaciosUsados;
         int cantidadItems = 0; //items normales
         String itemCabeza = null;

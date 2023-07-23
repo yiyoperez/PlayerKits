@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitScheduler;
-import pk.ajneb97.inventory.InventarioJugador;
+import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
@@ -196,7 +196,7 @@ public class InventarioManager {
         Inventory inv = Bukkit.createInventory(null, size, MessageUtils.getMensajeColor(getInventoryPageName(config, pagina)));
         jugador.openInventory(inv);
         InventarioManager invM = new InventarioManager(plugin);
-        plugin.agregarInventarioJugador(new InventarioJugador(jugador, pagina, invM, "main"));
+        plugin.agregarInventarioJugador(new PlayerInventory(jugador, pagina, invM, "main"));
 
         invM.actualizarInventario(jugador, pagina);
     }

@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import pk.ajneb97.inventory.InventarioJugador;
+import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.utils.MessageUtils;
 
@@ -27,7 +27,7 @@ public class InventarioListener implements Listener {
     @EventHandler
     public void clickInventario(InventoryClickEvent event) {
         Player jugador = (Player) event.getWhoClicked();
-        InventarioJugador inv = plugin.getInventarioJugador(jugador.getName());
+        PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
         if (inv != null) {
             if (event.getCurrentItem() == null || event.getCurrentItem().getType().name().contains("AIR")) {
                 event.setCancelled(true);
@@ -140,7 +140,7 @@ public class InventarioListener implements Listener {
     @EventHandler
     public void alCerrar(InventoryCloseEvent event) {
         Player jugador = (Player) event.getPlayer();
-        InventarioJugador inv = plugin.getInventarioJugador(jugador.getName());
+        PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
         if (inv != null && inv.getInventarioManager() != null) {
             Bukkit.getScheduler().cancelTask(inv.getInventarioManager().getTaskID());
         }
