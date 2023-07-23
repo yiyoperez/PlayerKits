@@ -76,7 +76,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.zaxxer</pattern>
-                                    <shadedPattern>pk.hikari</shadedPattern>
+                                    <shadedPattern>pk.ajneb97.libs.hikari</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
