@@ -87,7 +87,6 @@ public class PlayerKits extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new ExpansionPlayerKits(this).register();
         }
-        checkMessagesUpdate();
 
         reloadPlayerDataSaveTask();
         setNbtSeparationChar();
@@ -302,8 +301,8 @@ public class PlayerKits extends JavaPlugin {
         }
     }
 
-    // Find a better way to replace this.
-    public void checkMessagesUpdate() {
+    //TODO: Find a better way to replace this.
+    /*public void checkMessagesUpdate() {
         Path archivo = Paths.get(configFile.getPath());
         try {
             String texto = new String(Files.readAllBytes(archivo));
@@ -407,7 +406,7 @@ public class PlayerKits extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public void rellenarInventarioConfig() {
         FileConfiguration config = getConfig();
