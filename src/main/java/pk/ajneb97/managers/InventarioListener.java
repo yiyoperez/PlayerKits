@@ -112,14 +112,14 @@ public class InventarioListener implements Listener {
                                                         hasPermission = false;
                                                     }
                                                 }
-                                                boolean permissionCheck = config.getBoolean("Config.preview_inventory_requires_permission");
+                                                boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
                                                 if (permissionCheck && !hasPermission) {
                                                     String prefix = config.getString("Messages.prefix");
                                                     jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cantPreviewError")));
                                                     return;
                                                 }
 
-                                                InventarioPreview.abrirInventarioPreview(plugin, jugador, configKits, config, key, inv.getPagina());
+                                                InventarioPreview.abrirInventarioPreview(plugin, jugador, key, inv.getPagina());
                                             } else {
                                                 KitManager.claimKit(jugador, key, plugin, true, false, false);
 

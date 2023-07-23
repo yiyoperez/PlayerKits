@@ -23,11 +23,11 @@ public class InventarioPreview implements Listener{
 	private static FileConfiguration config;
 	private static FileConfiguration messages;
 
-	public InventarioPreview(PlayerKits plugin, FileConfiguration kits, FileConfiguration config, FileConfiguration messages) {
+	public InventarioPreview(PlayerKits plugin) {
 		this.plugin = plugin;
-		this.kits = kits;
-		this.config = config;
-		this.messages = messages;
+		this.kits = plugin.getKits();
+		this.config = plugin.getConfig();
+		this.messages = plugin.getMessages();
 	}
 
 	public static void abrirInventarioPreview(PlayerKits plugin, Player jugador, String kit, int pagina) {
