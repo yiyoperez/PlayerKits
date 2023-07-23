@@ -17,18 +17,26 @@ import pk.ajneb97.utils.MessageUtils;
 
 public class InventarioPreview implements Listener{
 	
-	private PlayerKits plugin;
-	public InventarioPreview(PlayerKits plugin) {
+	private final PlayerKits plugin;
+
+	private static FileConfiguration kits;
+	private static FileConfiguration config;
+	private static FileConfiguration messages;
+
+	public InventarioPreview(PlayerKits plugin, FileConfiguration kits, FileConfiguration config, FileConfiguration messages) {
 		this.plugin = plugin;
+		this.kits = kits;
+		this.config = config;
+		this.messages = messages;
 	}
 
-	public static void abrirInventarioPreview(PlayerKits plugin,Player jugador,FileConfiguration kits,FileConfiguration config,String kit,int pagina) {
+	public static void abrirInventarioPreview(PlayerKits plugin, Player jugador, String kit, int pagina) {
 		int slots = Integer.valueOf(config.getString("Config.previewInventorySize"));
-		Inventory inv = Bukkit.createInventory(null, slots, MessageUtils.getMensajeColor(config.getString("Messages.previewInventoryName")));
+		Inventory inv = Bukkit.createInventory(null, slots, MessageUtils.getMensajeColor(messages.getString("previewInventoryName")));
 		if(config.getString("Config.kit_preview_back_item").equals("true")) {
 			ItemStack item = new ItemStack(Material.ARROW);
 			ItemMeta meta = item.getItemMeta();
-			meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.backItemName")));
+			meta.setDisplayName(MessageUtils.getMensajeColor(messages.getString("backItemName")));
 			item.setItemMeta(meta);
 			inv.setItem(Integer.valueOf(config.getString("Config.preview_inventory_back_item_slot")), item);
 		}
@@ -38,8 +46,8 @@ public class InventarioPreview implements Listener{
 		int slot = 0;
 		if(!kits.contains("Kits."+kit+".Items")) {
 			//No tiene items, solo comandos?
-			String prefix = config.getString("Messages.prefix");
-			jugador.sendMessage(MessageUtils.getMensajeColor(prefix+config.getString("Messages.noPreviewError")));
+			String prefix = messages.getString("prefix");
+			jugador.sendMessage(MessageUtils.getMensajeColor(prefix+messages.getString("noPreviewError")));
 			return;
 		}
 		for(String n : kits.getConfigurationSection("Kits."+kit+".Items").getKeys(false)) {
