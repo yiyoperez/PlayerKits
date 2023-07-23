@@ -1,14 +1,32 @@
 package pk.ajneb97;
 
 
-import java.io.BufferedReader;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+import pk.ajneb97.api.ExpansionPlayerKits;
+import pk.ajneb97.api.PlayerKitsAPI;
+import pk.ajneb97.managers.InventarioConfirmacionDinero;
+import pk.ajneb97.managers.InventarioEditar;
+import pk.ajneb97.managers.InventarioListener;
+import pk.ajneb97.managers.InventarioPreview;
+import pk.ajneb97.managers.JugadorManager;
+import pk.ajneb97.managers.PlayerDataSaveTask;
+import pk.ajneb97.managers.PlayerListener;
+import pk.ajneb97.mysql.ConexionMySQL;
+import pk.ajneb97.mysql.MySQL;
+import pk.ajneb97.otros.Utilidades;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,61 +34,29 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import net.milkbowl.vault.economy.Economy;
-import pk.ajneb97.api.ExpansionPlayerKits;
-import pk.ajneb97.api.PlayerKitsAPI;
-import pk.ajneb97.managers.InventarioConfirmacionDinero;
-import pk.ajneb97.managers.InventarioEditar;
-import pk.ajneb97.managers.InventarioListener;
-import pk.ajneb97.managers.InventarioManager;
-import pk.ajneb97.managers.InventarioPreview;
-import pk.ajneb97.managers.JugadorManager;
-import pk.ajneb97.managers.PlayerDataSaveTask;
-import pk.ajneb97.managers.PlayerListener;
-import pk.ajneb97.model.JugadorDatos;
-import pk.ajneb97.model.KitJugador;
-import pk.ajneb97.mysql.ConexionMySQL;
-import pk.ajneb97.mysql.MySQL;
-import pk.ajneb97.otros.Utilidades;
-
-
-
 public class PlayerKits extends JavaPlugin {
-  
-	PluginDescriptionFile pdfFile = getDescription();
-	public String version = pdfFile.getVersion();
+
 	private FileConfiguration kits = null;
 	private File kitsFile = null;
 	private FileConfiguration players = null;
 	private File playersFile = null;
-	public String latestversion;
 	private String rutaConfig;
 	private KitEditando kitEditando;
 	public static String nombrePlugin = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
 	public boolean primeraVez = false;
 	RegisteredServiceProvider<Economy> rsp = null;
-	private static Economy econ = null;	
+	private static Economy econ = null;
 	public boolean primeraVezKits = false;
 	private ArrayList<InventarioJugador> inventarioJugadores;
-	
+
 	private JugadorManager jugadorManager;
-	
+
 	private ConexionMySQL conexionDatabase;
-	
+
 	private PlayerDataSaveTask playerDataSaveTask;
-	
+
 	private String nbtSeparationChar;
-	
+
 	public void onEnable(){
 	   this.inventarioJugadores = new ArrayList<InventarioJugador>();
 	   registerEvents();
@@ -91,44 +77,42 @@ public class PlayerKits extends JavaPlugin {
 	   }
 	   jugadorManager = new JugadorManager(this);
 	   PlayerKitsAPI api = new PlayerKitsAPI(this);
-	   
+
 	   if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
 		   new ExpansionPlayerKits(this).register();
 	   }
 	   checkMessagesUpdate();
-	   
+
 	   reloadPlayerDataSaveTask();
 	   setNbtSeparationChar();
-	   Bukkit.getConsoleSender().sendMessage(nombrePlugin+ChatColor.YELLOW + "Has been enabled! " + ChatColor.WHITE + "Version: " + version);
+	   Bukkit.getConsoleSender().sendMessage(nombrePlugin+ChatColor.YELLOW + "Has been enabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
 	   Bukkit.getConsoleSender().sendMessage(nombrePlugin+ChatColor.YELLOW + "Thanks for using my plugin!  " + ChatColor.WHITE + "~Ajneb97");
-	   updateChecker();
 	}
-	  
+
 	public void onDisable(){
 		jugadorManager.guardarJugadores();
 		if(kits != null) {
 			saveKits();
 		}
-		Bukkit.getConsoleSender().sendMessage(nombrePlugin+ChatColor.YELLOW + "Has been disabled! " + ChatColor.WHITE + "Version: " + version);
+		Bukkit.getConsoleSender().sendMessage(nombrePlugin+ChatColor.YELLOW + "Has been disabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
 	}
 	public void registerCommands(){
 		this.getCommand("kit").setExecutor(new Comando(this));
 	}
-	
+
 	public void registerEvents(){
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new InventarioListener(this), this);
 		pm.registerEvents(new InventarioPreview(this), this);
 		pm.registerEvents(new PlayerListener(this), this);
-		pm.registerEvents(new Actualizacion(this), this);
 		pm.registerEvents(new InventarioEditar(this), this);
 		pm.registerEvents(new InventarioConfirmacionDinero(this), this);
 	}
-	
+
 	public void agregarInventarioJugador(InventarioJugador inv) {
 		this.inventarioJugadores.add(inv);
 	}
-	
+
 	public InventarioJugador getInventarioJugador(String jugador) {
 		for(InventarioJugador inv : inventarioJugadores) {
 			if(inv.getJugador().getName().equals(jugador)) {
@@ -137,7 +121,7 @@ public class PlayerKits extends JavaPlugin {
 		}
 		return null;
 	}
-	
+
 	public void removerInventarioJugador(String jugador) {
 		for(int i=0;i<inventarioJugadores.size();i++) {
 			if(inventarioJugadores.get(i).getJugador().getName().equals(jugador)) {
@@ -145,7 +129,7 @@ public class PlayerKits extends JavaPlugin {
 			}
 		}
 	}
-	
+
 	public void reloadPlayerDataSaveTask() {
 		if(playerDataSaveTask != null) {
 			playerDataSaveTask.end();
@@ -153,17 +137,17 @@ public class PlayerKits extends JavaPlugin {
 		playerDataSaveTask = new PlayerDataSaveTask(this);
 		playerDataSaveTask.start();
 	}
-	
-	public void registerConfig(){		
+
+	public void registerConfig(){
 		File config = new File(this.getDataFolder(), "config.yml");
 		rutaConfig = config.getPath();
 	    if(!config.exists()){
 	    	this.primeraVez = true;
 	    	this.getConfig().options().copyDefaults(true);
-			saveConfig();  
+			saveConfig();
 	    }
   }
-	
+
 	 public void registerKits(){
 		  kitsFile = new File(this.getDataFolder(), "kits.yml");
 		  if(!kitsFile.exists()){
@@ -179,14 +163,14 @@ public class PlayerKits extends JavaPlugin {
 			 e.printStackTrace();
 	 	}
 	 }
-	  
+
 	  public FileConfiguration getKits() {
 		    if (kits == null) {
 		        reloadKits();
 		    }
 		    return kits;
 		}
-	  
+
 	  public void reloadKits() {
 		    if (kits == null) {
 		    	kitsFile = new File(getDataFolder(), "kits.yml");
@@ -202,9 +186,9 @@ public class PlayerKits extends JavaPlugin {
 			    }
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
-			}	    
+			}
 		}
-	  
+
 	  public void registerPlayers(){
 		  playersFile = new File(this.getDataFolder(), "players.yml");
 		  if(!playersFile.exists()){
@@ -219,14 +203,14 @@ public class PlayerKits extends JavaPlugin {
 			 e.printStackTrace();
 	 	}
 	 }
-	  
+
 	  public FileConfiguration getPlayers() {
 		    if (players == null) {
 		        reloadPlayers();
 		    }
 		    return players;
 		}
-	  
+
 	  public void reloadPlayers() {
 		    if (players == null) {
 		    playersFile = new File(getDataFolder(), "players.yml");
@@ -242,21 +226,21 @@ public class PlayerKits extends JavaPlugin {
 			    }
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
-			}	    
+			}
 		}
-	  
+
 	  public void setKitEditando(KitEditando p) {
 			this.kitEditando = p;
 		}
-		
+
 		public void removerKitEditando() {
 			this.kitEditando = null;
 		}
-		
+
 		public KitEditando getKitEditando() {
 			return this.kitEditando;
 		}
-		
+
 		private boolean setupEconomy() {
 			  if (getServer().getPluginManager().getPlugin("Vault") == null) {
 		          return false;
@@ -268,42 +252,21 @@ public class PlayerKits extends JavaPlugin {
 		      econ = rsp.getProvider();
 		      return econ != null;
 		  }
-		  
-		public Economy getEconomy(){	
+
+		public Economy getEconomy(){
 			return econ;
 		}
-		
+
 		public Connection getConnection() {
 			return this.conexionDatabase.getConnection();
 		}
-	  
-	  public void updateChecker(){
-		  
-		  try {
-			  HttpURLConnection con = (HttpURLConnection) new URL(
-	                  "https://api.spigotmc.org/legacy/update.php?resource=75185").openConnection();
-	          int timed_out = 1250;
-	          con.setConnectTimeout(timed_out);
-	          con.setReadTimeout(timed_out);
-	          latestversion = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-	          if (latestversion.length() <= 7) {
-	        	  if(!version.equals(latestversion)){
-	        		  Bukkit.getConsoleSender().sendMessage(ChatColor.RED +"There is a new version available. "+ChatColor.YELLOW+
-	        				  "("+ChatColor.GRAY+latestversion+ChatColor.YELLOW+")");
-	        		  Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"You can download it at: "+ChatColor.WHITE+"https://www.spigotmc.org/resources/75185/");  
-	        	  }      	  
-	          }
-	      } catch (Exception ex) {
-	    	  Bukkit.getConsoleSender().sendMessage(nombrePlugin + ChatColor.RED +"Error while checking update.");
-	      }
-	  }
-	  
-	  
+
+
 	  public JugadorManager getJugadorManager() {
 		return jugadorManager;
 	}
-	  
-	
+
+
 
 	public String getNbtSeparationChar() {
 		return nbtSeparationChar;
@@ -382,7 +345,7 @@ public class PlayerKits extends JavaPlugin {
 			  }
 			  if(!texto.contains("kit_page_sound")){
 				  getConfig().set("Config.kit_page_sound", "BLOCK_LAVA_POP;10;1");
-				  
+
 				  saveConfig();
 			  }
 			  if(!texto.contains("kit_error_sound:")){
@@ -404,25 +367,25 @@ public class PlayerKits extends JavaPlugin {
 				  getConfig().set("Messages.commandGiveError", "&cYou need to use: &7/kit give <kit> <player>");
 				  getConfig().set("Messages.kitGive", "&aKit &7%kit% &agiven to &e%player%&a!");
 				  saveConfig();
-			  } 
+			  }
 			  if(!texto.contains("previewInventoryName:")){
 				  getConfig().set("Messages.previewInventoryName", "&9Kit Preview");
 				  getConfig().set("Messages.backItemName", "&7Back");
 				  getConfig().set("Config.kit_preview", true);
 				  saveConfig();
-			  } 
+			  }
 			  if(!texto.contains("oneTimeError:")){
 				  getConfig().set("Messages.oneTimeError", "&cYou can't claim this kit again.");
 				  List<String> lista = new ArrayList<String>();
 				  lista.add("&cYou can't claim this kit again.");
 				  getConfig().set("Messages.kitOneTimeLore", lista);
 				  saveConfig();
-			  }  
+			  }
 		  }catch(IOException e){
 			  e.printStackTrace();
 		  }
 	  }
-	  
+
 	  public void rellenarInventarioConfig() {
 		  FileConfiguration config = getConfig();
 		  if(!Utilidades.isLegacy()) {
@@ -450,15 +413,15 @@ public class PlayerKits extends JavaPlugin {
 		  config.set("Config.Inventory.26.name", "&6Next Page" );
 		  config.set("Config.Inventory.26.skulldata", "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
 		  config.set("Config.Inventory.26.type", "next_page");
-		  
+
 		  this.saveConfig();
 	  }
-	  
+
 	  //Esto arregla bugs
 		public void rellenarKitsConfig() {
 			//Comprobar cuando se carga por primera vez la config
 			FileConfiguration kits = getKits();
-			
+
 			kits.set("Kits.iron.Items.1.id", "IRON_AXE");
 			kits.set("Kits.iron.Items.1.amount", 1);
 			kits.set("Kits.iron.Items.2.id", "IRON_PICKAXE");
@@ -480,7 +443,7 @@ public class PlayerKits extends JavaPlugin {
 			lore.add("&bRight Click to preview!");
 			kits.set("Kits.iron.display_lore", lore);
 			kits.set("Kits.iron.cooldown", 10800);
-			
+
 			kits.set("Kits.diamond.Items.1.id", "DIAMOND_AXE");
 			kits.set("Kits.diamond.Items.1.amount", 1);
 			kits.set("Kits.diamond.Items.2.id", "DIAMOND_PICKAXE");
@@ -526,7 +489,7 @@ public class PlayerKits extends JavaPlugin {
 			lore.add("");
 			lore.add("&7You need: &bVIP&6+ &7rank.");
 			kits.set("Kits.diamond.noPermissionsItem.display_lore", lore);
-			
+
 			this.saveKits();
 		}
 }
