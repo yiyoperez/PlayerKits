@@ -136,6 +136,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void helpArgument(CommandSender sender) {
+        // Really?
         if (!sender.isOp() && !sender.hasPermission("playerkits.admin")) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -147,7 +148,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void openArgument(CommandSender sender, Player player, String[] args) {
-        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+        if (!player.isOp() && !player.hasPermission("playerkits.open")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
         }
@@ -188,7 +189,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void createArgument(Player player, String[] args) {
-        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+        if (!player.isOp() && !player.hasPermission("playerkits.create")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
         }
@@ -235,7 +236,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void editArgument(Player player, String[] args) {
-        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+        if (!player.isOp() && !player.hasPermission("playerkits.edit")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
         }
@@ -268,7 +269,7 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
-            if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+            if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.list")) {
                 if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
                     player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitNoPermissions").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
                 } else {
@@ -306,7 +307,7 @@ public class Comando implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.claim")) {
             KitManager.claimKit(player, kit, plugin, true, false, false);
         } else {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
@@ -325,7 +326,7 @@ public class Comando implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.preview")) {
             boolean hasPermission = true;
             if (kits.contains("Kits." + kit + ".permission")) {
                 String permission = kits.getString("Kits." + kit + ".permission");
@@ -405,7 +406,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void reloadArgument(Player player) {
-        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+        if (!player.isOp() && !player.hasPermission("playerkits.reload")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
         }
@@ -496,9 +497,9 @@ public class Comando implements CommandExecutor, TabCompleter {
                 }
             } else {
                 if ((args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("reset")) && args.length == 2) {
-                    String argKit = args[1];
+                    String argKit = args[1].toLowerCase();
                     for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
-                        if (argKit.toLowerCase().isEmpty() || key.toLowerCase().startsWith(argKit.toLowerCase())) {
+                        if (argKit.isEmpty() || key.toLowerCase().startsWith(argKit.toLowerCase())) {
                             completions.add(key);
                         }
                     }
