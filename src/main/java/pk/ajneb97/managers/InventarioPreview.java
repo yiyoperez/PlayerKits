@@ -53,7 +53,7 @@ public class InventarioPreview implements Listener{
 					slot++;
 				}
 			}catch(ArrayIndexOutOfBoundsException e) {
-				jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.nombrePlugin+"&cThere is an error. Items for this kits are set on an invalid slot of the preview inventory. Change the &7previewInventorySize &coption in the config.yml file!"));
+				jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix +"&cThere is an error. Items for this kits are set on an invalid slot of the preview inventory. Change the &7previewInventorySize &coption in the config.yml file!"));
 				return;
 			}
 		}

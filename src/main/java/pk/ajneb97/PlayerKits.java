@@ -42,7 +42,7 @@ public class PlayerKits extends JavaPlugin {
     private File playersFile = null;
     private String rutaConfig;
     private KitEditando kitEditando;
-    public static String nombrePlugin = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
+    public static String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
     public boolean primeraVez = false;
     RegisteredServiceProvider<Economy> rsp = null;
     private static Economy econ = null;
@@ -85,8 +85,8 @@ public class PlayerKits extends JavaPlugin {
 
         reloadPlayerDataSaveTask();
         setNbtSeparationChar();
-        Bukkit.getConsoleSender().sendMessage(nombrePlugin + ChatColor.YELLOW + "Has been enabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
-        Bukkit.getConsoleSender().sendMessage(nombrePlugin + ChatColor.YELLOW + "Thanks for using my plugin!  " + ChatColor.WHITE + "~Ajneb97");
+        Bukkit.getConsoleSender().sendMessage(pluginPrefix + ChatColor.YELLOW + "Has been enabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
+        Bukkit.getConsoleSender().sendMessage(pluginPrefix + ChatColor.YELLOW + "Thanks for using my plugin!  " + ChatColor.WHITE + "~Ajneb97");
     }
 
     public void onDisable() {
@@ -94,7 +94,7 @@ public class PlayerKits extends JavaPlugin {
         if (kits != null) {
             saveKits();
         }
-        Bukkit.getConsoleSender().sendMessage(nombrePlugin + ChatColor.YELLOW + "Has been disabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
+        Bukkit.getConsoleSender().sendMessage(pluginPrefix + ChatColor.YELLOW + "Has been disabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
     }
 
     public void registerCommands() {
