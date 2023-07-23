@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -179,16 +179,8 @@ public class PlayerKits extends JavaPlugin {
         }
         kits = YamlConfiguration.loadConfiguration(kitsFile);
 
-        Reader defConfigStream;
-        try {
-            defConfigStream = new InputStreamReader(this.getResource("kits.yml"), "UTF8");
-            if (defConfigStream != null) {
-                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-                kits.setDefaults(defConfig);
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        Reader defConfigStream = new InputStreamReader(this.getResource("kits.yml"), StandardCharsets.UTF_8);
+        kits.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
     }
 
     public void registerPlayers() {
@@ -220,16 +212,8 @@ public class PlayerKits extends JavaPlugin {
         }
         players = YamlConfiguration.loadConfiguration(playersFile);
 
-        Reader defConfigStream;
-        try {
-            defConfigStream = new InputStreamReader(this.getResource("players.yml"), "UTF8");
-            if (defConfigStream != null) {
-                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-                players.setDefaults(defConfig);
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        Reader defConfigStream = new InputStreamReader(this.getResource("players.yml"), StandardCharsets.UTF_8);
+        players.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
     }
 
     public void setKitEditando(KitEditando p) {
