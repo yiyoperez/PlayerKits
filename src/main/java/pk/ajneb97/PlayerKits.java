@@ -36,18 +36,21 @@ import java.util.List;
 
 public class PlayerKits extends JavaPlugin {
 
-    private FileConfiguration kits = null;
-    private File kitsFile = null;
-    private FileConfiguration players = null;
-    private File playersFile = null;
-    private String rutaConfig;
+    private File kitsFile;
+    private File configFile;
+    private File playersFile;
+    private File messagesFile;
+    private FileConfiguration kits;
+    private FileConfiguration players;
+    private FileConfiguration messages;
+
     private KitEditando kitEditando;
     public static String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
     public boolean primeraVez = false;
     RegisteredServiceProvider<Economy> rsp = null;
     private static Economy econ = null;
     public boolean primeraVezKits = false;
-    private ArrayList<InventarioJugador> inventarioJugadores;
+    private ArrayList<InventarioJugador> inventarioJugadores = new ArrayList<>();
 
     private JugadorManager jugadorManager;
 
@@ -58,7 +61,6 @@ public class PlayerKits extends JavaPlugin {
     private String nbtSeparationChar;
 
     public void onEnable() {
-        this.inventarioJugadores = new ArrayList<InventarioJugador>();
         registerEvents();
         registerCommands();
         registerConfig();
@@ -140,18 +142,58 @@ public class PlayerKits extends JavaPlugin {
     }
 
     public void registerConfig() {
-        File config = new File(this.getDataFolder(), "config.yml");
-        rutaConfig = config.getPath();
-        if (!config.exists()) {
+        this.configFile = new File(this.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
             this.primeraVez = true;
             this.getConfig().options().copyDefaults(true);
             saveConfig();
         }
     }
 
+    public void reloadMessages() {
+        this.messagesFile = new File(this.getDataFolder(), "messages.yml");
+        this.messages = YamlConfiguration.loadConfiguration(this.messagesFile);
+
+        Reader defConfigStream = new InputStreamReader(this.getResource("messages.yml"), StandardCharsets.UTF_8);
+        this.messages.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
+    }
+
+    public void registerMessages() {
+        this.messagesFile = new File(this.getDataFolder(), "messages.yml");
+        if (!this.messagesFile.exists()) {
+            this.getMessages().options().copyDefaults(true);
+            saveMessages();
+        }
+    }
+
+    private void saveMessages() {
+        try {
+            this.messages.save(this.messagesFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public FileConfiguration getMessages() {
+        if (this.messages == null) {
+            reloadMessages();
+        }
+        return this.messages;
+    }
+
+    public void reloadKits() {
+        if (this.kits == null) {
+            this.kitsFile = new File(getDataFolder(), "kits.yml");
+        }
+        this.kits = YamlConfiguration.loadConfiguration(this.kitsFile);
+
+        Reader defConfigStream = new InputStreamReader(this.getResource("kits.yml"), StandardCharsets.UTF_8);
+        this.kits.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
+    }
+
     public void registerKits() {
-        kitsFile = new File(this.getDataFolder(), "kits.yml");
-        if (!kitsFile.exists()) {
+        this.kitsFile = new File(this.getDataFolder(), "kits.yml");
+        if (!this.kitsFile.exists()) {
             primeraVezKits = true;
             this.getKits().options().copyDefaults(true);
             saveKits();
@@ -160,32 +202,32 @@ public class PlayerKits extends JavaPlugin {
 
     public void saveKits() {
         try {
-            kits.save(kitsFile);
+            this.kits.save(this.kitsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public FileConfiguration getKits() {
-        if (kits == null) {
+        if (this.kits == null) {
             reloadKits();
         }
-        return kits;
+        return this.kits;
     }
 
-    public void reloadKits() {
-        if (kits == null) {
-            kitsFile = new File(getDataFolder(), "kits.yml");
+    public void reloadPlayers() {
+        if (this.players == null) {
+            this.playersFile = new File(getDataFolder(), "players.yml");
         }
-        kits = YamlConfiguration.loadConfiguration(kitsFile);
+        this.players = YamlConfiguration.loadConfiguration(playersFile);
 
-        Reader defConfigStream = new InputStreamReader(this.getResource("kits.yml"), StandardCharsets.UTF_8);
-        kits.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
+        Reader defConfigStream = new InputStreamReader(this.getResource("players.yml"), StandardCharsets.UTF_8);
+        this.players.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
     }
 
     public void registerPlayers() {
-        playersFile = new File(this.getDataFolder(), "players.yml");
-        if (!playersFile.exists()) {
+        this.playersFile = new File(this.getDataFolder(), "players.yml");
+        if (!this.playersFile.exists()) {
             this.getPlayers().options().copyDefaults(true);
             savePlayers();
         }
@@ -193,27 +235,17 @@ public class PlayerKits extends JavaPlugin {
 
     public void savePlayers() {
         try {
-            players.save(playersFile);
+            this.players.save(this.playersFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public FileConfiguration getPlayers() {
-        if (players == null) {
+        if (this.players == null) {
             reloadPlayers();
         }
-        return players;
-    }
-
-    public void reloadPlayers() {
-        if (players == null) {
-            playersFile = new File(getDataFolder(), "players.yml");
-        }
-        players = YamlConfiguration.loadConfiguration(playersFile);
-
-        Reader defConfigStream = new InputStreamReader(this.getResource("players.yml"), StandardCharsets.UTF_8);
-        players.setDefaults(YamlConfiguration.loadConfiguration(defConfigStream));
+        return this.players;
     }
 
     public void setKitEditando(KitEditando p) {
@@ -266,8 +298,9 @@ public class PlayerKits extends JavaPlugin {
         }
     }
 
+    // Find a better way to replace this.
     public void checkMessagesUpdate() {
-        Path archivo = Paths.get(rutaConfig);
+        Path archivo = Paths.get(configFile.getPath());
         try {
             String texto = new String(Files.readAllBytes(archivo));
             if (!texto.contains("nbt_alternative_data_save:")) {
