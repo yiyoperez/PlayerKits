@@ -412,85 +412,86 @@ public class InventarioEditar implements Listener {
         String pathInventoryM = ChatColor.stripColor(pathInventory);
 
         if (ChatColor.stripColor(event.getView().getTitle()).equals(pathInventoryM)) {
-            if ((event.getSlotType() == null)) {
+            // Again?
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                final Player jugador = (Player) event.getWhoClicked();
-                int slot = event.getSlot();
-                if (event.getClickedInventory() != null && event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    final KitEditando kitEditando = plugin.getKitEditando();
-                    FileConfiguration kits = plugin.getKits();
-                    if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
-                        if (slot == 45) {
-                            event.setCancelled(true);
-                            InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                        } else if (slot == 53) {
-                            //Guardar items
-                            event.setCancelled(true);
-                            kits.set("Kits." + kitEditando.getKit() + ".Items", null);
-                            ItemStack[] contents = jugador.getOpenInventory().getTopInventory().getContents();
-                            int c = 1;
-                            FileConfiguration config = plugin.getConfig();
-                            for (int i = 0; i < 44; i++) {
-                                if (contents[i] != null && !contents[i].getType().equals(Material.AIR)) {
-                                    String path = "Kits." + kitEditando.getKit() + ".Items." + c;
-                                    ItemStack contentsClone = contents[i].clone();
-                                    if (!Bukkit.getVersion().contains("1.8")) {
-                                        ItemMeta meta = contentsClone.getItemMeta();
-                                        List<String> lore = meta.getLore();
-                                        if (lore != null && !lore.isEmpty()) {
-                                            String ultimaLinea = ChatColor.stripColor(lore.get(lore.size() - 1));
-                                            if (ultimaLinea.equals("[Right Click to remove from OFFHAND]")) {
-                                                lore.remove(lore.size() - 1);
-                                                lore.remove(lore.size() - 1);
-                                                kits.set(path + ".offhand", true);
-                                                if (lore.isEmpty()) {
-                                                    meta.setLore(null);
-                                                } else {
-                                                    meta.setLore(lore);
-                                                }
-                                            }
-                                            contentsClone.setItemMeta(meta);
-                                        }
-                                    }
+            }
 
-                                    KitManager.saveItem(contentsClone, kits, path, config);
-                                    kits.set(path + ".preview_slot", i);
-                                    c++;
-                                }
-                            }
-                            plugin.saveKits();
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aKit Items saved."));
-                        } else if (slot >= 46 && slot <= 52) {
-                            event.setCancelled(true);
-                        } else if (event.getClick().equals(ClickType.RIGHT)) {
-                            ItemStack item = event.getCurrentItem();
-                            if (item != null && !item.getType().equals(Material.AIR)
-                                    && !Bukkit.getVersion().contains("1.8")) {
-                                event.setCancelled(true);
-                                ItemMeta meta = item.getItemMeta();
-                                List<String> lore = meta.getLore();
-                                if (lore != null) {
-                                    String ultimaLinea = ChatColor.stripColor(lore.get(lore.size() - 1));
-                                    if (ultimaLinea.equals("[Right Click to remove from OFFHAND]")) {
-                                        lore.remove(lore.size() - 1);
-                                        lore.remove(lore.size() - 1);
-                                        if (lore.isEmpty()) {
-                                            lore = null;
+            final Player jugador = (Player) event.getWhoClicked();
+            int slot = event.getSlot();
+            if (event.getClickedInventory() != null && event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                final KitEditando kitEditando = plugin.getKitEditando();
+                FileConfiguration kits = plugin.getKits();
+                if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
+                    if (slot == 45) {
+                        event.setCancelled(true);
+                        InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                    } else if (slot == 53) {
+                        //Guardar items
+                        event.setCancelled(true);
+                        kits.set("Kits." + kitEditando.getKit() + ".Items", null);
+                        ItemStack[] contents = jugador.getOpenInventory().getTopInventory().getContents();
+                        int c = 1;
+                        FileConfiguration config = plugin.getConfig();
+                        for (int i = 0; i < 44; i++) {
+                            if (contents[i] != null && !contents[i].getType().equals(Material.AIR)) {
+                                String path = "Kits." + kitEditando.getKit() + ".Items." + c;
+                                ItemStack contentsClone = contents[i].clone();
+                                if (!Bukkit.getVersion().contains("1.8")) {
+                                    ItemMeta meta = contentsClone.getItemMeta();
+                                    List<String> lore = meta.getLore();
+                                    if (lore != null && !lore.isEmpty()) {
+                                        String ultimaLinea = ChatColor.stripColor(lore.get(lore.size() - 1));
+                                        if (ultimaLinea.equals("[Right Click to remove from OFFHAND]")) {
+                                            lore.remove(lore.size() - 1);
+                                            lore.remove(lore.size() - 1);
+                                            kits.set(path + ".offhand", true);
+                                            if (lore.isEmpty()) {
+                                                meta.setLore(null);
+                                            } else {
+                                                meta.setLore(lore);
+                                            }
                                         }
-                                    } else {
-                                        lore.add(ChatColor.translateAlternateColorCodes('&', " "));
-                                        lore.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove from OFFHAND&8]"));
+                                        contentsClone.setItemMeta(meta);
+                                    }
+                                }
+
+                                KitManager.saveItem(contentsClone, kits, path, config);
+                                kits.set(path + ".preview_slot", i);
+                                c++;
+                            }
+                        }
+                        plugin.saveKits();
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aKit Items saved."));
+                    } else if (slot >= 46 && slot <= 52) {
+                        event.setCancelled(true);
+                    } else if (event.getClick().equals(ClickType.RIGHT)) {
+                        ItemStack item = event.getCurrentItem();
+                        if (item != null && !item.getType().equals(Material.AIR)
+                                && !Bukkit.getVersion().contains("1.8")) {
+                            event.setCancelled(true);
+                            ItemMeta meta = item.getItemMeta();
+                            List<String> lore = meta.getLore();
+                            if (lore != null) {
+                                String ultimaLinea = ChatColor.stripColor(lore.get(lore.size() - 1));
+                                if (ultimaLinea.equals("[Right Click to remove from OFFHAND]")) {
+                                    lore.remove(lore.size() - 1);
+                                    lore.remove(lore.size() - 1);
+                                    if (lore.isEmpty()) {
+                                        lore = null;
                                     }
                                 } else {
-                                    lore = new ArrayList<>();
                                     lore.add(ChatColor.translateAlternateColorCodes('&', " "));
                                     lore.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove from OFFHAND&8]"));
                                 }
-                                meta.setLore(lore);
-                                item.setItemMeta(meta);
+                            } else {
+                                lore = new ArrayList<>();
+                                lore.add(ChatColor.translateAlternateColorCodes('&', " "));
+                                lore.add(ChatColor.translateAlternateColorCodes('&', "&8[&cRight Click to remove from OFFHAND&8]"));
                             }
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
                         }
                     }
                 }
@@ -679,60 +680,61 @@ public class InventarioEditar implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            // Oh my.. whats this.
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                final Player jugador = (Player) event.getWhoClicked();
-                int slot = event.getSlot();
-                if (event.getClickedInventory() != null && event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    final KitEditando kitEditando = plugin.getKitEditando();
-                    FileConfiguration kits = plugin.getKits();
-                    if (slot != 11) {
-                        event.setCancelled(true);
-                        if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
-                            final String tipoDisplay = kitEditando.getTipoDisplay();
-                            if (slot == 18) {
-                                guardarDisplayItem(event.getClickedInventory(), tipoDisplay, kits, kitEditando.getKit());
-                                InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                            } else if (slot == 14) {
-                                //set display name
-                                jugador.closeInventory();
-                                KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), tipoDisplay);
-                                kit.setPaso("display_name");
-                                plugin.setKitEditando(kit);
-                                jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the display name of the Kit."));
-                                jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7You can use color codes&8)"));
-                            } else if (slot == 16) {
-                                //set glowing
-                                guardarDisplayItem(event.getClickedInventory(), tipoDisplay, kits, kitEditando.getKit());
-                                String path = "";
-                                if (tipoDisplay.equals("normal")) {
-                                    path = "Kits." + kitEditando.getKit() + ".display_item_glowing";
-                                    if (kits.contains("Kits." + kitEditando.getKit() + ".display_item_glowing") && kits.getString("Kits." + kitEditando.getKit() + ".display_item_glowing").equals("true")) {
-                                        kits.set(path, false);
-                                    } else {
-                                        kits.set(path, true);
-                                    }
-                                } else {
-                                    path = "Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_item_glowing";
-                                    if (kits.contains("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_item_glowing") && kits.getString("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_item_glowing").equals("true")) {
-                                        kits.set(path, false);
-                                    } else {
-                                        kits.set(path, true);
-                                    }
-                                }
+            }
 
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, tipoDisplay);
-                                    }
-                                }, 3L);
-                            } else if (slot == 15) {
-                                guardarDisplayItem(event.getClickedInventory(), tipoDisplay, kits, kitEditando.getKit());
-                                InventarioEditar.crearInventarioDisplayItemLore(jugador, kitEditando.getKit(), plugin, tipoDisplay);
+            final Player jugador = (Player) event.getWhoClicked();
+            int slot = event.getSlot();
+            if (event.getClickedInventory() != null && event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                final KitEditando kitEditando = plugin.getKitEditando();
+                FileConfiguration kits = plugin.getKits();
+                if (slot != 11) {
+                    event.setCancelled(true);
+                    if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
+                        final String tipoDisplay = kitEditando.getTipoDisplay();
+                        if (slot == 18) {
+                            guardarDisplayItem(event.getClickedInventory(), tipoDisplay, kits, kitEditando.getKit());
+                            InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                        } else if (slot == 14) {
+                            //set display name
+                            jugador.closeInventory();
+                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), tipoDisplay);
+                            kit.setPaso("display_name");
+                            plugin.setKitEditando(kit);
+                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the display name of the Kit."));
+                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7You can use color codes&8)"));
+                        } else if (slot == 16) {
+                            //set glowing
+                            guardarDisplayItem(event.getClickedInventory(), tipoDisplay, kits, kitEditando.getKit());
+                            String path = "";
+                            if (tipoDisplay.equals("normal")) {
+                                path = "Kits." + kitEditando.getKit() + ".display_item_glowing";
+                                if (kits.contains("Kits." + kitEditando.getKit() + ".display_item_glowing") && kits.getString("Kits." + kitEditando.getKit() + ".display_item_glowing").equals("true")) {
+                                    kits.set(path, false);
+                                } else {
+                                    kits.set(path, true);
+                                }
+                            } else {
+                                path = "Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_item_glowing";
+                                if (kits.contains("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_item_glowing") && kits.getString("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_item_glowing").equals("true")) {
+                                    kits.set(path, false);
+                                } else {
+                                    kits.set(path, true);
+                                }
                             }
+
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                                @Override
+                                public void run() {
+                                    InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, tipoDisplay);
+                                }
+                            }, 3L);
+                        } else if (slot == 15) {
+                            guardarDisplayItem(event.getClickedInventory(), tipoDisplay, kits, kitEditando.getKit());
+                            InventarioEditar.crearInventarioDisplayItemLore(jugador, kitEditando.getKit(), plugin, tipoDisplay);
                         }
                     }
                 }
@@ -863,58 +865,58 @@ public class InventarioEditar implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            // Im kinda giving up at this point.
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                final Player jugador = (Player) event.getWhoClicked();
-                int slot = event.getSlot();
-                event.setCancelled(true);
-                if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    final KitEditando kitEditando = plugin.getKitEditando();
-                    FileConfiguration kits = plugin.getKits();
-                    if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
-                        final String tipoDisplay = kitEditando.getTipoDisplay();
-                        if (slot == 45) {
-                            InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, tipoDisplay);
-                        } else if (slot == 53) {
-                            //Agregar lore
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), tipoDisplay);
-                            kit.setPaso("lore");
-                            plugin.setKitEditando(kit);
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the lore line to add."));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'empty' to add an empty line&8)"));
-                        } else if (slot >= 0 && slot <= 44 && event.getClick().equals(ClickType.RIGHT)) {
-                            List<String> lore = new ArrayList<>();
-                            if (tipoDisplay.equals("normal")) {
-                                if (kits.contains("Kits." + kitEditando.getKit() + ".display_lore")) {
-                                    lore = kits.getStringList("Kits." + kitEditando.getKit() + ".display_lore");
-                                }
-                            } else {
-                                if (kits.contains("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_lore")) {
-                                    lore = kits.getStringList("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_lore");
-                                }
+            }
+            final Player jugador = (Player) event.getWhoClicked();
+            int slot = event.getSlot();
+            event.setCancelled(true);
+            if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                final KitEditando kitEditando = plugin.getKitEditando();
+                FileConfiguration kits = plugin.getKits();
+                if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
+                    final String tipoDisplay = kitEditando.getTipoDisplay();
+                    if (slot == 45) {
+                        InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, tipoDisplay);
+                    } else if (slot == 53) {
+                        //Agregar lore
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), tipoDisplay);
+                        kit.setPaso("lore");
+                        plugin.setKitEditando(kit);
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the lore line to add."));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'empty' to add an empty line&8)"));
+                    } else if (slot >= 0 && slot <= 44 && event.getClick().equals(ClickType.RIGHT)) {
+                        List<String> lore = new ArrayList<>();
+                        if (tipoDisplay.equals("normal")) {
+                            if (kits.contains("Kits." + kitEditando.getKit() + ".display_lore")) {
+                                lore = kits.getStringList("Kits." + kitEditando.getKit() + ".display_lore");
                             }
-                            for (int i = 0; i < lore.size(); i++) {
-                                if (i == slot) {
-                                    lore.remove(i);
-                                    break;
-                                }
+                        } else {
+                            if (kits.contains("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_lore")) {
+                                lore = kits.getStringList("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_lore");
                             }
-                            if (tipoDisplay.equals("normal")) {
-                                kits.set("Kits." + kitEditando.getKit() + ".display_lore", lore);
-                            } else {
-                                kits.set("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_lore", lore);
-                            }
-
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    InventarioEditar.crearInventarioDisplayItemLore(jugador, kitEditando.getKit(), plugin, tipoDisplay);
-                                }
-                            }, 3L);
                         }
+                        for (int i = 0; i < lore.size(); i++) {
+                            if (i == slot) {
+                                lore.remove(i);
+                                break;
+                            }
+                        }
+                        if (tipoDisplay.equals("normal")) {
+                            kits.set("Kits." + kitEditando.getKit() + ".display_lore", lore);
+                        } else {
+                            kits.set("Kits." + kitEditando.getKit() + "." + tipoDisplay + ".display_lore", lore);
+                        }
+
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                InventarioEditar.crearInventarioDisplayItemLore(jugador, kitEditando.getKit(), plugin, tipoDisplay);
+                            }
+                        }, 3L);
                     }
                 }
             }
@@ -982,48 +984,49 @@ public class InventarioEditar implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            // Dont even wanna keep comenting.
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                final Player jugador = (Player) event.getWhoClicked();
-                int slot = event.getSlot();
-                event.setCancelled(true);
-                if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    final KitEditando kitEditando = plugin.getKitEditando();
-                    FileConfiguration kits = plugin.getKits();
-                    if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
-                        if (slot == 45) {
-                            InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                        } else if (slot == 53) {
-                            //Agregar comando
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
-                            kit.setPaso("comando");
-                            plugin.setKitEditando(kit);
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the command to add."));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7This command will be executed from console&8)"));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Player variable is: &e%player%&8)"));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write the command without the '/'&8)"));
-                        } else if (slot >= 0 && slot <= 44 && event.getClick().equals(ClickType.RIGHT)) {
-                            List<String> comandos = new ArrayList<>();
-                            if (kits.contains("Kits." + kitEditando.getKit() + ".Commands")) {
-                                comandos = kits.getStringList("Kits." + kitEditando.getKit() + ".Commands");
-                            }
-                            for (int i = 0; i < comandos.size(); i++) {
-                                if (i == slot) {
-                                    comandos.remove(i);
-                                    break;
-                                }
-                            }
-                            kits.set("Kits." + kitEditando.getKit() + ".Commands", comandos);
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    InventarioEditar.crearInventarioComandos(jugador, kitEditando.getKit(), plugin);
-                                }
-                            }, 3L);
+            }
+
+            final Player jugador = (Player) event.getWhoClicked();
+            int slot = event.getSlot();
+            event.setCancelled(true);
+            if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                final KitEditando kitEditando = plugin.getKitEditando();
+                FileConfiguration kits = plugin.getKits();
+                if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
+                    if (slot == 45) {
+                        InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                    } else if (slot == 53) {
+                        //Agregar comando
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
+                        kit.setPaso("comando");
+                        plugin.setKitEditando(kit);
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the command to add."));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7This command will be executed from console&8)"));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Player variable is: &e%player%&8)"));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write the command without the '/'&8)"));
+                    } else if (slot >= 0 && slot <= 44 && event.getClick().equals(ClickType.RIGHT)) {
+                        List<String> comandos = new ArrayList<>();
+                        if (kits.contains("Kits." + kitEditando.getKit() + ".Commands")) {
+                            comandos = kits.getStringList("Kits." + kitEditando.getKit() + ".Commands");
                         }
+                        for (int i = 0; i < comandos.size(); i++) {
+                            if (i == slot) {
+                                comandos.remove(i);
+                                break;
+                            }
+                        }
+                        kits.set("Kits." + kitEditando.getKit() + ".Commands", comandos);
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                InventarioEditar.crearInventarioComandos(jugador, kitEditando.getKit(), plugin);
+                            }
+                        }, 3L);
                     }
                 }
             }
@@ -1078,127 +1081,128 @@ public class InventarioEditar implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            // Todo: please check why those are here.
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                final Player jugador = (Player) event.getWhoClicked();
-                int slot = event.getSlot();
-                event.setCancelled(true);
-                if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    final KitEditando kitEditando = plugin.getKitEditando();
-                    FileConfiguration kits = plugin.getKits();
-                    if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
-                        if (slot == 10) {
-                            //set slot
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
-                            kit.setPaso("slot");
-                            plugin.setKitEditando(kit);
-                            int max = config.getInt("inventory.size") - 1;
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the new slot of the Kit."));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Use a number between 0 and " + max + "&8)"));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not show the kit&8)"));
-                        } else if (slot == 11) {
-                            //set cooldown
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
-                            kit.setPaso("cooldown");
-                            plugin.setKitEditando(kit);
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the cooldown of the Kit."));
-                        } else if (slot == 12) {
-                            //set permission
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
-                            kit.setPaso("permission");
-                            plugin.setKitEditando(kit);
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the permission of the Kit."));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not have a permission&8)"));
-                        } else if (slot == 19) {
-                            //set first join
-                            if (kits.contains("Kits." + kitEditando.getKit() + ".first_join") && kits.getString("Kits." + kitEditando.getKit() + ".first_join").equals("true")) {
-                                kits.set("Kits." + kitEditando.getKit() + ".first_join", false);
-                            } else {
-                                kits.set("Kits." + kitEditando.getKit() + ".first_join", true);
-                            }
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                                }
-                            }, 3L);
-                        } else if (slot == 20) {
-                            //set one time
-                            if (kits.contains("Kits." + kitEditando.getKit() + ".one_time") && kits.getString("Kits." + kitEditando.getKit() + ".one_time").equals("true")) {
-                                kits.set("Kits." + kitEditando.getKit() + ".one_time", false);
-                            } else {
-                                kits.set("Kits." + kitEditando.getKit() + ".one_time", true);
-                            }
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                                }
-                            }, 3L);
-                        } else if (slot == 28) {
-                            //set auto armor
-                            if (kits.contains("Kits." + kitEditando.getKit() + ".auto_armor") && kits.getString("Kits." + kitEditando.getKit() + ".auto_armor").equals("true")) {
-                                kits.set("Kits." + kitEditando.getKit() + ".auto_armor", false);
-                            } else {
-                                kits.set("Kits." + kitEditando.getKit() + ".auto_armor", true);
-                            }
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                                }
-                            }, 3L);
-                        } else if (slot == 15) {
-                            //set commands
-                            InventarioEditar.crearInventarioComandos(jugador, kitEditando.getKit(), plugin);
-                        } else if (slot == 14) {
-                            //set items
-                            InventarioEditar.crearInventarioItems(jugador, kitEditando.getKit(), plugin);
-                        } else if (slot == 23) {
-                            //set price
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
-                            kit.setPaso("price");
-                            plugin.setKitEditando(kit);
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the price of the Kit."));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not have a price&8)"));
-                        } else if (slot == 16) {
-                            //set page
-                            jugador.closeInventory();
-                            KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
-                            kit.setPaso("page");
-                            plugin.setKitEditando(kit);
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the new page of the Kit."));
-                            jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Use a number greater than 0&8)"));
-                        } else if (slot == 21) {
-                            //set one time buy
-                            if (kits.contains("Kits." + kitEditando.getKit() + ".one_time_buy") && kits.getString("Kits." + kitEditando.getKit() + ".one_time_buy").equals("true")) {
-                                kits.set("Kits." + kitEditando.getKit() + ".one_time_buy", false);
-                            } else {
-                                kits.set("Kits." + kitEditando.getKit() + ".one_time_buy", true);
-                            }
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                                @Override
-                                public void run() {
-                                    InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
-                                }
-                            }, 3L);
-                        } else if (slot == 40) {
-                            InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, "noPermissionsItem");
-                        } else if (slot == 39) {
-                            InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, "normal");
-                        } else if (slot == 41) {
-                            InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, "noBuyItem");
-                        }
+            }
 
+            final Player jugador = (Player) event.getWhoClicked();
+            int slot = event.getSlot();
+            event.setCancelled(true);
+            if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                final KitEditando kitEditando = plugin.getKitEditando();
+                FileConfiguration kits = plugin.getKits();
+                if (kitEditando != null && kitEditando.getJugador().getName().equals(jugador.getName())) {
+                    if (slot == 10) {
+                        //set slot
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
+                        kit.setPaso("slot");
+                        plugin.setKitEditando(kit);
+                        int max = config.getInt("inventory.size") - 1;
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the new slot of the Kit."));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Use a number between 0 and " + max + "&8)"));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not show the kit&8)"));
+                    } else if (slot == 11) {
+                        //set cooldown
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
+                        kit.setPaso("cooldown");
+                        plugin.setKitEditando(kit);
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the cooldown of the Kit."));
+                    } else if (slot == 12) {
+                        //set permission
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
+                        kit.setPaso("permission");
+                        plugin.setKitEditando(kit);
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the permission of the Kit."));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not have a permission&8)"));
+                    } else if (slot == 19) {
+                        //set first join
+                        if (kits.contains("Kits." + kitEditando.getKit() + ".first_join") && kits.getString("Kits." + kitEditando.getKit() + ".first_join").equals("true")) {
+                            kits.set("Kits." + kitEditando.getKit() + ".first_join", false);
+                        } else {
+                            kits.set("Kits." + kitEditando.getKit() + ".first_join", true);
+                        }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                            }
+                        }, 3L);
+                    } else if (slot == 20) {
+                        //set one time
+                        if (kits.contains("Kits." + kitEditando.getKit() + ".one_time") && kits.getString("Kits." + kitEditando.getKit() + ".one_time").equals("true")) {
+                            kits.set("Kits." + kitEditando.getKit() + ".one_time", false);
+                        } else {
+                            kits.set("Kits." + kitEditando.getKit() + ".one_time", true);
+                        }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                            }
+                        }, 3L);
+                    } else if (slot == 28) {
+                        //set auto armor
+                        if (kits.contains("Kits." + kitEditando.getKit() + ".auto_armor") && kits.getString("Kits." + kitEditando.getKit() + ".auto_armor").equals("true")) {
+                            kits.set("Kits." + kitEditando.getKit() + ".auto_armor", false);
+                        } else {
+                            kits.set("Kits." + kitEditando.getKit() + ".auto_armor", true);
+                        }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                            }
+                        }, 3L);
+                    } else if (slot == 15) {
+                        //set commands
+                        InventarioEditar.crearInventarioComandos(jugador, kitEditando.getKit(), plugin);
+                    } else if (slot == 14) {
+                        //set items
+                        InventarioEditar.crearInventarioItems(jugador, kitEditando.getKit(), plugin);
+                    } else if (slot == 23) {
+                        //set price
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
+                        kit.setPaso("price");
+                        plugin.setKitEditando(kit);
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the price of the Kit."));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Write 'none' to not have a price&8)"));
+                    } else if (slot == 16) {
+                        //set page
+                        jugador.closeInventory();
+                        KitEditando kit = new KitEditando(jugador, kitEditando.getKit(), "");
+                        kit.setPaso("page");
+                        plugin.setKitEditando(kit);
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aWrite the new page of the Kit."));
+                        jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8(&7Use a number greater than 0&8)"));
+                    } else if (slot == 21) {
+                        //set one time buy
+                        if (kits.contains("Kits." + kitEditando.getKit() + ".one_time_buy") && kits.getString("Kits." + kitEditando.getKit() + ".one_time_buy").equals("true")) {
+                            kits.set("Kits." + kitEditando.getKit() + ".one_time_buy", false);
+                        } else {
+                            kits.set("Kits." + kitEditando.getKit() + ".one_time_buy", true);
+                        }
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                            @Override
+                            public void run() {
+                                InventarioEditar.crearInventario(jugador, kitEditando.getKit(), plugin);
+                            }
+                        }, 3L);
+                    } else if (slot == 40) {
+                        InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, "noPermissionsItem");
+                    } else if (slot == 39) {
+                        InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, "normal");
+                    } else if (slot == 41) {
+                        InventarioEditar.crearInventarioDisplayItem(jugador, kitEditando.getKit(), plugin, "noBuyItem");
                     }
 
                 }
+
             }
         }
     }
@@ -1214,6 +1218,7 @@ public class InventarioEditar implements Listener {
             FileConfiguration config = plugin.getConfig();
             String prefix = ChatColor.translateAlternateColorCodes('&', config.getString("Messages.prefix"));
             String paso = kit.getPaso();
+            //TODO: Reduce if statements.
             if (paso.equals("slot")) {
                 int max = config.getInt("inventory.size") - 1;
                 try {

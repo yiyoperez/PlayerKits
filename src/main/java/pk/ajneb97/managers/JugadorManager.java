@@ -20,7 +20,7 @@ public class JugadorManager {
     }
 
     public void cargarJugadores() {
-        jugadores = new ArrayList<JugadorDatos>();
+        jugadores = new ArrayList<>();
         if (MySQL.isEnabled(plugin.getConfig())) {
 //			  this.jugadores = MySQL.getJugadores(this);
             return;
@@ -28,7 +28,7 @@ public class JugadorManager {
         FileConfiguration config = plugin.getPlayers();
         if (config.contains("Players")) {
             for (String key : config.getConfigurationSection("Players").getKeys(false)) {
-                ArrayList<KitJugador> kits = new ArrayList<KitJugador>();
+                ArrayList<KitJugador> kits = new ArrayList<>();
                 String player = config.getString("Players." + key + ".name");
                 for (String kit : config.getConfigurationSection("Players." + key).getKeys(false)) {
                     if (!kit.equals("name")) {
@@ -148,7 +148,7 @@ public class JugadorManager {
     public void setBuyed(Player jugador, String kit) {
         JugadorDatos j = getJugadorPorUUID(jugador.getUniqueId().toString());
         if (j == null) {
-            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<KitJugador>());
+            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<>());
             agregarJugadorDatos(j);
         }
 
@@ -176,7 +176,7 @@ public class JugadorManager {
     public void setOneTime(Player jugador, String kit) {
         JugadorDatos j = getJugadorPorUUID(jugador.getUniqueId().toString());
         if (j == null) {
-            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<KitJugador>());
+            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<>());
             agregarJugadorDatos(j);
         }
 
@@ -204,7 +204,7 @@ public class JugadorManager {
     public void setCooldown(Player jugador, String kit, long millis) {
         JugadorDatos j = getJugadorPorUUID(jugador.getUniqueId().toString());
         if (j == null) {
-            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<KitJugador>());
+            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<>());
             agregarJugadorDatos(j);
         }
 

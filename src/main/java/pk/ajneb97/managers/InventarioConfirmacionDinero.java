@@ -83,42 +83,43 @@ public class InventarioConfirmacionDinero implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            // HMM ?
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                String prefix = config.getString("Messages.prefix");
-                int slot = event.getSlot();
-                event.setCancelled(true);
-                if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    String tipoInventario = inv.getTipoInventario();
-                    if (tipoInventario.startsWith("buying")) {
-                        if (slot >= 0 && slot <= 3) {
-                            FileConfiguration configKits = plugin.getKits();
-                            String kit = tipoInventario.replace("buying: ", "");
-                            double price = configKits.getDouble("Kits." + kit + ".price");
-                            Economy econ = plugin.getEconomy();
-                            double balance = econ.getBalance(jugador);
-                            if (balance < price) {
-                                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
-                                        .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
-                            } else {
-                                KitManager.claimKit(jugador, kit, plugin, true, false, true);
-                                int pag = inv.getPagina();
-                                if (pag != -1) {
-                                    InventarioManager.abrirInventarioMain(config, plugin, jugador, pag);
-                                } else {
-                                    jugador.closeInventory();
-                                }
+            }
 
-                            }
-                        } else if (slot >= 5 && slot <= 8) {
+            String prefix = config.getString("Messages.prefix");
+            int slot = event.getSlot();
+            event.setCancelled(true);
+            if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                String tipoInventario = inv.getTipoInventario();
+                if (tipoInventario.startsWith("buying")) {
+                    if (slot >= 0 && slot <= 3) {
+                        FileConfiguration configKits = plugin.getKits();
+                        String kit = tipoInventario.replace("buying: ", "");
+                        double price = configKits.getDouble("Kits." + kit + ".price");
+                        Economy econ = plugin.getEconomy();
+                        double balance = econ.getBalance(jugador);
+                        if (balance < price) {
+                            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
+                                    .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
+                        } else {
+                            KitManager.claimKit(jugador, kit, plugin, true, false, true);
                             int pag = inv.getPagina();
                             if (pag != -1) {
                                 InventarioManager.abrirInventarioMain(config, plugin, jugador, pag);
                             } else {
                                 jugador.closeInventory();
                             }
+
+                        }
+                    } else if (slot >= 5 && slot <= 8) {
+                        int pag = inv.getPagina();
+                        if (pag != -1) {
+                            InventarioManager.abrirInventarioMain(config, plugin, jugador, pag);
+                        } else {
+                            jugador.closeInventory();
                         }
                     }
                 }

@@ -137,7 +137,7 @@ public class Utils {
     }
 
     public static int getSlotDisponible(FileConfiguration kitConfig, FileConfiguration config) {
-        ArrayList<Integer> slotsOcupados = new ArrayList<Integer>();
+        ArrayList<Integer> slotsOcupados = new ArrayList<>();
         if (kitConfig.contains("Kits")) {
             for (String path : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
                 if (kitConfig.contains("Kits." + path + ".slot")) {

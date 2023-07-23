@@ -32,106 +32,107 @@ public class InventarioListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            //TODO: ...
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
-            } else {
-                int slot = event.getSlot();
-                event.setCancelled(true);
-                if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                    String tipoInventario = inv.getTipoInventario();
-                    if (tipoInventario.equals("main")) {
-                        int pagina = inv.getPagina();
-                        FileConfiguration configKits = plugin.getKits();
-                        FileConfiguration config = plugin.getConfig();
-                        int paginasTotales = InventarioManager.getPaginasTotales(configKits);
-                        if (config.contains("Config.Inventory")) {
-                            for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
-                                int slotNuevo = Integer.parseInt(key);
-                                if (slot == slotNuevo) {
+            }
 
-                                    if (config.contains("Config.Inventory." + key + ".type")) {
-                                        if (config.getString("Config.Inventory." + key + ".type").equals("previous_page")) {
-                                            if (pagina > 1) {
-                                                if (!config.getString("Config.kit_page_sound").equals("none")) {
-                                                    String[] separados = config.getString("Config.kit_page_sound").split(";");
-                                                    try {
-                                                        Sound sound = Sound.valueOf(separados[0]);
-                                                        jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
-                                                    } catch (Exception ex) {
-                                                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
-                                                    }
-                                                }
+            int slot = event.getSlot();
+            event.setCancelled(true);
+            if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
+                String tipoInventario = inv.getTipoInventario();
+                if (tipoInventario.equals("main")) {
+                    int pagina = inv.getPagina();
+                    FileConfiguration configKits = plugin.getKits();
+                    FileConfiguration config = plugin.getConfig();
+                    int paginasTotales = InventarioManager.getPaginasTotales(configKits);
+                    if (config.contains("Config.Inventory")) {
+                        for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
+                            int slotNuevo = Integer.parseInt(key);
+                            if (slot == slotNuevo) {
 
-                                                InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina - 1);
-                                                return;
-                                            }
-                                        } else if (config.getString("Config.Inventory." + key + ".type").equals("next_page")) {
-                                            if (paginasTotales > pagina) {
-                                                if (!config.getString("Config.kit_page_sound").equals("none")) {
-                                                    String[] separados = config.getString("Config.kit_page_sound").split(";");
-                                                    try {
-                                                        Sound sound = Sound.valueOf(separados[0]);
-                                                        jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
-                                                    } catch (Exception ex) {
-                                                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
-                                                    }
+                                if (config.contains("Config.Inventory." + key + ".type")) {
+                                    if (config.getString("Config.Inventory." + key + ".type").equals("previous_page")) {
+                                        if (pagina > 1) {
+                                            if (!config.getString("Config.kit_page_sound").equals("none")) {
+                                                String[] separados = config.getString("Config.kit_page_sound").split(";");
+                                                try {
+                                                    Sound sound = Sound.valueOf(separados[0]);
+                                                    jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
+                                                } catch (Exception ex) {
+                                                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                                                 }
-                                                InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina + 1);
-                                                return;
                                             }
+
+                                            InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina - 1);
+                                            return;
+                                        }
+                                    } else if (config.getString("Config.Inventory." + key + ".type").equals("next_page")) {
+                                        if (paginasTotales > pagina) {
+                                            if (!config.getString("Config.kit_page_sound").equals("none")) {
+                                                String[] separados = config.getString("Config.kit_page_sound").split(";");
+                                                try {
+                                                    Sound sound = Sound.valueOf(separados[0]);
+                                                    jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
+                                                } catch (Exception ex) {
+                                                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
+                                                }
+                                            }
+                                            InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina + 1);
+                                            return;
                                         }
                                     }
+                                }
 
-                                    if (config.contains("Config.Inventory." + key + ".command")) {
-                                        String comando = config.getString("Config.Inventory." + key + ".command");
-                                        CommandSender console = Bukkit.getServer().getConsoleSender();
-                                        String comandoAEnviar = comando.replaceAll("%player%", jugador.getName());
-                                        Bukkit.dispatchCommand(console, comandoAEnviar);
+                                if (config.contains("Config.Inventory." + key + ".command")) {
+                                    String comando = config.getString("Config.Inventory." + key + ".command");
+                                    CommandSender console = Bukkit.getServer().getConsoleSender();
+                                    String comandoAEnviar = comando.replaceAll("%player%", jugador.getName());
+                                    Bukkit.dispatchCommand(console, comandoAEnviar);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    if (configKits.contains("Kits")) {
+                        for (String key : configKits.getConfigurationSection("Kits").getKeys(false)) {
+                            if (configKits.contains("Kits." + key + ".slot")) {
+                                if (slot == configKits.getInt("Kits." + key + ".slot")) {
+                                    int page = 1;
+                                    if (configKits.contains("Kits." + key + ".page")) {
+                                        page = configKits.getInt("Kits." + key + ".page");
+                                    }
+                                    if (page == pagina) {
+                                        if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
+                                            //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
+                                            boolean hasPermission = true;
+                                            if (configKits.contains("Kits." + key + ".permission")) {
+                                                String permission = configKits.getString("Kits." + key + ".permission");
+                                                if (!jugador.isOp() && !jugador.hasPermission(permission)) {
+                                                    hasPermission = false;
+                                                }
+                                            }
+                                            boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
+                                            if (permissionCheck && !hasPermission) {
+                                                String prefix = config.getString("Messages.prefix");
+                                                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cantPreviewError")));
+                                                return;
+                                            }
+
+                                            InventarioPreview.abrirInventarioPreview(plugin, jugador, key, inv.getPagina());
+                                        } else {
+                                            KitManager.claimKit(jugador, key, plugin, true, false, false);
+
+                                        }
                                         return;
                                     }
                                 }
                             }
                         }
-                        if (configKits.contains("Kits")) {
-                            for (String key : configKits.getConfigurationSection("Kits").getKeys(false)) {
-                                if (configKits.contains("Kits." + key + ".slot")) {
-                                    if (slot == configKits.getInt("Kits." + key + ".slot")) {
-                                        int page = 1;
-                                        if (configKits.contains("Kits." + key + ".page")) {
-                                            page = configKits.getInt("Kits." + key + ".page");
-                                        }
-                                        if (page == pagina) {
-                                            if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
-                                                //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
-                                                boolean hasPermission = true;
-                                                if (configKits.contains("Kits." + key + ".permission")) {
-                                                    String permission = configKits.getString("Kits." + key + ".permission");
-                                                    if (!jugador.isOp() && !jugador.hasPermission(permission)) {
-                                                        hasPermission = false;
-                                                    }
-                                                }
-                                                boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
-                                                if (permissionCheck && !hasPermission) {
-                                                    String prefix = config.getString("Messages.prefix");
-                                                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cantPreviewError")));
-                                                    return;
-                                                }
-
-                                                InventarioPreview.abrirInventarioPreview(plugin, jugador, key, inv.getPagina());
-                                            } else {
-                                                KitManager.claimKit(jugador, key, plugin, true, false, false);
-
-                                            }
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
-
                 }
+
             }
         }
     }

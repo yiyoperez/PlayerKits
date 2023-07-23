@@ -69,7 +69,7 @@ public class KitManager {
 
             configKits.set("Kits." + kitName + ".display_item", "IRON_SWORD");
             configKits.set("Kits." + kitName + ".display_name", "&6&l" + kitName + " &aKit");
-            List<String> lore = new ArrayList<String>();
+            List<String> lore = new ArrayList<>();
             lore.add("&7This is a description of the kit.");
             lore.add("&7You can add multiples &alines&7.");
             configKits.set("Kits." + kitName + ".display_lore", lore);
@@ -78,7 +78,7 @@ public class KitManager {
             configKits.set("Kits." + kitName + ".permission", "playerkits.kit." + kitName);
             configKits.set("Kits." + kitName + ".noPermissionsItem.display_item", "BARRIER");
             configKits.set("Kits." + kitName + ".noPermissionsItem.display_name", "&6&l" + kitName + " &aKit");
-            lore = new ArrayList<String>();
+            lore = new ArrayList<>();
             lore.add("&cYou don't have permissions to claim");
             lore.add("&cthis kit.");
             configKits.set("Kits." + kitName + ".noPermissionsItem.display_lore", lore);
@@ -113,7 +113,7 @@ public class KitManager {
                 PotionMeta meta = (PotionMeta) item.getItemMeta();
                 if (meta.hasCustomEffects()) {
                     List<PotionEffect> efectos = meta.getCustomEffects();
-                    List<String> lista = new ArrayList<String>();
+                    List<String> lista = new ArrayList<>();
                     for (PotionEffect efecto : efectos) {
                         String tipo = efecto.getType().getName();
                         int amplifier = efecto.getAmplifier();
@@ -151,7 +151,7 @@ public class KitManager {
         if (id == Material.ENCHANTED_BOOK) {
             EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
             Map<Enchantment, Integer> enchants = meta.getStoredEnchants();
-            List<String> enchantsList = new ArrayList<String>();
+            List<String> enchantsList = new ArrayList<>();
             for (Map.Entry<Enchantment, Integer> entry : enchants.entrySet()) {
                 enchantsList.add(entry.getKey().getName() + ";" + entry.getValue());
             }
@@ -163,10 +163,10 @@ public class KitManager {
             String author = meta.getAuthor();
             String title = meta.getTitle();
             String generation = null;
-            List<String> pages = new ArrayList<String>();
+            List<String> pages = new ArrayList<>();
 
             if (!Bukkit.getVersion().contains("1.12") && Utils.isLegacy()) {
-                pages = new ArrayList<String>(meta.getPages());
+                pages = new ArrayList<>(meta.getPages());
             } else {
                 if (meta.getGeneration() != null) {
                     generation = meta.getGeneration().name();
@@ -185,7 +185,7 @@ public class KitManager {
         if (id.name().equals("FIREWORK") || id.name().equals("FIREWORK_ROCKET")) {
             FireworkMeta meta = (FireworkMeta) item.getItemMeta();
             List<FireworkEffect> efectos = meta.getEffects();
-            List<String> effectList = new ArrayList<String>();
+            List<String> effectList = new ArrayList<>();
             for (FireworkEffect e : efectos) {
                 String linea = e.getType().name() + ";";
                 List<Color> colores = e.getColors();
@@ -306,7 +306,7 @@ public class KitManager {
             if (item.getItemMeta().hasEnchants()) {
                 Map<Enchantment, Integer> e = item.getEnchantments();
                 String pathench = path + ".enchants";
-                List<String> enchantments = new ArrayList<String>();
+                List<String> enchantments = new ArrayList<>();
                 for (Map.Entry<Enchantment, Integer> entry : e.entrySet()) {
                     String enchant = entry.getKey().getName();
                     int level = entry.getValue();
@@ -323,9 +323,8 @@ public class KitManager {
 //			}
             Set<ItemFlag> flags = item.getItemMeta().getItemFlags();
             if (flags != null && !flags.isEmpty()) {
-                List<ItemFlag> listflags = new ArrayList<ItemFlag>();
-                List<String> stringflags = new ArrayList<String>();
-                listflags.addAll(flags);
+                List<String> stringflags = new ArrayList<>();
+                List<ItemFlag> listflags = new ArrayList<>(flags);
                 for (int i = 0; i < flags.size(); i++) {
                     stringflags.add(listflags.get(i).name());
                 }
@@ -361,7 +360,7 @@ public class KitManager {
         String[] idsplit = new String[2];
         boolean placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         idsplit = id.split(":");
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         if (kitConfig.contains(path + ".lore")) {
             lore = kitConfig.getStringList(path + ".lore");
             for (int i = 0; i < lore.size(); i++) {
@@ -374,9 +373,9 @@ public class KitManager {
                 }
             }
         }
-        List<String> enchants = new ArrayList<String>();
+        List<String> enchants = new ArrayList<>();
         enchants = kitConfig.getStringList(path + ".enchants");
-        List<String> flags = new ArrayList<String>();
+        List<String> flags = new ArrayList<>();
         flags = kitConfig.getStringList(path + ".hide-flags");
         String pathamount = path + ".amount";
         int pathamountInt = 1;
@@ -421,7 +420,7 @@ public class KitManager {
             if (idsplit[0].equals("383") || idsplit[0].equals("MONSTER_EGG")) {
                 if (Bukkit.getVersion().contains("1.11") || Bukkit.getVersion().contains("1.12")) {
                     String stringDataValue = idsplit[1];
-                    DataValue = Integer.valueOf(stringDataValue);
+                    DataValue = Integer.parseInt(stringDataValue);
                     crafteos = new ItemStack(Material.valueOf("MONSTER_EGG"), pathamountInt);
                     SpawnEggMeta eggMeta = (SpawnEggMeta) crafteos.getItemMeta();
                     eggMeta.setSpawnedType(EntityType.fromId(DataValue));
@@ -463,9 +462,9 @@ public class KitManager {
             List<String> pages = kitConfig.getStringList(path + ".book-pages");
 
             if (!Bukkit.getVersion().contains("1.12") && Utils.isLegacy()) {
-                meta.setPages(new ArrayList<String>(pages));
+                meta.setPages(new ArrayList<>(pages));
             } else {
-                ArrayList<BaseComponent[]> pagesBaseComponent = new ArrayList<BaseComponent[]>();
+                ArrayList<BaseComponent[]> pagesBaseComponent = new ArrayList<>();
                 for (String page : pages) {
                     pagesBaseComponent.add(ComponentSerializer.parse(page));
                 }
@@ -487,24 +486,24 @@ public class KitManager {
                 String[] sep = s.split(";");
                 String type = sep[0];
                 String[] colores = sep[1].split(",");
-                List<Color> coloresList = new ArrayList<Color>();
+                List<Color> coloresList = new ArrayList<>();
                 for (String colore : colores) {
-                    coloresList.add(Color.fromRGB(Integer.valueOf(colore)));
+                    coloresList.add(Color.fromRGB(Integer.parseInt(colore)));
                 }
-                List<Color> coloresListFade = new ArrayList<Color>();
+                List<Color> coloresListFade = new ArrayList<>();
                 if (!sep[2].equals("")) {
                     String[] coloresFade = sep[2].split(",");
                     for (String value : coloresFade) {
-                        coloresListFade.add(Color.fromRGB(Integer.valueOf(value)));
+                        coloresListFade.add(Color.fromRGB(Integer.parseInt(value)));
                     }
                 }
 
-                boolean flicker = Boolean.valueOf(sep[3]);
-                boolean trail = Boolean.valueOf(sep[4]);
+                boolean flicker = Boolean.parseBoolean(sep[3]);
+                boolean trail = Boolean.parseBoolean(sep[4]);
                 meta.addEffect(FireworkEffect.builder().flicker(flicker).trail(trail).with(Type.valueOf(type))
                         .withColor(coloresList).withFade(coloresListFade).build());
             }
-            int power = Integer.valueOf(kitConfig.getString(path + ".firework-power"));
+            int power = kitConfig.getInt(path + ".firework-power");
             meta.setPower(power);
             crafteos.setItemMeta(meta);
         }
@@ -531,7 +530,7 @@ public class KitManager {
             }
             if (esBanner) {
                 BannerMeta meta = (BannerMeta) crafteos.getItemMeta();
-                List<Pattern> patterns = new ArrayList<Pattern>();
+                List<Pattern> patterns = new ArrayList<>();
                 String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
                 if (!patternsPath.equals("")) {
                     String[] patternsSeparados = patternsPath.split(";");
@@ -605,9 +604,9 @@ public class KitManager {
                 corte = split[1].split("-");
                 //int max = Integer.valueOf(corte[1]);
                 //level = r.nextInt(max-min)+min;
-                level = Integer.valueOf(corte[0]);
+                level = Integer.parseInt(corte[0]);
             } else {
-                level = Integer.valueOf(split[1]);
+                level = Integer.parseInt(split[1]);
             }
             crafteosMeta.addEnchant(Enchantment.getByName(split[0]), level, true);
         }
@@ -616,7 +615,7 @@ public class KitManager {
         }
         if (Utils.isNew()) {
             if (kitConfig.contains(path + ".custom_model_data")) {
-                int customModelData = Integer.valueOf(kitConfig.getString(path + ".custom_model_data"));
+                int customModelData = kitConfig.getInt(path + ".custom_model_data");
                 crafteosMeta.setCustomModelData(customModelData);
             }
         }
@@ -667,7 +666,7 @@ public class KitManager {
             }
             if (!comprandoKit && configKits.contains("Kits." + kit + ".price")
                     && !jManager.isBuyed(jugador, kit)) {
-                double price = Double.valueOf(configKits.getString("Kits." + kit + ".price"));
+                double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
                     double balance = econ.getBalance(jugador);
@@ -754,8 +753,8 @@ public class KitManager {
             }
         }
 
-        boolean tirarItems = Boolean.valueOf(config.getString("Config.drop_items_if_full_inventory"));
-        boolean ejecutarComandosPrimero = Boolean.valueOf(config.getString("Config.commands_before_items"));
+        boolean tirarItems = config.getBoolean("Config.drop_items_if_full_inventory");
+        boolean ejecutarComandosPrimero = config.getBoolean("Config.commands_before_items");
 
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
@@ -767,7 +766,7 @@ public class KitManager {
         if (!ignoreValues) {
             if (comprandoKit && configKits.contains("Kits." + kit + ".price")
                     && !jManager.isBuyed(jugador, kit)) {
-                double price = Double.valueOf(configKits.getString("Kits." + kit + ".price"));
+                double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
                     econ.withdrawPlayer(jugador, price);
@@ -795,7 +794,7 @@ public class KitManager {
                 String[] separados = config.getString("Config.kit_claim_sound").split(";");
                 try {
                     Sound sound = Sound.valueOf(separados[0]);
-                    jugador.playSound(jugador.getLocation(), sound, Float.valueOf(separados[1]), Float.valueOf(separados[2]));
+                    jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
                 } catch (Exception ex) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                 }
@@ -855,7 +854,7 @@ public class KitManager {
         String[] separados = config.getString("Config.kit_error_sound").split(";");
         try {
             Sound sound = Sound.valueOf(separados[0]);
-            jugador.playSound(jugador.getLocation(), sound, Float.valueOf(separados[1]), Float.valueOf(separados[2]));
+            jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
         }

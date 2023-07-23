@@ -52,7 +52,7 @@ public class MySQL {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                ArrayList<KitJugador> kitsJugador = new ArrayList<KitJugador>();
+                ArrayList<KitJugador> kitsJugador = new ArrayList<>();
                 String nombre = null;
                 try (Connection connection = plugin.getConnection()) {
                     PreparedStatement statement = connection.prepareStatement("SELECT * FROM playerkits_data WHERE uuid=?");
@@ -96,7 +96,7 @@ public class MySQL {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                ArrayList<KitJugador> kitsJugador = new ArrayList<KitJugador>();
+                ArrayList<KitJugador> kitsJugador = new ArrayList<>();
                 String uuid = null;
                 try (Connection connection = plugin.getConnection()) {
                     PreparedStatement statement = connection.prepareStatement("SELECT * FROM playerkits_data WHERE player_name=?");

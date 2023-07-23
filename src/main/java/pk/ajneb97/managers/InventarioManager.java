@@ -192,7 +192,7 @@ public class InventarioManager {
     }
 
     public static void abrirInventarioMain(FileConfiguration config, PlayerKits plugin, Player jugador, int pagina) {
-        int size = Integer.valueOf(config.getInt("inventory.size"));
+        int size = config.getInt("inventory.size");
         Inventory inv = Bukkit.createInventory(null, size, MessageUtils.getMensajeColor(getInventoryPageName(config, pagina)));
         jugador.openInventory(inv);
         InventarioManager invM = new InventarioManager(plugin);

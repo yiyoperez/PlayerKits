@@ -37,7 +37,7 @@ public class PlayerListener implements Listener {
                     } else {
                         //Lo crea si no existe
                         MySQL.crearKitJugador(plugin, jugador.getName(), jugador.getUniqueId().toString(), null);
-                        jManager.agregarJugadorDatos(new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<KitJugador>()));
+                        jManager.agregarJugadorDatos(new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<>()));
                         darKitInicial(jugador);
                     }
                 }
@@ -45,7 +45,7 @@ public class PlayerListener implements Listener {
         } else {
             JugadorDatos j = jManager.getJugadorPorUUID(jugador.getUniqueId().toString());
             if (j == null) {
-                j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<KitJugador>());
+                j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<>());
                 jManager.agregarJugadorDatos(j);
                 darKitInicial(jugador);
             } else {

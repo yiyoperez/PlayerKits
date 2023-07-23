@@ -9,6 +9,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioManager;
@@ -39,7 +40,7 @@ public class Comando implements CommandExecutor, TabCompleter {
         this.prefix = messages.getString("prefix");
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player) && args.length > 0) {
 
             String subCommand = args[0].toLowerCase();
@@ -430,7 +431,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {

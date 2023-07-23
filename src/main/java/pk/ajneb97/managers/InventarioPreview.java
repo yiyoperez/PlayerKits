@@ -38,7 +38,7 @@ public class InventarioPreview implements Listener {
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(MessageUtils.getMensajeColor(messages.getString("backItemName")));
             item.setItemMeta(meta);
-            inv.setItem(Integer.valueOf(config.getString("preview-inventory.back-item-slot")), item);
+            inv.setItem(config.getInt("preview-inventory.back-item-slot"), item);
         }
 
 
@@ -54,7 +54,7 @@ public class InventarioPreview implements Listener {
             ItemStack item = KitManager.getItem(kits, path, config, jugador);
             try {
                 if (kits.contains(path + ".preview_slot")) {
-                    inv.setItem(Integer.valueOf(kits.getString(path + ".preview_slot")), item);
+                    inv.setItem(kits.getInt(path + ".preview_slot"), item);
                 } else {
                     inv.setItem(slot, item);
                     slot++;
@@ -80,7 +80,8 @@ public class InventarioPreview implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if ((event.getSlotType() == null)) {
+            // :(
+            if (event.getSlotType() == null) {
                 event.setCancelled(true);
                 return;
             }
@@ -90,7 +91,7 @@ public class InventarioPreview implements Listener {
             if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
                 String tipoInventario = inv.getTipoInventario();
                 if (tipoInventario.equals("preview")) {
-                    int slotAClickear = Integer.valueOf(config.getInt("preview-inventory.back-item-slot"));
+                    int slotAClickear = config.getInt("preview-inventory.back-item-slot");
                     if (slot == slotAClickear && !event.getCurrentItem().getType().name().contains("AIR")) {
                         InventarioManager.abrirInventarioMain(config, plugin, jugador, inv.getPagina());
                     }
