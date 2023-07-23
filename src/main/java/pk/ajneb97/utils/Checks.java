@@ -10,8 +10,9 @@ public class Checks {
 
     public static boolean checkTodo(PlayerKits plugin, CommandSender jugador) {
         FileConfiguration config = plugin.getConfig();
-        String nombre = config.getString("Messages.prefix");
-        String mensaje = nombre + config.getString("Messages.materialNameError");
+        FileConfiguration messages = plugin.getMessages();
+        String prefix = messages.getString("prefix");
+        String mensaje = prefix + config.getString("Messages.materialNameError");
 
         //Check config.yml
         if (config.contains("Config.Inventory")) {
