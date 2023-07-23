@@ -1,3 +1,5 @@
+
+claim_kit_short_command: false
 nbt_alternative_data_save: false
 
 Config:
@@ -11,7 +13,6 @@ Config:
     drop_items_if_full_inventory: false
     commands_before_items: false
     preview_inventory_requires_permission: false
-    claim_kit_short_command: false
     player_data_save_time: 300
     inventory_pages_names:
       1: "&9Kits"
