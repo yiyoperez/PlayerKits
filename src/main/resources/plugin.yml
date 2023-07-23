@@ -3,7 +3,7 @@ version: 2.25.1
 name: PlayerKits
 api-version: 1.13
 softdepend: [Vault,PlaceholderAPI]
-author: Ajneb97
+authors: [Ajneb97, Sliide_]
 
 commands:
   kit:
