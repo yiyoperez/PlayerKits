@@ -109,7 +109,6 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
                 return result;
             }
 
-
         }
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%) 
