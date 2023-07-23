@@ -34,27 +34,28 @@ public class Comando implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration configKits = plugin.getKits();
+        FileConfiguration messages = plugin.getMessages();
         String prefix = config.getString("Messages.prefix");
-        if (!(sender instanceof Player)) {
-            if (args.length > 0) {
-                if (args[0].equalsIgnoreCase("reload")) {
-                    plugin.reloadConfig();
-                    plugin.reloadKits();
-                    plugin.reloadPlayerDataSaveTask();
-                    sender.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.configReload")));
-                } else if (args[0].equalsIgnoreCase("give")) {
-                    //kit give <kit> <jugador>
-                    give(sender, args, prefix, config, configKits);
-                } else if (args[0].equalsIgnoreCase("open")) {
-                    //Abrir inventario
-                    // /kit open <jugador> <pagina>
-                    open(sender, args, prefix, config, configKits);
-                } else if (args[0].equalsIgnoreCase("reset")) {
-                    reset(sender, args, prefix, config, configKits);
-                }
+        if (!(sender instanceof Player) && args.length > 0) {
+
+            if (args[0].equalsIgnoreCase("reload")) {
+                plugin.reloadConfig();
+                plugin.reloadKits();
+                plugin.reloadPlayerDataSaveTask();
+                sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
+            } else if (args[0].equalsIgnoreCase("give")) {
+                //kit give <kit> <jugador>
+                give(sender, args, prefix, config, configKits);
+            } else if (args[0].equalsIgnoreCase("open")) {
+                //Abrir inventario
+                // /kit open <jugador> <pagina>
+                open(sender, args, prefix, config, configKits);
+            } else if (args[0].equalsIgnoreCase("reset")) {
+                reset(sender, args, prefix, config, configKits);
             }
             return false;
         }
+
         final Player jugador = (Player) sender;
 
         // Open inventory if empty command.
@@ -64,21 +65,21 @@ public class Comando implements CommandExecutor, TabCompleter {
                 return true;
             }
             InventarioManager.abrirInventarioMain(config, plugin, jugador, 1);
-            return true;
+            return false;
         }
 
 
         if (config.getBoolean("claim_kit_short_command")) {
             // /kit <kit>
             String kit = getKit(configKits, args[0]);
-            if (kit != null) {
-                if (configKits.contains("Kits." + kit + ".slot") || jugador.isOp() || jugador.hasPermission("playerkits.admin")) {
-                    KitManager.claimKit(jugador, kit, plugin, true, false, false);
-                } else {
-                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.kitDoesNotExists").replace("%name%", args[0])));
-                }
-                return true;
+            if (kit == null) {
+                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[0])));
             }
+
+            if (configKits.contains("Kits." + kit + ".slot") || jugador.isOp() || jugador.hasPermission("playerkits.admin")) {
+                KitManager.claimKit(jugador, kit, plugin, true, false, false);
+            }
+            return true;
         }
 
         if (args[0].equalsIgnoreCase("create")) {
