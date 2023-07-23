@@ -29,7 +29,6 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerKits extends JavaPlugin {
 
@@ -43,10 +42,8 @@ public class PlayerKits extends JavaPlugin {
 
     private KitEditando kitEditando;
     public static String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
-    public boolean primeraVez = false;
     RegisteredServiceProvider<Economy> rsp = null;
     private static Economy econ = null;
-    public boolean primeraVezKits = false;
     private ArrayList<InventarioJugador> inventarioJugadores = new ArrayList<>();
 
     private JugadorManager jugadorManager;
@@ -66,12 +63,8 @@ public class PlayerKits extends JavaPlugin {
 
         setupEconomy();
 
-        if (primeraVez) {
-            rellenarInventarioConfig();
-        }
-        if (this.primeraVezKits) {
-            rellenarKitsConfig();
-        }
+        populateConfigIfEmpty();
+
         if (MySQL.isEnabled(getConfig())) {
             conexionDatabase = new ConexionMySQL();
             conexionDatabase.setupMySql(this, getConfig());
@@ -141,7 +134,6 @@ public class PlayerKits extends JavaPlugin {
     public void registerConfig() {
         this.configFile = new File(this.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
-            this.primeraVez = true;
             this.getConfig().options().copyDefaults(true);
             saveConfig();
         }
@@ -191,7 +183,6 @@ public class PlayerKits extends JavaPlugin {
     public void registerKits() {
         this.kitsFile = new File(this.getDataFolder(), "kits.yml");
         if (!this.kitsFile.exists()) {
-            primeraVezKits = true;
             this.getKits().options().copyDefaults(true);
             saveKits();
         }
@@ -390,23 +381,23 @@ public class PlayerKits extends JavaPlugin {
         }
     }*/
 
-    public void rellenarInventarioConfig() {
+    public void populateConfigIfEmpty() {
         FileConfiguration config = getConfig();
-        if (!Utilidades.isLegacy()) {
-            config.set("Config.Inventory.0.id", "BLACK_STAINED_GLASS_PANE");
-            config.set("Config.Inventory.8.id", "BLACK_STAINED_GLASS_PANE");
-            config.set("Config.Inventory.36.id", "BLACK_STAINED_GLASS_PANE");
-            config.set("Config.Inventory.44.id", "BLACK_STAINED_GLASS_PANE");
-            config.set("Config.Inventory.18.id", "PLAYER_HEAD");
-            config.set("Config.Inventory.26.id", "PLAYER_HEAD");
-        } else {
-            config.set("Config.Inventory.0.id", "STAINED_GLASS_PANE:15");
-            config.set("Config.Inventory.8.id", "STAINED_GLASS_PANE:15");
-            config.set("Config.Inventory.36.id", "STAINED_GLASS_PANE:15");
-            config.set("Config.Inventory.44.id", "STAINED_GLASS_PANE:15");
-            config.set("Config.Inventory.18.id", "SKULL_ITEM:3");
-            config.set("Config.Inventory.26.id", "SKULL_ITEM:3");
-        }
+
+        // Not sure if it works.
+        if (!config.getKeys(true).isEmpty()) return;
+
+        config.set("Config.kit_page_sound", Utilidades.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
+        config.set("Config.kit_claim_sound", Utilidades.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
+        config.set("Config.kit_error_sound", Utilidades.isLegacy() ? "LEVELUP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+
+        config.set("Config.Inventory.0.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.8.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.36.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.44.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.18.id", Utilidades.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        config.set("Config.Inventory.26.id", Utilidades.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+
         config.set("Config.Inventory.0.name", " ");
         config.set("Config.Inventory.8.name", " ");
         config.set("Config.Inventory.36.name", " ");
@@ -419,81 +410,5 @@ public class PlayerKits extends JavaPlugin {
         config.set("Config.Inventory.26.type", "next_page");
 
         this.saveConfig();
-    }
-
-    //Esto arregla bugs
-    public void rellenarKitsConfig() {
-        //Comprobar cuando se carga por primera vez la config
-        FileConfiguration kits = getKits();
-
-        kits.set("Kits.iron.Items.1.id", "IRON_AXE");
-        kits.set("Kits.iron.Items.1.amount", 1);
-        kits.set("Kits.iron.Items.2.id", "IRON_PICKAXE");
-        kits.set("Kits.iron.Items.2.amount", 1);
-        kits.set("Kits.iron.Items.3.id", "IRON_SWORD");
-        kits.set("Kits.iron.Items.3.amount", 1);
-        kits.set("Kits.iron.slot", 10);
-        kits.set("Kits.iron.display_item", "IRON_AXE");
-        kits.set("Kits.iron.display_name", "&6&lIron &aKit");
-        List<String> lore = new ArrayList<String>();
-        lore.add("&eThis kit includes:");
-        lore.add("&8- &7x1 Iron Axe");
-        lore.add("&8- &7x1 Iron Pickaxe");
-        lore.add("&8- &7x1 Iron Sword");
-        lore.add("");
-        lore.add("&7Cooldown: &c3 hours");
-        lore.add("");
-        lore.add("&aLeft Click to claim!");
-        lore.add("&bRight Click to preview!");
-        kits.set("Kits.iron.display_lore", lore);
-        kits.set("Kits.iron.cooldown", 10800);
-
-        kits.set("Kits.diamond.Items.1.id", "DIAMOND_AXE");
-        kits.set("Kits.diamond.Items.1.amount", 1);
-        kits.set("Kits.diamond.Items.2.id", "DIAMOND_PICKAXE");
-        kits.set("Kits.diamond.Items.2.amount", 1);
-        kits.set("Kits.diamond.Items.3.id", "DIAMOND_SWORD");
-        kits.set("Kits.diamond.Items.3.name", "&4Super Sword");
-        lore = new ArrayList<String>();
-        lore.add("&7Best sword on the server.");
-        lore.add("");
-        lore.add("&7Owner: &6%player%");
-        kits.set("Kits.diamond.Items.3.lore", lore);
-        lore = new ArrayList<String>();
-        lore.add("DAMAGE_ALL;5");
-        kits.set("Kits.diamond.Items.3.enchants", lore);
-        kits.set("Kits.diamond.Items.3.amount", 1);
-        lore = new ArrayList<String>();
-        lore.add("bc &6%player% &ejust claimed a &aDIAMOND KIT&e!");
-        kits.set("Kits.diamond.Commands", lore);
-        kits.set("Kits.diamond.slot", 11);
-        kits.set("Kits.diamond.display_item", "DIAMOND_SWORD");
-        kits.set("Kits.diamond.display_name", "&6&lDiamond &aKit");
-        lore = new ArrayList<String>();
-        lore.add("&eThis kit includes:");
-        lore.add("&8- &7x1 Diamond Axe");
-        lore.add("&8- &7x1 Diamond Pickaxe");
-        lore.add("&8- &7x1 Diamond Sword");
-        lore.add("");
-        lore.add("&7Cooldown: &c12 hours");
-        lore.add("&7Price: &a$5000");
-        lore.add("");
-        lore.add("&aLeft Click to buy!");
-        lore.add("&bRight Click to preview!");
-        kits.set("Kits.diamond.display_lore", lore);
-        kits.set("Kits.diamond.display_item_glowing", true);
-        kits.set("Kits.diamond.cooldown", 43200);
-        kits.set("Kits.diamond.price", 5000);
-        kits.set("Kits.diamond.permission", "playerkits.kit.diamond");
-        kits.set("Kits.diamond.noPermissionsItem.display_item", "BARRIER");
-        kits.set("Kits.diamond.noPermissionsItem.display_name", "&6&lDiamond &aKit");
-        lore = new ArrayList<String>();
-        lore.add("&cYou don't have permissions to claim");
-        lore.add("&cthis kit.");
-        lore.add("");
-        lore.add("&7You need: &bVIP&6+ &7rank.");
-        kits.set("Kits.diamond.noPermissionsItem.display_lore", lore);
-
-        this.saveKits();
     }
 }
