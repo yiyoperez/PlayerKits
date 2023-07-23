@@ -51,13 +51,13 @@ public class Comando implements CommandExecutor, TabCompleter {
                     sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
                     break;
                 case "give":
-                    give(sender, args, prefix, config, kits);
+                    give(sender, args);
                     break;
                 case "open":
-                    open(sender, args, prefix, config, kits);
+                    open(sender, args);
                     break;
                 case "reset":
-                    reset(sender, args, prefix, config, kits);
+                    reset(sender, args);
                     break;
                 default:
                     helpArgument(sender);
@@ -66,9 +66,8 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         final Player player = (Player) sender;
-
         // Open inventory if empty command.
-        if (args.length <= 0) {
+        if (args.length == 0) {
             //Abrir inventario
             if (!Checks.checkTodo(plugin, player)) {
                 return true;
@@ -136,121 +135,13 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void helpArgument(CommandSender sender) {
-        if (sender.isOp() || sender.hasPermission("playerkits.admin")) {
-            for (String helpMessage : messages.getStringList("command-help-message")) {
-                sender.sendMessage(MessageUtils.getMensajeColor(helpMessage));
-            }
-        } else {
+        if (!sender.isOp() && !sender.hasPermission("playerkits.admin")) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
         }
-    }
 
-    private void previewArgument(Player player, String[] args) {
-        if (args.length >= 2) {
-            String kit = getKit(kits, args[1]);
-            if (kit != null) {
-                if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
-                    boolean hasPermission = true;
-                    if (kits.contains("Kits." + kit + ".permission")) {
-                        String permission = kits.getString("Kits." + kit + ".permission");
-                        if (!player.isOp() && !player.hasPermission(permission)) {
-                            hasPermission = false;
-                        }
-                    }
-                    boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
-                    if (permissionCheck && !hasPermission) {
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
-                        return;
-                    }
-
-                    InventarioPreview.abrirInventarioPreview(plugin, player, kit, 1);
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-            }
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandPreviewError")));
-        }
-    }
-
-    private void giveArgument(CommandSender sender, Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            give(sender, args, prefix, config, kits);
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
-    private void editArgument(Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            if (args.length >= 2) {
-                String kit = getKit(kits, args[1]);
-                if (kit != null) {
-                    InventarioEditar.crearInventario(player, kit, plugin);
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandEditError")));
-            }
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
-    private void listArgument(Player player) {
-        if (player.isOp() || player.hasPermission("playerkits.admin") || player.hasPermission("playerkits.list")) {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandList")));
-            int c = 1;
-            JugadorManager jManager = plugin.getJugadorManager();
-            if (kits.contains("Kits")) {
-                for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
-                    if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
-                        if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
-                            player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitNoPermissions").replace("%number%", c + "").replace("%kit%", key)));
-                        } else {
-                            if (kits.contains("Kits." + key + ".one_time") && kits.getString("Kits." + key + ".one_time").equals("true") && jManager.isOneTime(player, key)) {
-                                player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitOneTime").replace("%number%", c + "").replace("%kit%", key)));
-                            } else {
-                                boolean cooldownReady = true;
-                                if (kits.contains("Kits." + key + ".cooldown")) {
-                                    String cooldown = Utils.getCooldown(key, player, kits, config, jManager);
-                                    if (!cooldown.equals("ready")) {
-                                        cooldownReady = false;
-                                        player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitInCooldown").replace("%number%", c + "").replace("%kit%", key).replace("%time%", cooldown)));
-                                    }
-                                }
-                                if (cooldownReady) {
-                                    player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKit").replace("%number%", c + "").replace("%kit%", key)));
-                                }
-                            }
-                        }
-                        c++;
-                    }
-
-                }
-            }
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-        }
-    }
-
-    private void claimArgument(Player player, String[] args) {
-        if (args.length >= 2) {
-            String kit = getKit(kits, args[1]);
-            if (kit != null) {
-                if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
-                    KitManager.claimKit(player, kit, plugin, true, false, false);
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-            }
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandClaimError")));
+        for (String helpMessage : messages.getStringList("command-help-message")) {
+            sender.sendMessage(MessageUtils.getMensajeColor(helpMessage));
         }
     }
 
@@ -260,109 +151,238 @@ public class Comando implements CommandExecutor, TabCompleter {
             return;
         }
 
-        open(sender, args, prefix, config, kits);
+        open(sender, args);
     }
 
-    public void open(CommandSender sender, String[] args, String prefix, FileConfiguration config, FileConfiguration kits) {
-        if (args.length >= 2) {
-            Player player = Bukkit.getPlayer(args[1]);
-            if (!Checks.checkTodo(plugin, sender)) {
+    public void open(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandOpenError")));
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(args[1]);
+        if (!Checks.checkTodo(plugin, sender)) return;
+
+        if (player == null) {
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[1])));
+            return;
+        }
+
+        int pag = 1;
+        if (args.length >= 3) {
+            try {
+                pag = Integer.valueOf(args[2]);
+                int pagsTotales = InventarioManager.getPaginasTotales(kits);
+                if (pag > pagsTotales) {
+                    sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("errorPage")));
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("errorPage")));
                 return;
             }
-            if (player != null) {
-                int pag = 1;
-                if (args.length >= 3) {
-                    try {
-                        pag = Integer.valueOf(args[2]);
-                        int pagsTotales = InventarioManager.getPaginasTotales(kits);
-                        if (pag > pagsTotales) {
-                            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("errorPage")));
-                            return;
-                        }
-                    } catch (NumberFormatException e) {
-                        sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("errorPage")));
-                        return;
-                    }
-                }
-                InventarioManager.abrirInventarioMain(config, plugin, player, pag);
-                sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitInventoryOpen").replace("%player%", args[1])));
-            } else {
-                sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[1])));
-            }
-        } else {
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandOpenError")));
         }
+        InventarioManager.abrirInventarioMain(config, plugin, player, pag);
+        sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitInventoryOpen").replace("%player%", args[1])));
     }
 
     private void createArgument(Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            if (args.length >= 2) {
-                String kit = getKit(kits, args[1]);
-                if (kit == null) {
-                    if (KitManager.save(args[1], kits, config, player)) {
-                        plugin.saveKits();
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitCreated").replace("%name%", args[1])));
-                    } else {
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("inventoryEmpty")));
-                    }
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", kit)));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandCreateError")));
-            }
-        } else {
+        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
+        }
+
+        if (args.length < 2) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandCreateError")));
+            return;
+        }
+
+        String kit = getKit(kits, args[1]);
+        if (kit != null) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", kit)));
+            return;
+        }
+
+        if (KitManager.save(args[1], kits, config, player)) {
+            plugin.saveKits();
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitCreated").replace("%name%", args[1])));
+        } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("inventoryEmpty")));
         }
     }
 
     private void deleteArgument(Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            if (args.length >= 2) {
-                String kit = getKit(kits, args[1]);
-                if (kit != null) {
-                    kits.set("Kits." + kit, null);
-                    plugin.saveKits();
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitRemoved").replace("%name%", kit)));
-                } else {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-                }
-            } else {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandDeleteError")));
-            }
-        } else {
+        if (!player.isOp() && !player.hasPermission("playerkits.delete")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
+        }
+
+        if (args.length < 2) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandDeleteError")));
+            return;
+        }
+
+        String kit = getKit(kits, args[1]);
+        if (kit == null) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+            return;
+        }
+
+        kits.set("Kits." + kit, null);
+        plugin.saveKits();
+        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitRemoved").replace("%name%", kit)));
+    }
+
+    private void editArgument(Player player, String[] args) {
+        if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
+        }
+
+        if (args.length < 2) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandEditError")));
+            return;
+        }
+
+        String kit = getKit(kits, args[1]);
+        if (kit != null) {
+            InventarioEditar.crearInventario(player, kit, plugin);
+        } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
         }
     }
 
-    public void give(CommandSender sender, String[] args, String prefix, FileConfiguration config, FileConfiguration kits) {
-        if (args.length >= 3) {
-            String kit = getKit(kits, args[1]);
-            if (kit != null) {
-                Player player = Bukkit.getPlayer(args[2]);
-                if (player != null) {
-                    KitManager.claimKit(player, kit, plugin, true, true, false);
-                    sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitGive").replace("%player%", args[2]).replace("%kit%", kit)));
+    private void listArgument(Player player) {
+        if (!player.isOp() && !player.hasPermission("playerkits.admin") && !player.hasPermission("playerkits.list")) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
+        }
+
+        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandList")));
+        int c = 1;
+        JugadorManager jManager = plugin.getJugadorManager();
+        if (!kits.contains("Kits")) {
+            // There is no kits available.
+            return;
+        }
+
+        for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
+            if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+                if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
+                    player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitNoPermissions").replace("%number%", c + "").replace("%kit%", key)));
                 } else {
-                    sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[2])));
+                    if (kits.contains("Kits." + key + ".one_time") && kits.getString("Kits." + key + ".one_time").equals("true") && jManager.isOneTime(player, key)) {
+                        player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitOneTime").replace("%number%", c + "").replace("%kit%", key)));
+                    } else {
+                        boolean cooldownReady = true;
+                        if (kits.contains("Kits." + key + ".cooldown")) {
+                            String cooldown = Utils.getCooldown(key, player, kits, config, jManager);
+                            if (!cooldown.equals("ready")) {
+                                cooldownReady = false;
+                                player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitInCooldown").replace("%number%", c + "").replace("%kit%", key).replace("%time%", cooldown)));
+                            }
+                        }
+                        if (cooldownReady) {
+                            player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKit").replace("%number%", c + "").replace("%kit%", key)));
+                        }
+                    }
                 }
-            } else {
-                sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+                c++;
             }
+
+        }
+    }
+
+    private void claimArgument(Player player, String[] args) {
+        if (args.length < 2) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandClaimError")));
+            return;
+        }
+
+        String kit = getKit(kits, args[1]);
+        if (kit == null) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+            return;
+        }
+
+        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+            KitManager.claimKit(player, kit, plugin, true, false, false);
         } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+        }
+    }
+
+    private void previewArgument(Player player, String[] args) {
+        if (args.length < 2) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandPreviewError")));
+            return;
+        }
+
+        String kit = getKit(kits, args[1]);
+        if (kit == null) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+            return;
+        }
+
+        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+            boolean hasPermission = true;
+            if (kits.contains("Kits." + kit + ".permission")) {
+                String permission = kits.getString("Kits." + kit + ".permission");
+                if (!player.isOp() && !player.hasPermission(permission)) {
+                    hasPermission = false;
+                }
+            }
+            boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
+            if (permissionCheck && !hasPermission) {
+                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
+                return;
+            }
+
+            InventarioPreview.abrirInventarioPreview(plugin, player, kit, 1);
+        } else {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+        }
+    }
+
+    private void giveArgument(CommandSender sender, Player player, String[] args) {
+        if (!player.isOp() && !player.hasPermission("playerkits.give")) {
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
+        }
+
+        give(sender, args);
+    }
+
+    public void give(CommandSender sender, String[] args) {
+        if (args.length < 3) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandGiveError")));
+            return;
+        }
+        String kit = getKit(kits, args[1]);
+        if (kit == null) {
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(args[2]);
+        if (player != null) {
+            KitManager.claimKit(player, kit, plugin, true, true, false);
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitGive").replace("%player%", args[2]).replace("%kit%", kit)));
+        } else {
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[2])));
         }
     }
 
     private void resetArgument(CommandSender sender, Player player, String[] args) {
-        if (player.isOp() || player.hasPermission("playerkits.admin")) {
-            reset(sender, args, prefix, config, kits);
-        } else {
+        if (!player.isOp() && !player.hasPermission("playerkits.reset")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
+            return;
         }
+
+        reset(sender, args);
     }
 
-    public void reset(CommandSender sender, String[] args, String prefix, FileConfiguration config, FileConfiguration kits) {
+    public void reset(CommandSender sender, String[] args) {
         // /kits reset <kit> <player>
         if (args.length < 3) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandResetError")));
