@@ -13,10 +13,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitScheduler;
-import pk.ajneb97.InventarioJugador;
+import pk.ajneb97.inventory.InventarioJugador;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.otros.MensajesUtils;
-import pk.ajneb97.otros.Utilidades;
+import pk.ajneb97.utils.MessageUtils;
+import pk.ajneb97.utils.Utils;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class InventarioManager {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration configKits = plugin.getKits();
 
-        String pathInventory = MensajesUtils.getMensajeColor(getInventoryPageName(config, pagina));
+        String pathInventory = MessageUtils.getMensajeColor(getInventoryPageName(config, pagina));
         String pathInventoryM = ChatColor.stripColor(pathInventory);
         Inventory inv = jugador.getOpenInventory().getTopInventory();
         int paginasTotales = getPaginasTotales(configKits);
@@ -58,14 +58,14 @@ public class InventarioManager {
                 for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
                     int slot = Integer.valueOf(key);
 
-                    ItemStack item = Utilidades.getItem(config.getString("Config.Inventory." + key + ".id"), 1, "");
+                    ItemStack item = Utils.getItem(config.getString("Config.Inventory." + key + ".id"), 1, "");
                     ItemMeta meta = item.getItemMeta();
                     if (config.contains("Config.Inventory." + key + ".name")) {
                         String name = config.getString("Config.Inventory." + key + ".name");
                         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                             name = PlaceholderAPI.setPlaceholders(jugador, name);
                         }
-                        meta.setDisplayName(MensajesUtils.getMensajeColor(name));
+                        meta.setDisplayName(MessageUtils.getMensajeColor(name));
                     }
                     if (config.contains("Config.Inventory." + key + ".lore")) {
                         List<String> lore = config.getStringList("Config.Inventory." + key + ".lore");
@@ -74,12 +74,12 @@ public class InventarioManager {
                             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                                 linea = PlaceholderAPI.setPlaceholders(jugador, linea);
                             }
-                            lore.set(i, MensajesUtils.getMensajeColor(linea));
+                            lore.set(i, MessageUtils.getMensajeColor(linea));
                         }
                         meta.setLore(lore);
                     }
                     meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-                    if (Utilidades.isNew()) {
+                    if (Utils.isNew()) {
                         if (config.contains("Config.Inventory." + key + ".custom_model_data")) {
                             int customModelData = Integer.valueOf(config.getString("Config.Inventory." + key + ".custom_model_data"));
                             meta.setCustomModelData(customModelData);
@@ -88,7 +88,7 @@ public class InventarioManager {
                     item.setItemMeta(meta);
                     if (config.contains("Config.Inventory." + key + ".skulldata")) {
                         String[] skulldata = config.getString("Config.Inventory." + key + ".skulldata").split(";");
-                        item = Utilidades.setSkull(item, skulldata[0], skulldata[1]);
+                        item = Utils.setSkull(item, skulldata[0], skulldata[1]);
                     }
 
                     if (config.contains("Config.Inventory." + key + ".type")) {
@@ -136,16 +136,16 @@ public class InventarioManager {
                                             && jManager.isOneTime(jugador, key)) {
                                         List<String> lore = config.getStringList("Messages.kitOneTimeLore");
                                         for (int i = 0; i < lore.size(); i++) {
-                                            lore.set(i, MensajesUtils.getMensajeColor(lore.get(i)));
+                                            lore.set(i, MessageUtils.getMensajeColor(lore.get(i)));
                                         }
                                         meta.setLore(lore);
                                     } else {
                                         if (configKits.contains("Kits." + key + ".cooldown")) {
-                                            String cooldown = Utilidades.getCooldown(key, jugador, configKits, config, jManager);
+                                            String cooldown = Utils.getCooldown(key, jugador, configKits, config, jManager);
                                             if (!cooldown.equals("ready")) {
                                                 List<String> lore = config.getStringList("Messages.kitInCooldownLore");
                                                 for (int i = 0; i < lore.size(); i++) {
-                                                    lore.set(i, MensajesUtils.getMensajeColor(lore.get(i).replace("%time%", cooldown)));
+                                                    lore.set(i, MessageUtils.getMensajeColor(lore.get(i).replace("%time%", cooldown)));
                                                 }
                                                 meta.setLore(lore);
                                             }
@@ -193,7 +193,7 @@ public class InventarioManager {
 
     public static void abrirInventarioMain(FileConfiguration config, PlayerKits plugin, Player jugador, int pagina) {
         int size = Integer.valueOf(config.getString("Config.inventorySize"));
-        Inventory inv = Bukkit.createInventory(null, size, MensajesUtils.getMensajeColor(getInventoryPageName(config, pagina)));
+        Inventory inv = Bukkit.createInventory(null, size, MessageUtils.getMensajeColor(getInventoryPageName(config, pagina)));
         jugador.openInventory(inv);
         InventarioManager invM = new InventarioManager(plugin);
         plugin.agregarInventarioJugador(new InventarioJugador(jugador, pagina, invM, "main"));
@@ -206,27 +206,27 @@ public class InventarioManager {
         // Kits.kit.noPermissionsItem
         // Kits.kit
         // Kits.kit.noBuyItem
-        ItemStack item = Utilidades.getItem(configKits.getString(path + ".display_item"), 1, "");
+        ItemStack item = Utils.getItem(configKits.getString(path + ".display_item"), 1, "");
         ItemMeta meta = item.getItemMeta();
         if (configKits.contains(path + ".display_name")) {
-            meta.setDisplayName(MensajesUtils.getMensajeColor(configKits.getString(path + ".display_name")));
+            meta.setDisplayName(MessageUtils.getMensajeColor(configKits.getString(path + ".display_name")));
         } else {
             if (configKits.contains("Kits." + kit + ".display_name")) {
-                meta.setDisplayName(MensajesUtils.getMensajeColor(configKits.getString("Kits." + kit + ".display_name")));
+                meta.setDisplayName(MessageUtils.getMensajeColor(configKits.getString("Kits." + kit + ".display_name")));
             }
 
         }
         if (configKits.contains(path + ".display_lore")) {
             List<String> lore = configKits.getStringList(path + ".display_lore");
             for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, MensajesUtils.getMensajeColor(lore.get(i)));
+                lore.set(i, MessageUtils.getMensajeColor(lore.get(i)));
             }
             meta.setLore(lore);
         } else {
             if (configKits.contains("Kits." + kit + ".display_lore")) {
                 List<String> lore = configKits.getStringList("Kits." + kit + ".display_lore");
                 for (int i = 0; i < lore.size(); i++) {
-                    lore.set(i, MensajesUtils.getMensajeColor(lore.get(i)));
+                    lore.set(i, MessageUtils.getMensajeColor(lore.get(i)));
                 }
                 meta.setLore(lore);
             }
@@ -243,7 +243,7 @@ public class InventarioManager {
         item.setItemMeta(meta);
         if (configKits.contains(path + ".display_item_skulldata")) {
             String[] skulldata = configKits.getString(path + ".display_item_skulldata").split(";");
-            item = Utilidades.setSkull(item, skulldata[0], skulldata[1]);
+            item = Utils.setSkull(item, skulldata[0], skulldata[1]);
         }
 
 //		else {

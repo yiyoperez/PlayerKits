@@ -11,9 +11,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import pk.ajneb97.InventarioJugador;
+import pk.ajneb97.inventory.InventarioJugador;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.otros.MensajesUtils;
+import pk.ajneb97.utils.MessageUtils;
 
 public class InventarioListener implements Listener {
 
@@ -115,7 +115,7 @@ public class InventarioListener implements Listener {
                                                 boolean permissionCheck = config.getBoolean("Config.preview_inventory_requires_permission");
                                                 if (permissionCheck && !hasPermission) {
                                                     String prefix = config.getString("Messages.prefix");
-                                                    jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.cantPreviewError")));
+                                                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cantPreviewError")));
                                                     return;
                                                 }
 

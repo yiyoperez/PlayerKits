@@ -18,9 +18,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import pk.ajneb97.KitEditando;
+import pk.ajneb97.inventory.KitEditando;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.otros.Utilidades;
+import pk.ajneb97.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,13 +91,13 @@ public class InventarioEditar implements Listener {
             firstJoin = kits.getString("Kits." + kit + ".first_join");
         }
         if (firstJoin.equals("true")) {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.LIME_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 10);
             }
         } else {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.GRAY_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 8);
@@ -121,13 +121,13 @@ public class InventarioEditar implements Listener {
             oneTime = kits.getString("Kits." + kit + ".one_time");
         }
         if (oneTime.equals("true")) {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.LIME_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 10);
             }
         } else {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.GRAY_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 8);
@@ -149,13 +149,13 @@ public class InventarioEditar implements Listener {
             autoArmor = kits.getString("Kits." + kit + ".auto_armor");
         }
         if (autoArmor.equals("true")) {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.LIME_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 10);
             }
         } else {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.GRAY_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 8);
@@ -290,13 +290,13 @@ public class InventarioEditar implements Listener {
             oneTimeBuy = kits.getString("Kits." + kit + ".one_time_buy");
         }
         if (oneTimeBuy.equals("true")) {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.LIME_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 10);
             }
         } else {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.GRAY_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 8);
@@ -343,7 +343,7 @@ public class InventarioEditar implements Listener {
         item.setItemMeta(meta);
         inv.setItem(53, item);
 
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         } else {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 8);
@@ -510,7 +510,7 @@ public class InventarioEditar implements Listener {
         item.setItemMeta(meta);
         inv.setItem(18, item);
 
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         } else {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 8);
@@ -529,7 +529,7 @@ public class InventarioEditar implements Listener {
         ;
         inv.setItem(17, item);
 
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.PLAYER_HEAD);
         } else {
             item = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
@@ -537,10 +537,10 @@ public class InventarioEditar implements Listener {
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&7Place item here &6>>"));
         item.setItemMeta(meta);
-        item = Utilidades.setSkull(item, "d513d666-0992-42c7-9aa6-e518a83e0b38", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
+        item = Utils.setSkull(item, "d513d666-0992-42c7-9aa6-e518a83e0b38", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
         inv.setItem(10, item);
 
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.PLAYER_HEAD);
         } else {
             item = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
@@ -548,7 +548,7 @@ public class InventarioEditar implements Listener {
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6<< &7Place item here"));
         item.setItemMeta(meta);
-        item = Utilidades.setSkull(item, "2391d533-ab09-434d-9980-adafde4057a3", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
+        item = Utils.setSkull(item, "2391d533-ab09-434d-9980-adafde4057a3", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
         inv.setItem(12, item);
 
         String name = "none";
@@ -619,13 +619,13 @@ public class InventarioEditar implements Listener {
             }
         }
         if (glowing.equals("true")) {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.LIME_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 10);
             }
         } else {
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.GRAY_DYE);
             } else {
                 item = new ItemStack(Material.valueOf("INK_SACK"), 1, (short) 8);
@@ -649,11 +649,11 @@ public class InventarioEditar implements Listener {
         ItemStack displayItem = null;
         if (tipoDisplay.equals("normal")) {
             if (kits.contains("Kits." + kit + ".display_item")) {
-                displayItem = Utilidades.getDisplayItem(kits, "Kits." + kit);
+                displayItem = Utils.getDisplayItem(kits, "Kits." + kit);
             }
         } else {
             if (kits.contains("Kits." + kit + "." + tipoDisplay + ".display_item")) {
-                displayItem = Utilidades.getDisplayItem(kits, "Kits." + kit + "." + tipoDisplay);
+                displayItem = Utils.getDisplayItem(kits, "Kits." + kit + "." + tipoDisplay);
             }
         }
 
@@ -753,7 +753,7 @@ public class InventarioEditar implements Listener {
         if (item != null) {
             Material id = item.getType();
             int datavalue = 0;
-            if (Utilidades.isLegacy()) {
+            if (Utils.isLegacy()) {
                 if (id == Material.POTION) {
                     datavalue = item.getDurability();
                 } else {
@@ -775,20 +775,20 @@ public class InventarioEditar implements Listener {
                 kits.set(path + ".display_item_leathercolor", meta.getColor().asRGB() + "");
             }
 
-            if (Utilidades.isNew()) {
+            if (Utils.isNew()) {
                 ItemMeta meta = item.getItemMeta();
                 if (meta.hasCustomModelData()) {
                     kits.set(path + ".display_item_custom_model_data", meta.getCustomModelData());
                 }
             }
 
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 if (id == Material.getMaterial("PLAYER_HEAD")) {
-                    Utilidades.guardarSkullDisplay(item, kits, path);
+                    Utils.guardarSkullDisplay(item, kits, path);
                 }
             } else {
                 if (id == Material.valueOf("SKULL_ITEM") && datavalue == 3) {
-                    Utilidades.guardarSkullDisplay(item, kits, path);
+                    Utils.guardarSkullDisplay(item, kits, path);
                 }
 
             }
@@ -814,7 +814,7 @@ public class InventarioEditar implements Listener {
         item.setItemMeta(meta);
         inv.setItem(53, item);
 
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         } else {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 8);
@@ -939,7 +939,7 @@ public class InventarioEditar implements Listener {
         item.setItemMeta(meta);
         inv.setItem(53, item);
 
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         } else {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 8);

@@ -1,10 +1,10 @@
-package pk.ajneb97;
+package pk.ajneb97.utils;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import pk.ajneb97.otros.MensajesUtils;
+import pk.ajneb97.PlayerKits;
 
 public class Checks {
 
@@ -40,7 +40,7 @@ public class Checks {
 
             return true;
         } catch (Exception e) {
-            jugador.sendMessage(MensajesUtils.getMensajeColor(mensaje.replace("%material%", key)));
+            jugador.sendMessage(MessageUtils.getMensajeColor(mensaje.replace("%material%", key)));
             return false;
         }
     }

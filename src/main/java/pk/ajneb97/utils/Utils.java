@@ -1,4 +1,4 @@
-package pk.ajneb97.otros;
+package pk.ajneb97.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -15,27 +15,19 @@ import pk.ajneb97.managers.JugadorManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utilidades {
+public class Utils {
 
 
     public static boolean isLegacy() {
-        if (Bukkit.getVersion().contains("1.13") || Bukkit.getVersion().contains("1.14") ||
-                Bukkit.getVersion().contains("1.15") || Bukkit.getVersion().contains("1.16")
-                || Bukkit.getVersion().contains("1.17") || Bukkit.getVersion().contains("1.18")
-                || Bukkit.getVersion().contains("1.19")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !Bukkit.getVersion().contains("1.13") && !Bukkit.getVersion().contains("1.14") &&
+                !Bukkit.getVersion().contains("1.15") && !Bukkit.getVersion().contains("1.16")
+                && !Bukkit.getVersion().contains("1.17") && !Bukkit.getVersion().contains("1.18")
+                && !Bukkit.getVersion().contains("1.19") && !Bukkit.getVersion().contains("1.20");
     }
 
     public static boolean isNew() {
-        if (Bukkit.getVersion().contains("1.16") || Bukkit.getVersion().contains("1.17") || Bukkit.getVersion().contains("1.18")
-                || Bukkit.getVersion().contains("1.19")) {
-            return true;
-        } else {
-            return false;
-        }
+        return Bukkit.getVersion().contains("1.16") || Bukkit.getVersion().contains("1.17") || Bukkit.getVersion().contains("1.18")
+                || Bukkit.getVersion().contains("1.19") || Bukkit.getVersion().contains("1.20");
     }
 
     public static String getCooldown(String kit, Player jugador, FileConfiguration kitConfig, FileConfiguration config, JugadorManager jManager) {
@@ -102,7 +94,7 @@ public class Utilidades {
         }
         if (!skulldata.isEmpty()) {
             String[] sep = skulldata.split(";");
-            stack = Utilidades.setSkull(stack, sep[0], sep[1]);
+            stack = Utils.setSkull(stack, sep[0], sep[1]);
         }
 
 
@@ -113,12 +105,12 @@ public class Utilidades {
         ItemStack item = getItem(kits.getString(path + ".display_item"), 1, "");
         ItemMeta meta = item.getItemMeta();
         if (kits.contains(path + ".display_name")) {
-            meta.setDisplayName(MensajesUtils.getMensajeColor(kits.getString(path + ".display_name")));
+            meta.setDisplayName(MessageUtils.getMensajeColor(kits.getString(path + ".display_name")));
         }
         if (kits.contains(path + ".display_lore")) {
             List<String> lore = kits.getStringList(path + ".display_lore");
             for (int i = 0; i < lore.size(); i++) {
-                lore.set(i, MensajesUtils.getMensajeColor(lore.get(i)));
+                lore.set(i, MessageUtils.getMensajeColor(lore.get(i)));
             }
             meta.setLore(lore);
         }
@@ -136,10 +128,10 @@ public class Utilidades {
             meta.setCustomModelData(customModelData);
             item.setItemMeta(meta);
         }
-        item = Utilidades.setUnbreakable(item);
+        item = Utils.setUnbreakable(item);
         if (kits.contains(path + ".display_item_skulldata")) {
             String[] skulldata = kits.getString(path + ".display_item_skulldata").split(";");
-            item = Utilidades.setSkull(item, skulldata[0], skulldata[1]);
+            item = Utils.setSkull(item, skulldata[0], skulldata[1]);
         }
 
         return item;

@@ -5,7 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.managers.JugadorManager;
-import pk.ajneb97.otros.Utilidades;
+import pk.ajneb97.utils.Utils;
 
 public class PlayerKitsAPI {
 
@@ -19,7 +19,7 @@ public class PlayerKitsAPI {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration configKits = plugin.getKits();
         JugadorManager jManager = plugin.getJugadorManager();
-        String cooldown = Utilidades.getCooldown(kit, player, configKits, config, jManager);
+        String cooldown = Utils.getCooldown(kit, player, configKits, config, jManager);
         if (cooldown.equals("ready")) {
             return ChatColor.translateAlternateColorCodes('&', config.getString("Messages.cooldownPlaceholderReady"));
         } else if (cooldown.equals("no_existe")) {

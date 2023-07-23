@@ -37,10 +37,10 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import pk.ajneb97.InventarioJugador;
+import pk.ajneb97.inventory.InventarioJugador;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.otros.MensajesUtils;
-import pk.ajneb97.otros.Utilidades;
+import pk.ajneb97.utils.MessageUtils;
+import pk.ajneb97.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class KitManager {
         if (c == 1) {
             return false;
         } else {
-            int slot = Utilidades.getSlotDisponible(configKits, config);
+            int slot = Utils.getSlotDisponible(configKits, config);
             if (slot != -1) {
                 configKits.set("Kits." + kitName + ".slot", slot);
             }
@@ -102,7 +102,7 @@ public class KitManager {
         int datavalue = 0;
         int amount = item.getAmount();
         String idtext = id + "";
-        if (Utilidades.isLegacy()) {
+        if (Utils.isLegacy()) {
             if (id == Material.POTION) {
                 datavalue = item.getDurability();
             } else {
@@ -166,7 +166,7 @@ public class KitManager {
             String generation = null;
             List<String> pages = new ArrayList<String>();
 
-            if (!Bukkit.getVersion().contains("1.12") && Utilidades.isLegacy()) {
+            if (!Bukkit.getVersion().contains("1.12") && Utils.isLegacy()) {
                 pages = new ArrayList<String>(meta.getPages());
             } else {
                 if (meta.getGeneration() != null) {
@@ -216,7 +216,7 @@ public class KitManager {
 
         boolean esBanner = false;
         boolean esEscudo = false;
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             if (id.name().contains("BANNER") && !id.name().contains("PATTERN")) {
                 esBanner = true;
             } else if (id == Material.SHIELD) {
@@ -259,7 +259,7 @@ public class KitManager {
                     patternsPath = patternsPath.replaceFirst(";", "");
                 }
                 kitConfig.set(path + ".banner-pattern", patternsPath);
-                if (Utilidades.isLegacy()) {
+                if (Utils.isLegacy()) {
                     kitConfig.set(path + ".banner-color", banner.getBaseColor().name());
                 } else {
                     kitConfig.set(path + ".banner-color", banner.getType().name());
@@ -268,8 +268,8 @@ public class KitManager {
         }
 
 
-        Utilidades u = new Utilidades();
-        if (!Utilidades.isLegacy()) {
+        Utils u = new Utils();
+        if (!Utils.isLegacy()) {
             if (id == Material.getMaterial("PLAYER_HEAD")) {
                 u.guardarSkull(item, kitConfig, path, "");
             }
@@ -284,12 +284,12 @@ public class KitManager {
         u.guardarAttributes(item, kitConfig, path);
         u.guardarNBT(item, kitConfig, path);
 
-        if (datavalue != 0 && Utilidades.isLegacy()) {
+        if (datavalue != 0 && Utils.isLegacy()) {
             idtext = idtext + ":" + datavalue;
         }
         kitConfig.set(path + ".id", idtext + "");
         kitConfig.set(path + ".amount", amount + "");
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             kitConfig.set(path + ".durability", item.getDurability() + "");
         }
         if (item.hasItemMeta()) {
@@ -340,7 +340,7 @@ public class KitManager {
             } else {
                 kitConfig.set(path + ".unbreakable", "false");
             }
-            if (Utilidades.isNew()) {
+            if (Utils.isNew()) {
                 if (item.getItemMeta().hasCustomModelData()) {
                     kitConfig.set(path + ".custom_model_data", item.getItemMeta().getCustomModelData() + "");
                 }
@@ -370,11 +370,11 @@ public class KitManager {
             lore = kitConfig.getStringList(path + ".lore");
             for (int i = 0; i < lore.size(); i++) {
                 if (placeholderAPI) {
-                    String nueva = MensajesUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i))
+                    String nueva = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i))
                             .replace("%player%", jugador.getName()));
                     lore.set(i, nueva);
                 } else {
-                    lore.set(i, MensajesUtils.getMensajeColor(lore.get(i).replace("%player%", jugador.getName())));
+                    lore.set(i, MessageUtils.getMensajeColor(lore.get(i).replace("%player%", jugador.getName())));
                 }
             }
         }
@@ -387,9 +387,9 @@ public class KitManager {
         if (kitConfig.contains(pathamount)) {
             pathamountInt = Integer.valueOf(kitConfig.getString(pathamount));
         }
-        ItemStack crafteos = Utilidades.getItem(id, pathamountInt, "");
+        ItemStack crafteos = Utils.getItem(id, pathamountInt, "");
         String pathdurability = path + ".durability";
-        if (!Utilidades.isLegacy() && kitConfig.contains(pathdurability)) {
+        if (!Utils.isLegacy() && kitConfig.contains(pathdurability)) {
             crafteos.setDurability(Short.valueOf(kitConfig.getString(pathdurability)));
         }
         if ((crafteos.getType().name().contains("POTION") || crafteos.getType().name().contains("TIPPED_ARROW"))) {
@@ -466,7 +466,7 @@ public class KitManager {
 
             List<String> pages = kitConfig.getStringList(path + ".book-pages");
 
-            if (!Bukkit.getVersion().contains("1.12") && Utilidades.isLegacy()) {
+            if (!Bukkit.getVersion().contains("1.12") && Utils.isLegacy()) {
                 meta.setPages(new ArrayList<String>(pages));
             } else {
                 ArrayList<BaseComponent[]> pagesBaseComponent = new ArrayList<BaseComponent[]>();
@@ -516,7 +516,7 @@ public class KitManager {
         if (kitConfig.contains(path + ".banner-pattern")) {
             boolean esBanner = false;
             boolean esEscudo = false;
-            if (!Utilidades.isLegacy()) {
+            if (!Utils.isLegacy()) {
                 if (crafteos.getType().name().contains("BANNER")) {
                     esBanner = true;
                 } else if (crafteos.getType() == Material.SHIELD) {
@@ -557,12 +557,12 @@ public class KitManager {
             } else if (esEscudo) {
                 BlockStateMeta meta = (BlockStateMeta) crafteos.getItemMeta();
                 Banner banner = (Banner) meta.getBlockState();
-                if (Utilidades.isLegacy()) {
+                if (Utils.isLegacy()) {
                     String mainColor = kitConfig.getString(path + ".banner-color");
                     banner.setBaseColor(DyeColor.valueOf(mainColor));
                 } else {
                     String mainColor = kitConfig.getString(path + ".banner-color");
-                    banner.setBaseColor(Utilidades.getBannerColor(mainColor));
+                    banner.setBaseColor(Utils.getBannerColor(mainColor));
                 }
                 String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
                 if (!patternsPath.equals("")) {
@@ -587,12 +587,12 @@ public class KitManager {
         ItemMeta crafteosMeta = crafteos.getItemMeta();
         if (kitConfig.contains(path + ".name")) {
             if (placeholderAPI) {
-                String nombre = MensajesUtils.getMensajeColor(kitConfig.getString(path + ".name"));
+                String nombre = MessageUtils.getMensajeColor(kitConfig.getString(path + ".name"));
                 String nueva = PlaceholderAPI.setPlaceholders(jugador, nombre)
                         .replace("%player%", jugador.getName());
                 crafteosMeta.setDisplayName(nueva);
             } else {
-                crafteosMeta.setDisplayName(MensajesUtils.getMensajeColor(kitConfig.getString(path + ".name").replace("%player%", jugador.getName())));
+                crafteosMeta.setDisplayName(MessageUtils.getMensajeColor(kitConfig.getString(path + ".name").replace("%player%", jugador.getName())));
             }
 
         }
@@ -618,7 +618,7 @@ public class KitManager {
         for (int i = 0; i < flags.size(); i++) {
             crafteosMeta.addItemFlags(ItemFlag.valueOf(flags.get(i)));
         }
-        if (Utilidades.isNew()) {
+        if (Utils.isNew()) {
             if (kitConfig.contains(path + ".custom_model_data")) {
                 int customModelData = Integer.valueOf(kitConfig.getString(path + ".custom_model_data"));
                 crafteosMeta.setCustomModelData(customModelData);
@@ -627,17 +627,17 @@ public class KitManager {
         crafteos.setItemMeta(crafteosMeta);
         if (kitConfig.contains(unbreakablepath)) {
             if (kitConfig.getString(unbreakablepath).equals("true")) {
-                crafteos = Utilidades.setUnbreakable(crafteos);
+                crafteos = Utils.setUnbreakable(crafteos);
             }
         }
         if (idsplit[0].equals("PLAYER_HEAD") || id.equals("SKULL_ITEM:3")) {
-            crafteos = Utilidades.setSkull(crafteos, path, kitConfig);
+            crafteos = Utils.setSkull(crafteos, path, kitConfig);
         }
         if (kitConfig.contains(path + ".attributes")) {
-            crafteos = Utilidades.setAttributes(crafteos, kitConfig, path);
+            crafteos = Utils.setAttributes(crafteos, kitConfig, path);
         }
         if (kitConfig.contains(path + ".nbt")) {
-            crafteos = Utilidades.setNBT(crafteos, kitConfig, path);
+            crafteos = Utils.setNBT(crafteos, kitConfig, path);
         }
         return crafteos;
     }
@@ -650,20 +650,20 @@ public class KitManager {
         if (!ignoreValues) {
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
                 if (jManager.isOneTime(jugador, kit)) {
-                    jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.oneTimeError")));
+                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.oneTimeError")));
                     errorSonido(jugador, config);
                     return;
                 }
             }
             if (configKits.contains("Kits." + kit + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
-                jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.kitNoPermissions")));
+                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.kitNoPermissions")));
                 errorSonido(jugador, config);
                 return;
             }
             if (configKits.contains("Kits." + kit + ".cooldown")) {
-                String cooldown = Utilidades.getCooldown(kit, jugador, configKits, config, jManager);
+                String cooldown = Utils.getCooldown(kit, jugador, configKits, config, jManager);
                 if (!cooldown.equals("ready")) {
-                    jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.cooldownError").replace("%time%", cooldown)));
+                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cooldownError").replace("%time%", cooldown)));
                     errorSonido(jugador, config);
                     return;
                 }
@@ -675,7 +675,7 @@ public class KitManager {
                     Economy econ = plugin.getEconomy();
                     double balance = econ.getBalance(jugador);
                     if (balance < price) {
-                        jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
+                        jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
                                 .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
                         errorSonido(jugador, config);
                         return;
@@ -763,7 +763,7 @@ public class KitManager {
 
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
-            jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.noSpaceError")));
+            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noSpaceError")));
             errorSonido(jugador, config);
             return;
         }
@@ -842,7 +842,7 @@ public class KitManager {
         if (message) {
             String kitReceived = config.getString("Messages.kitReceived").replace("%name%", kit);
             if (!kitReceived.equals("") && !kitReceived.isEmpty()) {
-                jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + kitReceived));
+                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + kitReceived));
             }
 
         }
@@ -884,7 +884,7 @@ public class KitManager {
             for (int i = 0; i < comandos.size(); i++) {
                 if (comandos.get(i).startsWith("msg %player% ")) {
                     String mensaje = comandos.get(i).replace("msg %player% ", "");
-                    jugador.sendMessage(MensajesUtils.getMensajeColor(mensaje));
+                    jugador.sendMessage(MessageUtils.getMensajeColor(mensaje));
                 } else {
                     String comandoAEnviar = comandos.get(i).replace("%player%", jugador.getName());
                     Bukkit.dispatchCommand(consola, comandoAEnviar);

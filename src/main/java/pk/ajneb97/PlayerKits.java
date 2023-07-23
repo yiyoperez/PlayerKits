@@ -11,6 +11,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import pk.ajneb97.api.ExpansionPlayerKits;
 import pk.ajneb97.api.PlayerKitsAPI;
+import pk.ajneb97.commands.Comando;
+import pk.ajneb97.inventory.InventarioJugador;
+import pk.ajneb97.inventory.KitEditando;
 import pk.ajneb97.managers.InventarioConfirmacionDinero;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioListener;
@@ -20,7 +23,7 @@ import pk.ajneb97.managers.PlayerDataSaveTask;
 import pk.ajneb97.managers.PlayerListener;
 import pk.ajneb97.mysql.ConexionMySQL;
 import pk.ajneb97.mysql.MySQL;
-import pk.ajneb97.otros.Utilidades;
+import pk.ajneb97.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -268,7 +271,6 @@ public class PlayerKits extends JavaPlugin {
         return this.conexionDatabase.getConnection();
     }
 
-
     public JugadorManager getJugadorManager() {
         return jugadorManager;
     }
@@ -387,16 +389,16 @@ public class PlayerKits extends JavaPlugin {
         // Not sure if it works.
         if (!config.getKeys(true).isEmpty()) return;
 
-        config.set("Config.kit_page_sound", Utilidades.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
-        config.set("Config.kit_claim_sound", Utilidades.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
-        config.set("Config.kit_error_sound", Utilidades.isLegacy() ? "LEVELUP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+        config.set("Config.kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
+        config.set("Config.kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
+        config.set("Config.kit_error_sound", Utils.isLegacy() ? "LEVELUP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
 
-        config.set("Config.Inventory.0.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.8.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.36.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.44.id", Utilidades.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.18.id", Utilidades.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
-        config.set("Config.Inventory.26.id", Utilidades.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        config.set("Config.Inventory.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.36.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.44.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Config.Inventory.18.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        config.set("Config.Inventory.26.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
 
         config.set("Config.Inventory.0.name", " ");
         config.set("Config.Inventory.8.name", " ");

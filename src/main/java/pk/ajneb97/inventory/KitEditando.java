@@ -1,4 +1,4 @@
-package pk.ajneb97;
+package pk.ajneb97.inventory;
 
 import org.bukkit.entity.Player;
 

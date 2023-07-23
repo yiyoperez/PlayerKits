@@ -11,10 +11,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import pk.ajneb97.InventarioJugador;
+import pk.ajneb97.inventory.InventarioJugador;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.otros.MensajesUtils;
-import pk.ajneb97.otros.Utilidades;
+import pk.ajneb97.utils.MessageUtils;
+import pk.ajneb97.utils.Utils;
 
 import java.util.List;
 
@@ -29,15 +29,15 @@ public class InventarioConfirmacionDinero implements Listener {
     @SuppressWarnings("deprecation")
     public static void crearInventario(Player jugador, PlayerKits plugin, double dinero, String kit, int pagina) {
         FileConfiguration config = plugin.getConfig();
-        Inventory inv = Bukkit.createInventory(null, 9, MensajesUtils.getMensajeColor(config.getString("Messages.moneyInventoryName")));
+        Inventory inv = Bukkit.createInventory(null, 9, MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryName")));
         ItemStack item = null;
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
         } else {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 5);
         }
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(MensajesUtils.getMensajeColor(config.getString("Messages.moneyInventoryYes")));
+        meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryYes")));
         item.setItemMeta(meta);
         inv.setItem(0, item);
         inv.setItem(1, item);
@@ -45,13 +45,13 @@ public class InventarioConfirmacionDinero implements Listener {
         inv.setItem(3, item);
 
         item = null;
-        if (!Utilidades.isLegacy()) {
+        if (!Utils.isLegacy()) {
             item = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
         } else {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 14);
         }
         meta = item.getItemMeta();
-        meta.setDisplayName(MensajesUtils.getMensajeColor(config.getString("Messages.moneyInventoryNo")));
+        meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryNo")));
         item.setItemMeta(meta);
         inv.setItem(5, item);
         inv.setItem(6, item);
@@ -60,10 +60,10 @@ public class InventarioConfirmacionDinero implements Listener {
 
         item = new ItemStack(Material.COAL_BLOCK, 1);
         meta = item.getItemMeta();
-        meta.setDisplayName(MensajesUtils.getMensajeColor(config.getString("Messages.moneyInventoryConfirmationName")));
+        meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryConfirmationName")));
         List<String> lore = config.getStringList("Messages.moneyInventoryConfirmationLore");
         for (int i = 0; i < lore.size(); i++) {
-            lore.set(i, MensajesUtils.getMensajeColor(lore.get(i).replace("%price%", dinero + "")));
+            lore.set(i, MessageUtils.getMensajeColor(lore.get(i).replace("%price%", dinero + "")));
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -101,7 +101,7 @@ public class InventarioConfirmacionDinero implements Listener {
                             Economy econ = plugin.getEconomy();
                             double balance = econ.getBalance(jugador);
                             if (balance < price) {
-                                jugador.sendMessage(MensajesUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
+                                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
                                         .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
                             } else {
                                 KitManager.claimKit(jugador, kit, plugin, true, false, true);
