@@ -35,7 +35,8 @@ public class Comando implements CommandExecutor, TabCompleter {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration configKits = plugin.getKits();
         FileConfiguration messages = plugin.getMessages();
-        String prefix = config.getString("Messages.prefix");
+        String prefix = messages.getString("prefix");
+
         if (!(sender instanceof Player) && args.length > 0) {
 
             if (args[0].equalsIgnoreCase("reload")) {
@@ -68,7 +69,7 @@ public class Comando implements CommandExecutor, TabCompleter {
             return false;
         }
 
-
+        //TODO: This option stuck the player if is an admin, it doesn't let him use subcommands.
         if (config.getBoolean("claim_kit_short_command")) {
             // /kit <kit>
             String kit = getKit(configKits, args[0]);
