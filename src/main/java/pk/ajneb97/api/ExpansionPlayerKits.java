@@ -1,9 +1,8 @@
 package pk.ajneb97.api;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
 
 /**
@@ -18,7 +17,7 @@ import pk.ajneb97.PlayerKits;
 public class ExpansionPlayerKits extends PlaceholderExpansion {
 
     // We get an instance of the plugin later.
-    private PlayerKits plugin;
+    private final PlayerKits plugin;
 
     public ExpansionPlayerKits(PlayerKits plugin) {
         this.plugin = plugin;
@@ -53,7 +52,7 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
      * @return The name of the author as a String.
      */
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return "Ajneb97";
     }
 
@@ -67,7 +66,7 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "playerkits";
     }
 
@@ -78,7 +77,7 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
      * @return The version as a String.
      */
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
 
@@ -93,7 +92,7 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
      * @return possibly-null String of the requested identifier.
      */
     @Override
-    public String onPlaceholderRequest(Player player, String identifier) {
+    public String onPlaceholderRequest(Player player, @NotNull String identifier) {
 
         if (player == null) {
             return "";
