@@ -21,26 +21,25 @@ import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class Comando implements CommandExecutor, TabCompleter {
 
     private final String prefix;
-    private final FileConfiguration kits;
-    private final FileConfiguration config;
-    private final FileConfiguration messages;
     private final PlayerKits plugin;
 
 
     public Comando(PlayerKits plugin) {
         this.plugin = plugin;
-        this.kits = plugin.getKits();
-        this.config = plugin.getConfig();
-        this.messages = plugin.getMessages();
-        this.prefix = messages.getString("prefix");
+        this.prefix = plugin.getMessages().getString("prefix");
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
+
         if (!(sender instanceof Player) && args.length > 0) {
 
             String subCommand = args[0].toLowerCase();
@@ -122,6 +121,10 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private boolean quickClaimMethod(Player player, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
+
         if (config.getBoolean("claim_kit_short_command")) {
             String kit = getKit(kits, args[0]);
             if (kit == null) {
@@ -141,18 +144,14 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void helpArgument(CommandSender sender) {
-        // Really?
-        if (!sender.isOp() && !sender.hasPermission("playerkits.admin")) {
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
-            return;
-        }
-
+        FileConfiguration messages = plugin.getMessages();
         for (String helpMessage : messages.getStringList("command-help-message")) {
             sender.sendMessage(MessageUtils.getMensajeColor(helpMessage));
         }
     }
 
     private void openArgument(CommandSender sender, Player player, String[] args) {
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.open")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -162,6 +161,9 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     public void open(CommandSender sender, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         if (args.length < 2) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandOpenError")));
             return;
@@ -191,11 +193,15 @@ public class Comando implements CommandExecutor, TabCompleter {
                 return;
             }
         }
+
         InventarioManager.abrirInventarioMain(config, plugin, player, pag);
         sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitInventoryOpen").replace("%player%", args[1])));
     }
 
     private void createArgument(Player player, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.create")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -221,6 +227,8 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void deleteArgument(Player player, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.delete")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -243,6 +251,8 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void editArgument(Player player, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.edit")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -254,14 +264,18 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         String kit = getKit(kits, args[1]);
-        if (kit != null) {
-            InventarioEditar.crearInventario(player, kit, plugin);
-        } else {
+        if (kit == null) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+            return;
         }
+
+        InventarioEditar.crearInventario(player, kit, plugin);
     }
 
     private void listArgument(Player player) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.admin") && !player.hasPermission("playerkits.list")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -305,6 +319,8 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void claimArgument(Player player, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration messages = plugin.getMessages();
         if (args.length < 2) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandClaimError")));
             return;
@@ -324,6 +340,9 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void previewArgument(Player player, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         if (args.length < 2) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandPreviewError")));
             return;
@@ -336,26 +355,28 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.preview")) {
-            boolean hasPermission = true;
-            if (kits.contains("Kits." + kit + ".permission")) {
-                String permission = kits.getString("Kits." + kit + ".permission");
-                if (!player.isOp() && !player.hasPermission(permission)) {
-                    hasPermission = false;
-                }
-            }
             boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
-            if (permissionCheck && !hasPermission) {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
-                return;
+            if (permissionCheck) {
+                boolean hasPermission = true;
+                if (kits.contains("Kits." + kit + ".permission")) {
+                    String permission = kits.getString("Kits." + kit + ".permission");
+                    if (!player.isOp() && !player.hasPermission(permission)) {
+                        hasPermission = false;
+                    }
+                }
+
+                if (!hasPermission) {
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
+                    return;
+                }
             }
 
             InventarioPreview.abrirInventarioPreview(plugin, player, kit, 1);
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
         }
     }
 
     private void giveArgument(CommandSender sender, Player player, String[] args) {
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.give")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -365,6 +386,8 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     public void give(CommandSender sender, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration messages = plugin.getMessages();
         if (args.length < 3) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandGiveError")));
             return;
@@ -385,6 +408,7 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     private void resetArgument(CommandSender sender, Player player, String[] args) {
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.reset")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -394,27 +418,30 @@ public class Comando implements CommandExecutor, TabCompleter {
     }
 
     public void reset(CommandSender sender, String[] args) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration messages = plugin.getMessages();
         // /kits reset <kit> <player>
         if (args.length < 3) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandResetError")));
             return;
         }
 
-        String nombreJugador = args[2];
+        String name = args[2];
         String kit = getKit(kits, args[1]);
         if (kit == null) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
-        if (plugin.getJugadorManager().reiniciarKit(nombreJugador, kit)) {
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetCorrect").replace("%kit%", args[1]).replace("%player%", nombreJugador)));
+        if (plugin.getJugadorManager().resetKit(name, kit)) {
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetCorrect").replace("%kit%", args[1]).replace("%player%", name)));
         } else {
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetFail").replace("%kit%", args[1]).replace("%player%", nombreJugador)));
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetFail").replace("%kit%", args[1]).replace("%player%", name)));
         }
     }
 
     private void reloadArgument(Player player) {
+        FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.reload")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
@@ -444,13 +471,17 @@ public class Comando implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        List<String> completions = new ArrayList<>();
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
 
+        List<String> completions = new ArrayList<>();
         if (args.length == 1) {
             //Mostrar todos los comandos
             List<String> commands = new ArrayList<>();
             commands.add("preview");
-            if (config.getBoolean("claim_kit_short_command")) {
+            if (!config.getBoolean("claim_kit_short_command")) {
+                commands.add("claim");
+            } else {
                 String argKit = args[0];
                 for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
                     if (kits.contains("Kits." + key + ".slot") || sender.isOp() || sender.hasPermission("playerkits.admin")) {
@@ -459,8 +490,6 @@ public class Comando implements CommandExecutor, TabCompleter {
                         }
                     }
                 }
-            } else {
-                commands.add("claim");
             }
 
             for (String c : commands) {
@@ -481,7 +510,6 @@ public class Comando implements CommandExecutor, TabCompleter {
             }
         }
 
-
         if (sender.isOp() || sender.hasPermission("playerkits.admin") || sender.hasPermission("playerkits.list")) {
             if (args.length == 1) {
                 String c = "list";
@@ -490,6 +518,7 @@ public class Comando implements CommandExecutor, TabCompleter {
                 }
             }
         }
+
         if (sender.isOp() || sender.hasPermission("playerkits.admin")) {
             if (args.length == 1) {
                 //Mostrar todos los comandos
@@ -519,7 +548,7 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         if (completions.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
 
