@@ -201,10 +201,10 @@ public class JugadorManager {
         }
     }
 
-    public void setCooldown(Player jugador, String kit, long millis) {
-        JugadorDatos j = getJugadorPorUUID(jugador.getUniqueId().toString());
+    public void setCooldown(Player player, String kit, long millis) {
+        JugadorDatos j = getJugadorPorUUID(player.getUniqueId().toString());
         if (j == null) {
-            j = new JugadorDatos(jugador.getName(), jugador.getUniqueId().toString(), new ArrayList<>());
+            j = new JugadorDatos(player.getName(), player.getUniqueId().toString(), new ArrayList<>());
             agregarJugadorDatos(j);
         }
 
@@ -214,7 +214,7 @@ public class JugadorManager {
                 k.setCooldown(millis);
                 listo = true;
                 if (MySQL.isEnabled(plugin.getConfig())) {
-                    MySQL.crearKitJugador(plugin, jugador.getName(), j.getUuid(), k);
+                    MySQL.crearKitJugador(plugin, player.getName(), j.getUuid(), k);
                 }
                 break;
             }
@@ -224,26 +224,23 @@ public class JugadorManager {
             KitJugador kitNuevo = new KitJugador(kit, false, millis, false);
             j.getKits().add(kitNuevo);
             if (MySQL.isEnabled(plugin.getConfig())) {
-                MySQL.crearKitJugador(plugin, jugador.getName(), j.getUuid(), kitNuevo);
+                MySQL.crearKitJugador(plugin, player.getName(), j.getUuid(), kitNuevo);
             }
         }
     }
 
-    public boolean reiniciarKit(String jugador, String kit) {
-        JugadorDatos j = getJugadorPorNombre(jugador);
+    public boolean resetKit(String player, String kit) {
+        JugadorDatos j = getJugadorPorNombre(player);
         if (j == null) {
             return false;
         }
 
         ArrayList<KitJugador> kits = j.getKits();
-        for (int i = 0; i < kits.size(); i++) {
-            if (kits.get(i).getNombre().equals(kit)) {
-                kits.remove(i);
-                if (MySQL.isEnabled(plugin.getConfig())) {
-                    MySQL.reiniciarKitJugador(plugin, jugador, kit);
-                }
-                return true;
+        if (kits.removeIf(kitJugador -> kitJugador.getNombre().equalsIgnoreCase(kit))) {
+            if (MySQL.isEnabled(plugin.getConfig())) {
+                MySQL.reiniciarKitJugador(plugin, player, kit);
             }
+            return true;
         }
 
         return false;
