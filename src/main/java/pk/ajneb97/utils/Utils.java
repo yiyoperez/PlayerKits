@@ -80,7 +80,9 @@ public class Utils {
     public static ItemStack getItem(String id, int amount, String skulldata) {
         String[] idsplit = new String[2];
         int DataValue = 0;
+
         ItemStack stack = null;
+
         if (id.contains(":")) {
             idsplit = id.split(":");
             String stringDataValue = idsplit[1];
@@ -144,8 +146,8 @@ public class Utils {
                 }
             }
         }
-        if (config.contains("Config.Inventory")) {
-            for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
+        if (config.contains("Inventory")) {
+            for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
                 int slotOcupado = Integer.parseInt(key);
                 slotsOcupados.add(slotOcupado);
             }

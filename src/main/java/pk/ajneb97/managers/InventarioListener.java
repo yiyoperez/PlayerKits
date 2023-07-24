@@ -47,16 +47,16 @@ public class InventarioListener implements Listener {
                     FileConfiguration configKits = plugin.getKits();
                     FileConfiguration config = plugin.getConfig();
                     int paginasTotales = InventarioManager.getPaginasTotales(configKits);
-                    if (config.contains("Config.Inventory")) {
-                        for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
+                    if (config.contains("Inventory")) {
+                        for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
                             int slotNuevo = Integer.parseInt(key);
                             if (slot == slotNuevo) {
 
-                                if (config.contains("Config.Inventory." + key + ".type")) {
-                                    if (config.getString("Config.Inventory." + key + ".type").equals("previous_page")) {
+                                if (config.contains("Inventory." + key + ".type")) {
+                                    if (config.getString("Inventory." + key + ".type").equals("previous_page")) {
                                         if (pagina > 1) {
-                                            if (!config.getString("Config.kit_page_sound").equals("none")) {
-                                                String[] separados = config.getString("Config.kit_page_sound").split(";");
+                                            if (!config.getString("kit_page_sound").equals("none")) {
+                                                String[] separados = config.getString("kit_page_sound").split(";");
                                                 try {
                                                     Sound sound = Sound.valueOf(separados[0]);
                                                     jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
@@ -68,10 +68,10 @@ public class InventarioListener implements Listener {
                                             InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina - 1);
                                             return;
                                         }
-                                    } else if (config.getString("Config.Inventory." + key + ".type").equals("next_page")) {
+                                    } else if (config.getString("Inventory." + key + ".type").equals("next_page")) {
                                         if (paginasTotales > pagina) {
-                                            if (!config.getString("Config.kit_page_sound").equals("none")) {
-                                                String[] separados = config.getString("Config.kit_page_sound").split(";");
+                                            if (!config.getString("kit_page_sound").equals("none")) {
+                                                String[] separados = config.getString("kit_page_sound").split(";");
                                                 try {
                                                     Sound sound = Sound.valueOf(separados[0]);
                                                     jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
@@ -85,8 +85,8 @@ public class InventarioListener implements Listener {
                                     }
                                 }
 
-                                if (config.contains("Config.Inventory." + key + ".command")) {
-                                    String comando = config.getString("Config.Inventory." + key + ".command");
+                                if (config.contains("Inventory." + key + ".command")) {
+                                    String comando = config.getString("Inventory." + key + ".command");
                                     CommandSender console = Bukkit.getServer().getConsoleSender();
                                     String comandoAEnviar = comando.replaceAll("%player%", jugador.getName());
                                     Bukkit.dispatchCommand(console, comandoAEnviar);

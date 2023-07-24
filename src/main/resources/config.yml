@@ -1,6 +1,10 @@
-
+player_data_save_time: 300
+commands_before_items: false
 claim_kit_short_command: false
+close_inventory_on_claim: false
 nbt_alternative_data_save: false
+hide_kits_with_permissions: false
+drop_items_if_full_inventory: false
 preview_inventory_requires_permission: false
 
 inventory:
@@ -12,19 +16,14 @@ preview-inventory:
   back-item: true
   back-item-slot: 45
 
-Config:
-    hide_kits_with_permissions: false
-    close_inventory_on_claim: false
-    drop_items_if_full_inventory: false
-    commands_before_items: false
-    player_data_save_time: 300
-    inventory_pages_names:
-      1: "&9Kits"
-      2: "&bVIP Kits"
-    mysql_database:
-      enabled: false
-      host: localhost
-      port: 3306
-      username: root
-      password: root
-      database: database
+mysql_database:
+  enabled: false
+  host: localhost
+  port: 3306
+  username: root
+  password: root
+  database: database
+
+inventory_pages_names:
+  1: "&9Kits"
+  2: "&bVIP Kits"

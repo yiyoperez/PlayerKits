@@ -751,8 +751,8 @@ public class KitManager {
             }
         }
 
-        boolean tirarItems = config.getBoolean("Config.drop_items_if_full_inventory");
-        boolean ejecutarComandosPrimero = config.getBoolean("Config.commands_before_items");
+        boolean tirarItems = config.getBoolean("drop_items_if_full_inventory");
+        boolean ejecutarComandosPrimero = config.getBoolean("commands_before_items");
 
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
@@ -788,8 +788,8 @@ public class KitManager {
                 }
             }
 
-            if (!config.getString("Config.kit_claim_sound").equals("none")) {
-                String[] separados = config.getString("Config.kit_claim_sound").split(";");
+            if (!config.getString("kit_claim_sound").equals("none")) {
+                String[] separados = config.getString("kit_claim_sound").split(";");
                 try {
                     Sound sound = Sound.valueOf(separados[0]);
                     jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
@@ -840,16 +840,16 @@ public class KitManager {
             }
         }
 
-        if (config.getString("Config.close_inventory_on_claim").equals("true")) {
+        if (config.getBoolean("close_inventory_on_claim")) {
             jugador.closeInventory();
         }
     }
 
     public static void errorSonido(Player jugador, FileConfiguration config) {
-        if (config.getString("Config.kit_error_sound").equals("none")) {
+        if (config.getString("kit_error_sound").equals("none")) {
             return;
         }
-        String[] separados = config.getString("Config.kit_error_sound").split(";");
+        String[] separados = config.getString("kit_error_sound").split(";");
         try {
             Sound sound = Sound.valueOf(separados[0]);
             jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));

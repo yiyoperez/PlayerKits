@@ -33,12 +33,11 @@ public class InventarioManager {
         return this.taskID;
     }
 
-    public void actualizarInventario(final Player jugador, final int pagina) {
+    public void actualizarInventario(final Player player, final int pagina) {
         BukkitScheduler sh = Bukkit.getServer().getScheduler();
         taskID = sh.scheduleSyncRepeatingTask(plugin, () -> {
-            if (!update(jugador, pagina)) {
+            if (!update(player, pagina)) {
                 Bukkit.getScheduler().cancelTask(taskID);
-                return;
             }
         }, 0L, 20L);
     }
@@ -52,21 +51,21 @@ public class InventarioManager {
         Inventory inv = jugador.getOpenInventory().getTopInventory();
         int paginasTotales = getPaginasTotales(configKits);
         if (inv != null && ChatColor.stripColor(jugador.getOpenInventory().getTitle()).equals(pathInventoryM)) {
-            if (config.contains("Config.Inventory")) {
-                for (String key : config.getConfigurationSection("Config.Inventory").getKeys(false)) {
+            if (config.contains("Inventory")) {
+                for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
                     int slot = Integer.parseInt(key);
 
-                    ItemStack item = Utils.getItem(config.getString("Config.Inventory." + key + ".id"), 1, "");
+                    ItemStack item = Utils.getItem(config.getString("Inventory." + key + ".id"), 1, "");
                     ItemMeta meta = item.getItemMeta();
-                    if (config.contains("Config.Inventory." + key + ".name")) {
-                        String name = config.getString("Config.Inventory." + key + ".name");
+                    if (config.contains("Inventory." + key + ".name")) {
+                        String name = config.getString("Inventory." + key + ".name");
                         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                             name = PlaceholderAPI.setPlaceholders(jugador, name);
                         }
                         meta.setDisplayName(MessageUtils.getMensajeColor(name));
                     }
-                    if (config.contains("Config.Inventory." + key + ".lore")) {
-                        List<String> lore = config.getStringList("Config.Inventory." + key + ".lore");
+                    if (config.contains("Inventory." + key + ".lore")) {
+                        List<String> lore = config.getStringList("Inventory." + key + ".lore");
                         for (int i = 0; i < lore.size(); i++) {
                             String linea = lore.get(i);
                             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -78,23 +77,23 @@ public class InventarioManager {
                     }
                     meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
                     if (Utils.isNew()) {
-                        if (config.contains("Config.Inventory." + key + ".custom_model_data")) {
-                            int customModelData = config.getInt("Config.Inventory." + key + ".custom_model_data");
+                        if (config.contains("Inventory." + key + ".custom_model_data")) {
+                            int customModelData = config.getInt("Inventory." + key + ".custom_model_data");
                             meta.setCustomModelData(customModelData);
                         }
                     }
                     item.setItemMeta(meta);
-                    if (config.contains("Config.Inventory." + key + ".skulldata")) {
-                        String[] skulldata = config.getString("Config.Inventory." + key + ".skulldata").split(";");
+                    if (config.contains("Inventory." + key + ".skulldata")) {
+                        String[] skulldata = config.getString("Inventory." + key + ".skulldata").split(";");
                         item = Utils.setSkull(item, skulldata[0], skulldata[1]);
                     }
 
-                    if (config.contains("Config.Inventory." + key + ".type")) {
-                        if (config.getString("Config.Inventory." + key + ".type").equals("previous_page")) {
+                    if (config.contains("Inventory." + key + ".type")) {
+                        if (config.getString("Inventory." + key + ".type").equals("previous_page")) {
                             if (pagina == 1) {
                                 continue;
                             }
-                        } else if (config.getString("Config.Inventory." + key + ".type").equals("next_page")) {
+                        } else if (config.getString("Inventory." + key + ".type").equals("next_page")) {
                             if (paginasTotales <= pagina) {
                                 continue;
                             }
@@ -114,7 +113,7 @@ public class InventarioManager {
                         }
                         if (page == pagina) {
                             if (configKits.contains("Kits." + key + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
-                                if (config.getString("Config.hide_kits_with_permissions").equals("true")) {
+                                if (config.getBoolean("hide_kits_with_permissions")) {
                                     continue;
                                 }
                             }
@@ -246,10 +245,10 @@ public class InventarioManager {
     }
 
     public static String getInventoryPageName(FileConfiguration config, int page) {
-        String defaultPage = config.getString("Config.inventory_pages_names.1");
-        for (String key : config.getConfigurationSection("Config.inventory_pages_names").getKeys(false)) {
+        String defaultPage = config.getString("inventory_pages_names.1");
+        for (String key : config.getConfigurationSection("inventory_pages_names").getKeys(false)) {
             if (key.equals(String.valueOf(page))) {
-                return config.getString("Config.inventory_pages_names." + key);
+                return config.getString("inventory_pages_names." + key);
             }
         }
         return defaultPage;

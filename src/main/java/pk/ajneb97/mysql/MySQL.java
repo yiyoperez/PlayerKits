@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class MySQL {
 
     public static boolean isEnabled(FileConfiguration config) {
-        return config.getString("Config.mysql_database.enabled").equals("true");
+        return config.getBoolean("mysql_database.enabled");
     }
 
     public static void createTable(PlayerKits plugin) {

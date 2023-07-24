@@ -18,7 +18,7 @@ public class PlayerDataSaveTask {
     }
 
     public void start() {
-        int timeSeconds = plugin.getConfig().getInt("Config.player_data_save_time");
+        int timeSeconds = plugin.getConfig().getInt("player_data_save_time");
         new BukkitRunnable() {
             @Override
             public void run() {

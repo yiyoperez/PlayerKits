@@ -12,8 +12,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pk.ajneb97.api.ExpansionPlayerKits;
 import pk.ajneb97.api.PlayerKitsAPI;
 import pk.ajneb97.commands.Comando;
-import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.inventory.KitEditando;
+import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.managers.InventarioConfirmacionDinero;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioListener;
@@ -389,27 +389,27 @@ public class PlayerKits extends JavaPlugin {
         // Not sure if it works.
         if (config.getKeys(true).isEmpty()) return;
 
-        config.set("Config.kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
-        config.set("Config.kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
-        config.set("Config.kit_error_sound", Utils.isLegacy() ? "LEVELUP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+        config.set("kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
+        config.set("kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
+        config.set("kit_error_sound", Utils.isLegacy() ? "LEVELUP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
 
-        config.set("Config.Inventory.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.36.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.44.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Config.Inventory.18.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
-        config.set("Config.Inventory.26.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        config.set("Inventory.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Inventory.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Inventory.36.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Inventory.44.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("Inventory.18.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        config.set("Inventory.26.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
 
-        config.set("Config.Inventory.0.name", " ");
-        config.set("Config.Inventory.8.name", " ");
-        config.set("Config.Inventory.36.name", " ");
-        config.set("Config.Inventory.44.name", " ");
-        config.set("Config.Inventory.18.name", "&6Previous Page");
-        config.set("Config.Inventory.18.skulldata", "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
-        config.set("Config.Inventory.18.type", "previous_page");
-        config.set("Config.Inventory.26.name", "&6Next Page");
-        config.set("Config.Inventory.26.skulldata", "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
-        config.set("Config.Inventory.26.type", "next_page");
+        config.set("Inventory.0.name", " ");
+        config.set("Inventory.8.name", " ");
+        config.set("Inventory.36.name", " ");
+        config.set("Inventory.44.name", " ");
+        config.set("Inventory.18.name", "&6Previous Page");
+        config.set("Inventory.18.skulldata", "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
+        config.set("Inventory.18.type", "previous_page");
+        config.set("Inventory.26.name", "&6Next Page");
+        config.set("Inventory.26.skulldata", "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
+        config.set("Inventory.26.type", "next_page");
 
         this.saveConfig();
     }

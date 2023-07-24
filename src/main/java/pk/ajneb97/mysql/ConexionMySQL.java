@@ -18,11 +18,11 @@ public class ConexionMySQL {
 
     public void setupMySql(PlayerKits plugin, FileConfiguration config) {
         try {
-            host = config.getString("Config.mysql_database.host");
-            port = config.getInt("Config.mysql_database.port");
-            database = config.getString("Config.mysql_database.database");
-            username = config.getString("Config.mysql_database.username");
-            password = config.getString("Config.mysql_database.password");
+            host = config.getString("mysql_database.host");
+            port = config.getInt("mysql_database.port");
+            database = config.getString("mysql_database.database");
+            username = config.getString("mysql_database.username");
+            password = config.getString("mysql_database.password");
             connection = new ConexionHikari(host, port, database, username, password);
             connection.getHikari().getConnection();
             MySQL.createTable(plugin);
