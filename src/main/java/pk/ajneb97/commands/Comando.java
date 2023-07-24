@@ -48,6 +48,7 @@ public class Comando implements CommandExecutor, TabCompleter {
                 case "reload":
                     plugin.reloadConfig();
                     plugin.reloadKits();
+                    plugin.reloadMessages();
                     plugin.reloadPlayerDataSaveTask();
                     sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
                     break;
@@ -63,18 +64,19 @@ public class Comando implements CommandExecutor, TabCompleter {
                 default:
                     helpArgument(sender);
             }
-            return false;
+            return true;
         }
 
         final Player player = (Player) sender;
         // Open inventory if empty command.
         if (args.length == 0) {
-            //Abrir inventario
-            if (!Checks.checkTodo(plugin, player)) {
-                return true;
-            }
+            //Verify main inventory items.
+
+            if (Checks.mainInventoryContainsBadItems(plugin, player)) return true;
+
+            // Finally open inventory to player.
             InventarioManager.abrirInventarioMain(config, plugin, player, 1);
-            return false;
+            return true;
         }
 
         //TODO: This option gets stuck player is an admin, it doesn't let him use subcommands.
@@ -163,7 +165,9 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         Player player = Bukkit.getPlayer(args[1]);
-        if (!Checks.checkTodo(plugin, sender)) return;
+
+        // If main inventory contains bad items return.
+        if (Checks.mainInventoryContainsBadItems(plugin, player)) return;
 
         if (player == null) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[1])));
@@ -412,7 +416,9 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         plugin.reloadConfig();
+        plugin.reloadMessages();
         plugin.reloadKits();
+
         plugin.reloadPlayerDataSaveTask();
         player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
     }

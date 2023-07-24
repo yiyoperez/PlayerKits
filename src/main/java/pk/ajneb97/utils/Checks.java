@@ -4,48 +4,67 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import pk.ajneb97.PlayerKits;
 
 public class Checks {
 
-    public static boolean checkTodo(PlayerKits plugin, CommandSender jugador) {
-        FileConfiguration config = plugin.getConfig();
-        FileConfiguration messages = plugin.getMessages();
-        String prefix = messages.getString("prefix");
-        String mensaje = prefix + config.getString("Messages.materialNameError");
 
+    public static boolean mainInventoryContainsBadItems(PlayerKits plugin, Player player) {
+        boolean badItems = false;
 
-        ConfigurationSection section = config.getConfigurationSection("Config.Inventory");
-        //Check config.yml
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("Inventory");
+
         if (section != null) {
             for (String key : section.getKeys(false)) {
-                //TODO: wtf does this check.
-                if (!comprobarMaterial(config.getString("Config.Inventory." + key + ".id"), jugador, mensaje)) {
-                    return false;
+                if (Checks.containsBadItems(plugin, player, section.getString(key + ".id"), key)) {
+                    badItems = true;
+                    break;
                 }
             }
         }
 
-        return true;
+        return badItems;
     }
 
-    @SuppressWarnings({"deprecation", "unused"})
-    public static boolean comprobarMaterial(String key, CommandSender jugador, String mensaje) {
+    public static boolean containsBadItems(PlayerKits plugin, CommandSender player, String id, String key) {
 
-        // TODO: this needs a better code and check.
-        if (key.contains(":")) {
-            String[] idsplit = key.split(":");
-            String stringDataValue = idsplit[1];
-            short DataValue = Short.parseShort(stringDataValue);
-            Material mat = Material.getMaterial(idsplit[0].toUpperCase());
-            ItemStack item = new ItemStack(mat, 1, DataValue);
-        } else {
-            ItemStack item = new ItemStack(Material.getMaterial(key), 1);
+        if (!materialExists(id)) {
+            FileConfiguration messages = plugin.getMessages();
+            String prefix = messages.getString("prefix");
+            String message = prefix + messages.getString("materialNameError");
+            player.sendMessage(MessageUtils.getMensajeColor(message.replace("%material%", id).replace("%key%", key)));
+            return true;
         }
 
-        //jugador.sendMessage(MessageUtils.getMensajeColor(mensaje.replace("%material%", key)));
+        return false;
+    }
 
-        return true;
+    @SuppressWarnings("deprecation")
+    public static boolean materialExists(String key) {
+        String materialID;
+        short dataValue = 0;
+        if (key.contains(":")) {
+            String[] split = key.split(":");
+            if (split.length == 1) {
+                return false;
+            }
+            materialID = split[0];
+            dataValue = Short.parseShort(split[1]);
+        } else {
+            materialID = key;
+        }
+
+        Material material = Material.matchMaterial(materialID);
+        if (material == null) return false;
+
+        try {
+            new ItemStack(material, 1, dataValue);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
