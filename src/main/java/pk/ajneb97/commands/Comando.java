@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioManager;
-import pk.ajneb97.managers.InventarioPreview;
+import pk.ajneb97.managers.InventoryPreview;
 import pk.ajneb97.managers.JugadorManager;
 import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.utils.Checks;
@@ -371,7 +371,7 @@ public class Comando implements CommandExecutor, TabCompleter {
                 }
             }
 
-            InventarioPreview.abrirInventarioPreview(plugin, player, kit, 1);
+            InventoryPreview.abrirInventarioPreview(plugin, player, kit, 1);
         }
     }
 

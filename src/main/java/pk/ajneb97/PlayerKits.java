@@ -17,7 +17,7 @@ import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.managers.InventarioConfirmacionDinero;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioListener;
-import pk.ajneb97.managers.InventarioPreview;
+import pk.ajneb97.managers.InventoryPreview;
 import pk.ajneb97.managers.JugadorManager;
 import pk.ajneb97.managers.PlayerDataSaveTask;
 import pk.ajneb97.managers.PlayerListeners;
@@ -99,7 +99,7 @@ public class PlayerKits extends JavaPlugin {
     public void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new InventarioListener(this), this);
-        pm.registerEvents(new InventarioPreview(this), this);
+        pm.registerEvents(new InventoryPreview(this), this);
         pm.registerEvents(new PlayerListeners(this), this);
         pm.registerEvents(new InventarioEditar(this), this);
         pm.registerEvents(new InventarioConfirmacionDinero(this), this);
