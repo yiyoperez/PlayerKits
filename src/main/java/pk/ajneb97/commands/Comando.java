@@ -123,10 +123,13 @@ public class Comando implements CommandExecutor, TabCompleter {
 
     private boolean quickClaimMethod(Player player, String[] args) {
         if (config.getBoolean("claim_kit_short_command")) {
-            // /kit <kit>
             String kit = getKit(kits, args[0]);
             if (kit == null) {
+                if (player.hasPermission("playerkits.bypass.short.claim")) {
+                    return false;
+                }
                 player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[0])));
+                return true;
             }
 
             if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
