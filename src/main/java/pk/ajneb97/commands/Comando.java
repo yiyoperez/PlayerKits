@@ -268,38 +268,40 @@ public class Comando implements CommandExecutor, TabCompleter {
         }
 
         player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandList")));
-        int c = 1;
         JugadorManager jManager = plugin.getJugadorManager();
+
+        // There is no kits available.
         if (!kits.contains("Kits")) {
-            // There is no kits available.
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandListEmpty")));
             return;
         }
 
+        StringJoiner list = new StringJoiner(messages.getString("commandListKitDisplayFormat", "&r, "));
         for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
             if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.list")) {
                 if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
-                    player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitNoPermissions").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
+                    list.add(messages.getString("commandListKitNoPermissions").replace("%kit%", key));
                 } else {
-                    if (kits.contains("Kits." + key + ".one_time") && kits.getString("Kits." + key + ".one_time").equals("true") && jManager.isOneTime(player, key)) {
-                        player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitOneTime").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
+                    if (kits.contains("Kits." + key + ".one_time") && kits.getBoolean("Kits." + key + ".one_time") && jManager.isOneTime(player, key)) {
+                        list.add(messages.getString("commandListKitOneTime").replace("%kit%", key));
                     } else {
                         boolean cooldownReady = true;
                         if (kits.contains("Kits." + key + ".cooldown")) {
                             String cooldown = Utils.getCooldown(key, player, kits, config, jManager);
                             if (!cooldown.equals("ready")) {
                                 cooldownReady = false;
-                                player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKitInCooldown").replace("%number%", String.valueOf(c)).replace("%kit%", key).replace("%time%", cooldown)));
+                                list.add(messages.getString("commandListKitInCooldown").replace("%kit%", key).replace("%time%", cooldown));
                             }
                         }
                         if (cooldownReady) {
-                            player.sendMessage(MessageUtils.getMensajeColor(messages.getString("commandListKit").replace("%number%", String.valueOf(c)).replace("%kit%", key)));
+                            list.add(messages.getString("commandListKit").replace("%kit%", key));
                         }
                     }
                 }
-                c++;
             }
-
         }
+
+        player.sendMessage(MessageUtils.getMensajeColor(String.valueOf(list)));
     }
 
     private void claimArgument(Player player, String[] args) {
