@@ -74,7 +74,7 @@ public class Comando implements CommandExecutor, TabCompleter {
             if (Checks.mainInventoryContainsBadItems(plugin, player)) return true;
 
             // Finally open inventory to player.
-            InventarioManager.abrirInventarioMain(config, plugin, player, 1);
+            InventarioManager.openMainInventory(config, plugin, player, 1);
             return true;
         }
 
@@ -183,7 +183,7 @@ public class Comando implements CommandExecutor, TabCompleter {
         if (args.length >= 3) {
             try {
                 pag = Integer.parseInt(args[2]);
-                int pagsTotales = InventarioManager.getPaginasTotales(kits);
+                int pagsTotales = InventarioManager.getCurrentPages(kits);
                 if (pag > pagsTotales) {
                     sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("errorPage")));
                     return;
@@ -194,7 +194,7 @@ public class Comando implements CommandExecutor, TabCompleter {
             }
         }
 
-        InventarioManager.abrirInventarioMain(config, plugin, player, pag);
+        InventarioManager.openMainInventory(config, plugin, player, pag);
         sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitInventoryOpen").replace("%player%", args[1])));
     }
 

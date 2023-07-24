@@ -106,7 +106,7 @@ public class InventarioConfirmacionDinero implements Listener {
                             KitManager.claimKit(jugador, kit, plugin, true, false, true);
                             int pag = inv.getPagina();
                             if (pag != -1) {
-                                InventarioManager.abrirInventarioMain(config, plugin, jugador, pag);
+                                InventarioManager.openMainInventory(config, plugin, jugador, pag);
                             } else {
                                 jugador.closeInventory();
                             }
@@ -115,7 +115,7 @@ public class InventarioConfirmacionDinero implements Listener {
                     } else if (slot >= 5 && slot <= 8) {
                         int pag = inv.getPagina();
                         if (pag != -1) {
-                            InventarioManager.abrirInventarioMain(config, plugin, jugador, pag);
+                            InventarioManager.openMainInventory(config, plugin, jugador, pag);
                         } else {
                             jugador.closeInventory();
                         }

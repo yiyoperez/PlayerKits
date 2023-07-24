@@ -24,7 +24,7 @@ public class InventarioListener implements Listener {
     }
 
     @EventHandler
-    public void clickInventario(InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         Player jugador = (Player) event.getWhoClicked();
         PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
         if (inv != null) {
@@ -46,7 +46,7 @@ public class InventarioListener implements Listener {
                     int pagina = inv.getPagina();
                     FileConfiguration configKits = plugin.getKits();
                     FileConfiguration config = plugin.getConfig();
-                    int paginasTotales = InventarioManager.getPaginasTotales(configKits);
+                    int paginasTotales = InventarioManager.getCurrentPages(configKits);
                     if (config.contains("Inventory")) {
                         for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
                             int slotNuevo = Integer.parseInt(key);
@@ -65,7 +65,7 @@ public class InventarioListener implements Listener {
                                                 }
                                             }
 
-                                            InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina - 1);
+                                            InventarioManager.openMainInventory(config, plugin, jugador, pagina - 1);
                                             return;
                                         }
                                     } else if (config.getString("Inventory." + key + ".type").equals("next_page")) {
@@ -79,7 +79,7 @@ public class InventarioListener implements Listener {
                                                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                                                 }
                                             }
-                                            InventarioManager.abrirInventarioMain(config, plugin, jugador, pagina + 1);
+                                            InventarioManager.openMainInventory(config, plugin, jugador, pagina + 1);
                                             return;
                                         }
                                     }

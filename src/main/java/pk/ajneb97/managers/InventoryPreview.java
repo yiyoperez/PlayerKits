@@ -87,7 +87,7 @@ public class InventoryPreview implements Listener {
             if (inv.getTipoInventario().equals("preview")) {
                 int slotAClickear = config.getInt("preview-inventory.back-item-slot");
                 if (slot == slotAClickear && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-                    InventarioManager.abrirInventarioMain(config, plugin, jugador, inv.getPagina());
+                    InventarioManager.openMainInventory(config, plugin, jugador, inv.getPagina());
                 }
             }
         }
