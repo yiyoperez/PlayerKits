@@ -158,7 +158,7 @@ public class PlayerKits extends JavaPlugin {
         }
     }
 
-    private void saveMessages() {
+    public void saveMessages() {
         try {
             this.messages.save(this.messagesFile);
         } catch (IOException e) {
