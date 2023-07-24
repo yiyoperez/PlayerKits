@@ -19,20 +19,18 @@ public class InventoryPreview implements Listener {
 
     private final PlayerKits plugin;
 
-    private static FileConfiguration kits;
-    private static FileConfiguration config;
-    private static FileConfiguration messages;
-
     public InventoryPreview(PlayerKits plugin) {
         this.plugin = plugin;
-        kits = plugin.getKits();
-        config = plugin.getConfig();
-        messages = plugin.getMessages();
     }
 
-    public static void abrirInventarioPreview(PlayerKits plugin, Player jugador, String kit, int pagina) {
+    public static void abrirInventarioPreview(PlayerKits plugin, Player player, String kit, int page) {
+        FileConfiguration kits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
+
         int slots = config.getInt("preview-inventory.size");
         Inventory inv = Bukkit.createInventory(null, slots, MessageUtils.getMensajeColor(messages.getString("previewInventoryName")));
+
         if (config.getBoolean("preview-inventory.back-item")) {
             ItemStack item = new ItemStack(Material.ARROW);
             ItemMeta meta = item.getItemMeta();
@@ -41,17 +39,16 @@ public class InventoryPreview implements Listener {
             inv.setItem(config.getInt("preview-inventory.back-item-slot"), item);
         }
 
-
-        int slot = 0;
         if (!kits.contains("Kits." + kit + ".Items")) {
-            //No tiene items, solo comandos?
             String prefix = messages.getString("prefix");
-            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPreviewError")));
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPreviewError")));
             return;
         }
+
+        int slot = 0;
         for (String n : kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
             String path = "Kits." + kit + ".Items." + n;
-            ItemStack item = KitManager.getItem(kits, path, config, jugador);
+            ItemStack item = KitManager.getItem(kits, path, config, player);
             try {
                 if (kits.contains(path + ".preview_slot")) {
                     inv.setItem(kits.getInt(path + ".preview_slot"), item);
@@ -60,14 +57,14 @@ public class InventoryPreview implements Listener {
                     slot++;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                jugador.sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&cThere is an error. Items for this kits are set on an invalid slot of the preview inventory. Change the &7previewInventorySize &coption in the config.yml file!"));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&cThere is an error. Items for this kits are set on an invalid slot of the preview inventory. Change the &7previewInventorySize &coption in the config.yml file!"));
                 return;
             }
         }
 
-        jugador.openInventory(inv);
+        player.openInventory(inv);
 
-        plugin.agregarInventarioJugador(new PlayerInventory(jugador, pagina, null, "preview"));
+        plugin.agregarInventarioJugador(new PlayerInventory(player, page, null, "preview"));
     }
 
     @EventHandler
@@ -75,26 +72,22 @@ public class InventoryPreview implements Listener {
         FileConfiguration config = plugin.getConfig();
         Player jugador = (Player) event.getWhoClicked();
         PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
-        if (inv != null) {
-            if (event.getCurrentItem() == null) {
-                event.setCancelled(true);
-                return;
-            }
-            // :(
-            if (event.getSlotType() == null) {
-                event.setCancelled(true);
-                return;
-            }
+        if (inv == null) {
+            return;
+        }
 
-            int slot = event.getSlot();
+        if (event.getCurrentItem() == null) {
             event.setCancelled(true);
-            if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
-                String tipoInventario = inv.getTipoInventario();
-                if (tipoInventario.equals("preview")) {
-                    int slotAClickear = config.getInt("preview-inventory.back-item-slot");
-                    if (slot == slotAClickear && !event.getCurrentItem().getType().name().contains("AIR")) {
-                        InventarioManager.abrirInventarioMain(config, plugin, jugador, inv.getPagina());
-                    }
+            return;
+        }
+
+        int slot = event.getSlot();
+        event.setCancelled(true);
+        if (event.getClickedInventory() == jugador.getOpenInventory().getTopInventory()) {
+            if (inv.getTipoInventario().equals("preview")) {
+                int slotAClickear = config.getInt("preview-inventory.back-item-slot");
+                if (slot == slotAClickear && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
+                    InventarioManager.abrirInventarioMain(config, plugin, jugador, inv.getPagina());
                 }
             }
         }
