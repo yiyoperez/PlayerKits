@@ -20,7 +20,7 @@ import pk.ajneb97.managers.InventarioListener;
 import pk.ajneb97.managers.InventarioPreview;
 import pk.ajneb97.managers.JugadorManager;
 import pk.ajneb97.managers.PlayerDataSaveTask;
-import pk.ajneb97.managers.PlayerListener;
+import pk.ajneb97.managers.PlayerListeners;
 import pk.ajneb97.mysql.ConexionMySQL;
 import pk.ajneb97.mysql.MySQL;
 import pk.ajneb97.utils.Utils;
@@ -100,7 +100,7 @@ public class PlayerKits extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new InventarioListener(this), this);
         pm.registerEvents(new InventarioPreview(this), this);
-        pm.registerEvents(new PlayerListener(this), this);
+        pm.registerEvents(new PlayerListeners(this), this);
         pm.registerEvents(new InventarioEditar(this), this);
         pm.registerEvents(new InventarioConfirmacionDinero(this), this);
     }
