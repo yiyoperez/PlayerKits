@@ -391,7 +391,7 @@ public class PlayerKits extends JavaPlugin {
 
         config.set("kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
         config.set("kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
-        config.set("kit_error_sound", Utils.isLegacy() ? "LEVELUP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+        config.set("kit_error_sound", Utils.isLegacy() ? "LEVEL_UP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
 
         config.set("Inventory.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
         config.set("Inventory.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
