@@ -120,7 +120,7 @@ public class InventarioListener implements Listener {
                                                 return;
                                             }
 
-                                            InventarioPreview.abrirInventarioPreview(plugin, jugador, key, inv.getPagina());
+                                            InventoryPreview.abrirInventarioPreview(plugin, jugador, key, inv.getPagina());
                                         } else {
                                             KitManager.claimKit(jugador, key, plugin, true, false, false);
 

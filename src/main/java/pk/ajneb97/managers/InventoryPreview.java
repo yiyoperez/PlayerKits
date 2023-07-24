@@ -15,7 +15,7 @@ import pk.ajneb97.PlayerKits;
 import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.utils.MessageUtils;
 
-public class InventarioPreview implements Listener {
+public class InventoryPreview implements Listener {
 
     private final PlayerKits plugin;
 
@@ -23,7 +23,7 @@ public class InventarioPreview implements Listener {
     private static FileConfiguration config;
     private static FileConfiguration messages;
 
-    public InventarioPreview(PlayerKits plugin) {
+    public InventoryPreview(PlayerKits plugin) {
         this.plugin = plugin;
         kits = plugin.getKits();
         config = plugin.getConfig();
