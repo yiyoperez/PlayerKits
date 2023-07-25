@@ -16,6 +16,7 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -270,24 +271,24 @@ public class KitManager {
         //todo ???
         if (!Utils.isLegacy()) {
             if (id == Material.getMaterial("PLAYER_HEAD")) {
-                Utils.guardarSkull(item, kitConfig, path, "");
+                Utils.saveSkull(item, kitConfig, path, "");
             }
         } else {
             if (id == Material.valueOf("SKULL_ITEM") && datavalue == 3) {
-                Utils.guardarSkull(item, kitConfig, path, "");
+                Utils.saveSkull(item, kitConfig, path, "");
                 idtext = "SKULL_ITEM";
             }
 
         }
 
-        Utils.guardarAttributes(item, kitConfig, path);
-        Utils.guardarNBT(item, kitConfig, path);
+        Utils.saveAttributes(item, kitConfig, path);
+        Utils.saveNBT(item, kitConfig, path);
 
         if (datavalue != 0 && Utils.isLegacy()) {
             idtext = idtext + ":" + datavalue;
         }
         kitConfig.set(path + ".id", idtext);
-        kitConfig.set(path + ".amount", String.valueOf(amount));
+        kitConfig.set(path + ".amount", amount);
         if (!Utils.isLegacy()) {
             kitConfig.set(path + ".durability", String.valueOf(item.getDurability()));
         }
@@ -330,12 +331,8 @@ public class KitManager {
                 kitConfig.set(path + ".hide-flags", stringflags);
             }
 
+            //kitConfig.set(path + ".unbreakable", Utils.getUnbreakable(item));
 
-            if (Utils.getUnbreakable(item)) {
-                kitConfig.set(path + ".unbreakable", "true");
-            } else {
-                kitConfig.set(path + ".unbreakable", "false");
-            }
             if (Utils.isNew()) {
                 if (item.getItemMeta().hasCustomModelData()) {
                     kitConfig.set(path + ".custom_model_data", String.valueOf(item.getItemMeta().getCustomModelData()));
@@ -371,8 +368,6 @@ public class KitManager {
                 }
             }
         }
-        List<String> enchants = new ArrayList<>();
-        enchants = kitConfig.getStringList(path + ".enchants");
         List<String> flags = new ArrayList<>();
         flags = kitConfig.getStringList(path + ".hide-flags");
         String pathamount = path + ".amount";

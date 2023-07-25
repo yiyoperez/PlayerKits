@@ -783,16 +783,17 @@ public class InventarioEditar implements Listener {
                 }
             }
 
-            if (!Utils.isLegacy()) {
+            Utils.saveSkullDisplay(item, kits, path);
+
+            /*if (!Utils.isLegacy()) {
                 if (id == Material.getMaterial("PLAYER_HEAD")) {
-                    Utils.guardarSkullDisplay(item, kits, path);
                 }
             } else {
                 if (id == Material.valueOf("SKULL_ITEM") && datavalue == 3) {
-                    Utils.guardarSkullDisplay(item, kits, path);
+                    Utils.saveSkullDisplay(item, kits, path);
                 }
 
-            }
+            }*/
         } else {
             kits.set(path + ".display_item", null);
         }
@@ -1216,7 +1217,8 @@ public class InventarioEditar implements Listener {
             FileConfiguration kits = plugin.getKits();
             event.setCancelled(true);
             FileConfiguration config = plugin.getConfig();
-            String prefix = ChatColor.translateAlternateColorCodes('&', config.getString("Messages.prefix"));
+            FileConfiguration messages = plugin.getMessages();
+            String prefix = ChatColor.translateAlternateColorCodes('&', messages.getString("prefix"));
             String paso = kit.getPaso();
             //TODO: Reduce if statements.
             if (paso.equals("slot")) {

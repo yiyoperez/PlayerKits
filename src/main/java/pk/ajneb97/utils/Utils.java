@@ -1,5 +1,8 @@
 package pk.ajneb97.utils;
 
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -14,6 +17,7 @@ import pk.ajneb97.managers.JugadorManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Utils {
 
@@ -30,7 +34,7 @@ public class Utils {
                 || Bukkit.getVersion().contains("1.19") || Bukkit.getVersion().contains("1.20");
     }
 
-    public static String getCooldown(String kit, Player jugador, FileConfiguration kitConfig, FileConfiguration config, JugadorManager jManager) {
+    public static String getCooldown(String kit, Player jugador, FileConfiguration kitConfig, FileConfiguration messages, JugadorManager jManager) {
         //1000millis claimea un kit de 5 segundos
         //6000millis puede claimearlo otra vez (timecooldown)
 
@@ -53,21 +57,21 @@ public class Utils {
             if (esperatotalseg > 59) {
                 esperatotalseg = esperatotalseg - 60 * esperatotalmin;
             }
-            String time = esperatotalseg + config.getString("Messages.seconds");
+            String time = esperatotalseg + messages.getString("seconds");
             if (esperatotalmin > 59) {
                 esperatotalmin = esperatotalmin - 60 * esperatotalhour;
             }
             if (esperatotalmin > 0) {
-                time = esperatotalmin + config.getString("Messages.minutes") + " " + time;
+                time = esperatotalmin + messages.getString("minutes") + " " + time;
             }
             if (esperatotalhour > 24) {
                 esperatotalhour = esperatotalhour - 24 * esperatotalday;
             }
             if (esperatotalhour > 0) {
-                time = esperatotalhour + config.getString("Messages.hours") + " " + time;
+                time = esperatotalhour + messages.getString("hours") + " " + time;
             }
             if (esperatotalday > 0) {
-                time = esperatotalday + config.getString("Messages.days") + " " + time;
+                time = esperatotalday + messages.getString("days") + " " + time;
             }
 
             return time;
@@ -93,6 +97,7 @@ public class Utils {
             Material mat = Material.getMaterial(id.toUpperCase());
             stack = new ItemStack(mat, amount);
         }
+
         if (!skulldata.isEmpty()) {
             String[] sep = skulldata.split(";");
             stack = Utils.setSkull(stack, sep[0], sep[1]);
@@ -127,7 +132,7 @@ public class Utils {
             meta.setCustomModelData(customModelData);
             item.setItemMeta(meta);
         }
-        item = Utils.setUnbreakable(item);
+        //item = Utils.setUnbreakable(item);
         if (kits.contains(path + ".display_item_skulldata")) {
             String[] skulldata = kits.getString(path + ".display_item_skulldata").split(";");
             item = Utils.setSkull(item, skulldata[0], skulldata[1]);
@@ -170,29 +175,131 @@ public class Utils {
     // TODO: Fix NMS stuff.
     // This will be a pain.
 
-    public static void guardarSkullDisplay(ItemStack item, FileConfiguration config, String path) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        //save skull display
+    // Saving an skull as display item.
+    public static void saveSkullDisplay(ItemStack item, FileConfiguration config, String path) {
+        NBTItem nbtItem = new NBTItem(item);
+        if (!nbtItem.hasNBTData()) return;
+
+        NBTCompound skullOwnerCompound = nbtItem.getCompound("SkullOwner");
+        if (skullOwnerCompound == null) return;
+
+        Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info("save skull display " + skullOwnerCompound.asNBTString());
+
+        String ID = skullOwnerCompound.getString("Id");
+        String value = skullOwnerCompound.getString("Value");
+
+        config.set(path + ".display_item_skulldata", ID + ";" + value);
     }
 
-    public static void guardarSkull(ItemStack item, FileConfiguration config, String path, String nombreJugador) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // save skull
+
+    // Saving an skull in items.
+    public static void saveSkull(ItemStack item, FileConfiguration config, String path, String nombreJugador) {
+        NBTItem nbtItem = new NBTItem(item);
+        if (!nbtItem.hasNBTData()) return;
+
+        NBTCompound skullOwnerCompound = nbtItem.getCompound("SkullOwner");
+        if (skullOwnerCompound == null) return;
+
+        Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info("save skull" + skullOwnerCompound.asNBTString());
+
+        String ID = skullOwnerCompound.getString("Id");
+        String name = skullOwnerCompound.getString("Name");
+        String value = skullOwnerCompound.getString("Value");
+
+        config.set(path + ".skull-id", ID);
+        config.set(path + ".skull-owner", name);
+        config.set(path + ".skull-texture", value);
     }
 
-    public static void guardarAttributes(ItemStack item, FileConfiguration config, String path) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // save attributes
+    public static ItemStack setSkull(ItemStack item, String id, String texture) {
+        NBTItem nbtItem = new NBTItem(item);
+        NBTCompound compound = nbtItem.getOrCreateCompound("SkullOwner");
+
+        compound.setUUID("Id", UUID.fromString(id));
+        compound.getOrCreateCompound("Properties")
+                .getCompoundList("textures")
+                .addCompound()
+                .setString("Value", texture);
+
+        return nbtItem.getItem();
     }
 
-    public static void guardarNBT(ItemStack item, FileConfiguration config, String path) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // save item nbt
+    public static ItemStack setSkull(ItemStack item, String path, FileConfiguration config) {
+        String idPath = path + ".skull-id";
+        String texturePath = path + ".skull-texture";
+
+        NBTItem nbtItem = new NBTItem(item);
+        NBTCompound compound = nbtItem.getOrCreateCompound("SkullOwner");
+
+        boolean hasID = config.contains(idPath);
+        boolean hasTexture = config.contains(texturePath);
+
+        compound.setUUID("Id", hasID ? UUID.fromString(idPath) : UUID.randomUUID());
+
+        if (hasTexture) {
+            compound.getOrCreateCompound("Properties")
+                    .getCompoundList("textures")
+                    .addCompound()
+                    .setString("Value", config.getString(texturePath));
+        }
+
+        return nbtItem.getItem();
+    }
+
+    public static ItemStack setAttributes(ItemStack item, FileConfiguration config, String key) {
+        // set attributes to item.
+        return null;
+    }
+
+    public static void saveAttributes(ItemStack item, FileConfiguration config, String path) {
+        NBTItem nbtItem = new NBTItem(item);
+        if (!nbtItem.hasNBTData()) return;
+
+        Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info("save attributes" + nbtItem.asNBTString());
+
+//        if (!nbtItem.hasTag("AttributeModifiers")) return;
+//
+//
+//        NBTCompoundList compound = nbtItem.getCompoundList("Attributes");
+//        if (compound.isEmpty()) return;
+//
+//        List<String> savedAttributes = new ArrayList<>();
+//        for (ReadWriteNBT nbt : compound) {
+//            String attributeName = nbt.getString("AttributeName");
+//            String name = nbt.getString("Name");
+//            double amount = nbt.getDouble("Amount");
+//            int operation = nbt.getInteger("Operation");
+//            int uuidLeast = nbt.getInteger("UUIDLeast");
+//            int uuidMost = nbt.getInteger("UUIDMost");
+//            String slot = nbt.getString("Slot");
+//
+//            savedAttributes.add(attributeName + ";" + name + ";" + amount + ";" + operation + ";" + uuidLeast + ";" + uuidMost + ";" + slot);
+//        }
+//
+//        config.set(path + ".attributes", savedAttributes);
+    }
+
+    public static void saveNBT(ItemStack item, FileConfiguration config, String path) {
+        NBTContainer nbtContainer = NBTItem.convertItemtoNBT(item);
+
+        Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info("save nbt" + nbtContainer.asNBTString());
+        //config.set(path + ".nbt", nbtContainer.asNBTString());
+    }
+
+    public static ItemStack setNBT(ItemStack item, FileConfiguration config, String key) {
+//        NBTItem nbtItem = new NBTItem(item);
+//        NBTContainer nbtContainer = new NBTContainer(config.getString(key + ".nbt"));
+//        nbtItem.applyNBT(NBTItem.convertNBTtoItem(nbtContainer));
+//
+//        return nbtItem.getItem();
+        return null;
     }
 
     public static ItemStack setUnbreakable(ItemStack item) {
         ItemStack itemStack = item.clone();
         ItemMeta meta = itemStack.getItemMeta();
+        // TODO: NPE in 1.8
+        // It doesn't exists in 1.8 ?!?!
         meta.setUnbreakable(true);
         itemStack.setItemMeta(meta);
 
@@ -202,29 +309,5 @@ public class Utils {
     public static boolean getUnbreakable(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         return (meta != null && meta.isUnbreakable());
-    }
-
-    public static ItemStack setSkull(ItemStack crafteos, String path, FileConfiguration config) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // set item to skull
-        return null;
-    }
-
-    public static ItemStack setNBT(ItemStack item, FileConfiguration config, String key) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // set nbt to item.
-        return null;
-    }
-
-    public static ItemStack setAttributes(ItemStack item, FileConfiguration config, String key) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // set attributes to item.
-        return null;
-    }
-
-    public static ItemStack setSkull(ItemStack item, String id, String textura) {
-        String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        // set skull with no id
-        return null;
     }
 }
