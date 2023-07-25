@@ -16,12 +16,12 @@ public class PlayerKitsAPI {
     }
 
     public static String getCooldown(Player player, String kit) {
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
         JugadorManager jManager = plugin.getJugadorManager();
-        String cooldown = Utils.getCooldown(kit, player, configKits, config, jManager);
+        String cooldown = Utils.getCooldown(kit, player, configKits, messages, jManager);
         if (cooldown.equals("ready")) {
-            return ChatColor.translateAlternateColorCodes('&', config.getString("Messages.cooldownPlaceholderReady"));
+            return ChatColor.translateAlternateColorCodes('&', messages.getString("cooldownPlaceholderReady"));
         } else if (cooldown.equals("no_existe")) {
             return null;
         } else {

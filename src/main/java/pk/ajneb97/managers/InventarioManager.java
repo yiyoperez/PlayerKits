@@ -44,6 +44,7 @@ public class InventarioManager {
 
     protected boolean update(Player jugador, int pagina) {
         FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
 
         String pathInventory = MessageUtils.getMensajeColor(getInventoryPageName(config, pagina));
@@ -136,14 +137,14 @@ public class InventarioManager {
                                 ItemMeta meta = item.getItemMeta();
                                 if (configKits.contains("Kits." + key + ".one_time") && configKits.getString("Kits." + key + ".one_time").equals("true")
                                         && manager.isOneTime(jugador, key)) {
-                                    List<String> lore = config.getStringList("Messages.kitOneTimeLore");
+                                    List<String> lore = messages.getStringList("kitOneTimeLore");
                                     lore.replaceAll(MessageUtils::getMensajeColor);
                                     meta.setLore(lore);
                                 } else {
                                     if (configKits.contains("Kits." + key + ".cooldown")) {
                                         String cooldown = Utils.getCooldown(key, jugador, configKits, config, manager);
                                         if (!cooldown.equals("ready")) {
-                                            List<String> lore = config.getStringList("Messages.kitInCooldownLore");
+                                            List<String> lore = messages.getStringList("kitInCooldownLore");
                                             lore.replaceAll(s -> MessageUtils.getMensajeColor(s.replace("%time%", cooldown)));
                                             meta.setLore(lore);
                                         }

@@ -39,7 +39,7 @@ public class InventoryPreview implements Listener {
             inv.setItem(config.getInt("preview-inventory.back-item-slot"), item);
         }
 
-        if (!kits.contains("Kits." + kit + ".Items")) {
+        if (kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false).isEmpty()) {
             String prefix = messages.getString("prefix");
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPreviewError")));
             return;
@@ -68,13 +68,12 @@ public class InventoryPreview implements Listener {
     }
 
     @EventHandler
-    public void clickInventario(InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         FileConfiguration config = plugin.getConfig();
-        Player jugador = (Player) event.getWhoClicked();
-        PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
-        if (inv == null) {
-            return;
-        }
+        Player player = (Player) event.getWhoClicked();
+
+        PlayerInventory inv = plugin.getInventarioJugador(player.getName());
+        if (inv == null) return;
 
         if (event.getCurrentItem() == null) {
             event.setCancelled(true);
@@ -83,11 +82,11 @@ public class InventoryPreview implements Listener {
 
         int slot = event.getSlot();
         event.setCancelled(true);
-        if (event.getClickedInventory() == jugador.getOpenInventory().getTopInventory()) {
+        if (event.getClickedInventory() == player.getOpenInventory().getTopInventory()) {
             if (inv.getTipoInventario().equals("preview")) {
                 int slotAClickear = config.getInt("preview-inventory.back-item-slot");
                 if (slot == slotAClickear && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-                    InventarioManager.openMainInventory(config, plugin, jugador, inv.getPagina());
+                    InventarioManager.openMainInventory(config, plugin, player, inv.getPagina());
                 }
             }
         }

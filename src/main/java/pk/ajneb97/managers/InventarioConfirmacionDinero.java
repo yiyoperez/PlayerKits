@@ -28,8 +28,8 @@ public class InventarioConfirmacionDinero implements Listener {
 
     @SuppressWarnings("deprecation")
     public static void crearInventario(Player jugador, PlayerKits plugin, double dinero, String kit, int pagina) {
-        FileConfiguration config = plugin.getConfig();
-        Inventory inv = Bukkit.createInventory(null, 9, MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryName")));
+        FileConfiguration  messages = plugin.getMessages();
+        Inventory inv = Bukkit.createInventory(null, 9, MessageUtils.getMensajeColor(messages.getString("moneyInventoryName")));
         ItemStack item;
         if (!Utils.isLegacy()) {
             item = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
@@ -37,7 +37,7 @@ public class InventarioConfirmacionDinero implements Listener {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 5);
         }
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryYes")));
+        meta.setDisplayName(MessageUtils.getMensajeColor(messages.getString("moneyInventoryYes")));
         item.setItemMeta(meta);
         inv.setItem(0, item);
         inv.setItem(1, item);
@@ -50,7 +50,7 @@ public class InventarioConfirmacionDinero implements Listener {
             item = new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 14);
         }
         meta = item.getItemMeta();
-        meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryNo")));
+        meta.setDisplayName(MessageUtils.getMensajeColor(messages.getString("moneyInventoryNo")));
         item.setItemMeta(meta);
         inv.setItem(5, item);
         inv.setItem(6, item);
@@ -59,8 +59,8 @@ public class InventarioConfirmacionDinero implements Listener {
 
         item = new ItemStack(Material.COAL_BLOCK, 1);
         meta = item.getItemMeta();
-        meta.setDisplayName(MessageUtils.getMensajeColor(config.getString("Messages.moneyInventoryConfirmationName")));
-        List<String> lore = config.getStringList("Messages.moneyInventoryConfirmationLore");
+        meta.setDisplayName(MessageUtils.getMensajeColor(messages.getString("moneyInventoryConfirmationName")));
+        List<String> lore = messages.getStringList("moneyInventoryConfirmationLore");
         lore.replaceAll(s -> MessageUtils.getMensajeColor(s.replace("%price%", dinero + "")));
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -74,6 +74,7 @@ public class InventarioConfirmacionDinero implements Listener {
     @EventHandler
     public void clickInventario(InventoryClickEvent event) {
         FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
         Player jugador = (Player) event.getWhoClicked();
         PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
         if (inv != null) {
@@ -87,7 +88,7 @@ public class InventarioConfirmacionDinero implements Listener {
                 return;
             }
 
-            String prefix = config.getString("Messages.prefix");
+            String prefix = messages.getString("prefix");
             int slot = event.getSlot();
             event.setCancelled(true);
             if (event.getClickedInventory().equals(jugador.getOpenInventory().getTopInventory())) {
@@ -100,7 +101,7 @@ public class InventarioConfirmacionDinero implements Listener {
                         Economy econ = plugin.getEconomy();
                         double balance = econ.getBalance(jugador);
                         if (balance < price) {
-                            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.noMoneyError")
+                            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
                                     .replace("%current_money%", String.valueOf(balance)).replace("%required_money%", String.valueOf(price))));
                         } else {
                             KitManager.claimKit(jugador, kit, plugin, true, false, true);

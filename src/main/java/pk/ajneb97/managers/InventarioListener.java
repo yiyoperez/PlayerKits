@@ -46,6 +46,7 @@ public class InventarioListener implements Listener {
                     int pagina = inv.getPagina();
                     FileConfiguration configKits = plugin.getKits();
                     FileConfiguration config = plugin.getConfig();
+                    FileConfiguration messages = plugin.getMessages();
                     int paginasTotales = InventarioManager.getCurrentPages(configKits);
                     if (config.contains("Inventory")) {
                         for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
@@ -115,8 +116,8 @@ public class InventarioListener implements Listener {
                                             }
                                             boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
                                             if (permissionCheck && !hasPermission) {
-                                                String prefix = config.getString("Messages.prefix");
-                                                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + config.getString("Messages.cantPreviewError")));
+                                                String prefix = messages.getString("prefix");
+                                                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
                                                 return;
                                             }
 
