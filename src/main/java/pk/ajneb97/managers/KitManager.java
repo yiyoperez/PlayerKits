@@ -303,16 +303,10 @@ public class KitManager {
                 kitConfig.set(path + ".lore", lore);
             }
             if (item.getItemMeta().hasEnchants()) {
-                Map<Enchantment, Integer> e = item.getEnchantments();
                 String pathench = path + ".enchants";
-                List<String> enchantments = new ArrayList<>();
-                for (Map.Entry<Enchantment, Integer> entry : e.entrySet()) {
-                    String enchant = entry.getKey().getName();
-                    int level = entry.getValue();
-                    String juntos = enchant + ";" + level;
-                    enchantments.add(juntos);
-                }
-                kitConfig.set(pathench, enchantments);
+                item.getEnchantments().forEach((enchant, level) -> {
+                    kitConfig.set(pathench + "." + enchant.getName(), level);
+                });
             }
 //			if(item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ATTRIBUTES) || item.getItemMeta().hasItemFlag(ItemFlag.HIDE_DESTROYS)
 //					|| item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS) || item.getItemMeta().hasItemFlag(ItemFlag.HIDE_PLACED_ON)
@@ -586,23 +580,17 @@ public class KitManager {
         }
 
         crafteosMeta.setLore(lore);
-        //Todo: check boxing.
-        for (String enchant : enchants) {
-            String[] split = new String[2];
-            split = enchant.split(";");
-            int level = 0;
-            if (split[1].contains("-")) {
-                //Random r = new Random();
-                String[] corte = new String[2];
-                corte = split[1].split("-");
-                //int max = Integer.valueOf(corte[1]);
-                //level = r.nextInt(max-min)+min;
-                level = Integer.parseInt(corte[0]);
-            } else {
-                level = Integer.parseInt(split[1]);
+
+        ConfigurationSection enchantSection = kitConfig.getConfigurationSection(path + ".enchants");
+        if (enchantSection != null) {
+            Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info(enchantSection.toString());
+
+            for (String key : enchantSection.getKeys(false)) {
+                int enchantmentLevel = enchantSection.getInt(key);
+                crafteosMeta.addEnchant(Enchantment.getByName(key), enchantmentLevel, true);
             }
-            crafteosMeta.addEnchant(Enchantment.getByName(split[0]), level, true);
         }
+
         for (String flag : flags) {
             crafteosMeta.addItemFlags(ItemFlag.valueOf(flag));
         }

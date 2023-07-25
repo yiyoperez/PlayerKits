@@ -40,7 +40,7 @@ Kits:
           - ''
           - '&7Owner: &6%player%'
         enchants:
-          - DAMAGE_ALL;5
+          DAMAGE_ALL: 5
         amount: 1
     Commands:
       - bc &6%player% &ejust claimed a &aDIAMOND KIT&e!
