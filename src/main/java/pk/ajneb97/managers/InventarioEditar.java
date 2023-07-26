@@ -785,7 +785,7 @@ public class InventarioEditar implements Listener {
             }
         }
 
-        Utils.saveSkullDisplay(item, kits, path);
+        Utils.saveSkull(item, kits, path, true);
     }
 
     @SuppressWarnings("deprecation")

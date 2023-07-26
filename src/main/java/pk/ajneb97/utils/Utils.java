@@ -173,8 +173,8 @@ public class Utils {
     // TODO: Fix NMS stuff.
     // This will be a pain.
 
-    // Saving an skull as display item.
-    public static void saveSkullDisplay(ItemStack item, FileConfiguration config, String path) {
+    // Saving an skull.
+    public static void saveSkull(ItemStack item, FileConfiguration config, String path, boolean isDisplay) {
         NBTItem nbtItem = new NBTItem(item);
         if (!nbtItem.hasNBTData()) return;
 
@@ -187,24 +187,7 @@ public class Utils {
                 .get(0)
                 .getString("Value");
 
-        config.set(path + ".display_item_skulldata", value);
-    }
-
-
-    // Saving an skull in items.
-    public static void saveSkull(ItemStack item, FileConfiguration config, String path) {
-        NBTItem nbtItem = new NBTItem(item);
-        if (!nbtItem.hasNBTData()) return;
-
-        NBTCompound skullOwnerCompound = nbtItem.getCompound("SkullOwner");
-        if (skullOwnerCompound == null) return;
-
-        String value = skullOwnerCompound.getOrCreateCompound("Properties")
-                .getCompoundList("textures")
-                .get(0)
-                .getString("Value");
-
-        config.set(path + ".skull-texture", value);
+        config.set(path + (isDisplay ? ".display_item_skulldata" : ".skull-texture"), value);
     }
 
     public static ItemStack setSkull(ItemStack item, String texture) {

@@ -267,8 +267,7 @@ public class KitManager {
             }
         }
 
-
-        Utils.saveSkull(item, kitConfig, path);
+        Utils.saveSkull(item, kitConfig, path, false);
         Utils.saveAttributes(item, kitConfig, path);
         Utils.saveNBT(item, kitConfig, path);
 
@@ -296,12 +295,7 @@ public class KitManager {
                     kitConfig.set(pathench + "." + enchant.getName(), level);
                 });
             }
-//			if(item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ATTRIBUTES) || item.getItemMeta().hasItemFlag(ItemFlag.HIDE_DESTROYS)
-//					|| item.getItemMeta().hasItemFlag(ItemFlag.HIDE_ENCHANTS) || item.getItemMeta().hasItemFlag(ItemFlag.HIDE_PLACED_ON)
-//					|| item.getItemMeta().hasItemFlag(ItemFlag.HIDE_POTION_EFFECTS) || item.getItemMeta().hasItemFlag(ItemFlag.HIDE_UNBREAKABLE)){
-//				
-//							
-//			}
+
             Set<ItemFlag> flags = item.getItemMeta().getItemFlags();
             if (flags != null && !flags.isEmpty()) {
                 List<String> stringflags = new ArrayList<>();
@@ -320,9 +314,7 @@ public class KitManager {
                     kitConfig.set(path + ".custom_model_data", String.valueOf(item.getItemMeta().getCustomModelData()));
                 }
             }
-
         }
-
     }
 
     public static ItemStack getItem(FileConfiguration kitConfig, String path, FileConfiguration config, Player jugador) {
@@ -545,7 +537,6 @@ public class KitManager {
                     }
                 }
 
-
                 banner.update();
                 meta.setBlockState(banner);
                 crafteos.setItemMeta(meta);
@@ -553,7 +544,6 @@ public class KitManager {
 
         }
 
-        String unbreakablepath = path + ".unbreakable";
         ItemMeta crafteosMeta = crafteos.getItemMeta();
         if (kitConfig.contains(path + ".name")) {
             if (placeholderAPI) {
@@ -589,6 +579,8 @@ public class KitManager {
             }
         }
         crafteos.setItemMeta(crafteosMeta);
+
+        String unbreakablepath = path + ".unbreakable";
         if (kitConfig.contains(unbreakablepath)) {
             if (kitConfig.getString(unbreakablepath).equals("true")) {
                 crafteos = Utils.setUnbreakable(crafteos);
