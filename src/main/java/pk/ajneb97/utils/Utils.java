@@ -34,6 +34,7 @@ public class Utils {
                 || Bukkit.getVersion().contains("1.19") || Bukkit.getVersion().contains("1.20");
     }
 
+    //TODO: Many people having problems with cooldown, take a look on this.
     public static String getCooldown(String kit, Player jugador, FileConfiguration kitConfig, FileConfiguration messages, JugadorManager jManager) {
         //1000millis claimea un kit de 5 segundos
         //6000millis puede claimearlo otra vez (timecooldown)
