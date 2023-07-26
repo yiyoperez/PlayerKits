@@ -8,6 +8,8 @@ drop_items_if_full_inventory: false
 close_inventory_no_permission: true
 preview_inventory_requires_permission: false
 
+sounds: {}
+
 preview-inventory:
   enabled: true
   size: 54

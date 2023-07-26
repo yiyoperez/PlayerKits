@@ -25,13 +25,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class Comando implements CommandExecutor, TabCompleter {
+public class MainCommand implements CommandExecutor, TabCompleter {
 
     private final String prefix;
     private final PlayerKits plugin;
 
 
-    public Comando(PlayerKits plugin) {
+    public MainCommand(PlayerKits plugin) {
         this.plugin = plugin;
         this.prefix = plugin.getMessages().getString("prefix");
     }

@@ -755,8 +755,8 @@ public class KitManager {
                 }
             }
 
-            if (!config.getString("kit_claim_sound").equals("none")) {
-                String[] separados = config.getString("kit_claim_sound").split(";");
+            if (!config.getString("sounds.claim_sound").equals("none")) {
+                String[] separados = config.getString("sounds.claim_sound").split(";");
                 try {
                     Sound sound = Sound.valueOf(separados[0]);
                     player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
@@ -813,10 +813,10 @@ public class KitManager {
     }
 
     public static void errorSonido(Player jugador, FileConfiguration config) {
-        if (config.getString("kit_error_sound").equals("none")) {
+        if (config.getString("sounds.error_sound").equals("none")) {
             return;
         }
-        String[] separados = config.getString("kit_error_sound").split(";");
+        String[] separados = config.getString("sounds.error_sound").split(";");
         try {
             Sound sound = Sound.valueOf(separados[0]);
             jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));

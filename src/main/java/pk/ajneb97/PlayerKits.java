@@ -11,7 +11,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import pk.ajneb97.api.ExpansionPlayerKits;
 import pk.ajneb97.api.PlayerKitsAPI;
-import pk.ajneb97.commands.Comando;
+import pk.ajneb97.commands.MainCommand;
 import pk.ajneb97.inventory.KitEditando;
 import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.managers.InventarioConfirmacionDinero;
@@ -93,7 +93,7 @@ public class PlayerKits extends JavaPlugin {
     }
 
     public void registerCommands() {
-        this.getCommand("kit").setExecutor(new Comando(this));
+        this.getCommand("kit").setExecutor(new MainCommand(this));
     }
 
     public void registerEvents() {
@@ -386,16 +386,10 @@ public class PlayerKits extends JavaPlugin {
     public void populateConfigIfEmpty() {
         FileConfiguration config = getConfig();
 
-        boolean containsSounds = false;
-        for (String key : config.getKeys(false)) {
-            containsSounds = key.startsWith("kit_");
-            break;
-        }
-
-        if (!containsSounds) {
-            config.set("kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
-            config.set("kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
-            config.set("kit_error_sound", Utils.isLegacy() ? "LEVEL_UP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+        if (config.getConfigurationSection("sounds").getKeys(false).isEmpty()) {
+            config.set("sounds.page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
+            config.set("sounds.claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
+            config.set("sounds.error_sound", Utils.isLegacy() ? "LEVEL_UP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
         }
 
         if (!config.getConfigurationSection("inventory.items").getKeys(false).isEmpty()) return;

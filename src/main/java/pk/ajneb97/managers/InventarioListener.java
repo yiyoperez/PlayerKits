@@ -67,8 +67,8 @@ public class InventarioListener implements Listener {
                     if (config.contains("inventory.items." + key + ".type")) {
                         if (config.getString("inventory.items." + key + ".type").equals("previous_page")) {
                             if (pagina > 1) {
-                                if (!config.getString("kit_page_sound").equals("none")) {
-                                    String[] separados = config.getString("kit_page_sound").split(";");
+                                if (!config.getString("sounds.page_sound").equals("none")) {
+                                    String[] separados = config.getString("sounds.page_sound").split(";");
                                     try {
                                         Sound sound = Sound.valueOf(separados[0]);
                                         player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
@@ -82,8 +82,8 @@ public class InventarioListener implements Listener {
                             }
                         } else if (config.getString("inventory.items." + key + ".type").equals("next_page")) {
                             if (paginasTotales > pagina) {
-                                if (!config.getString("kit_page_sound").equals("none")) {
-                                    String[] separados = config.getString("kit_page_sound").split(";");
+                                if (!config.getString("sounds.page_sound").equals("none")) {
+                                    String[] separados = config.getString("sounds.page_sound").split(";");
                                     try {
                                         Sound sound = Sound.valueOf(separados[0]);
                                         player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
