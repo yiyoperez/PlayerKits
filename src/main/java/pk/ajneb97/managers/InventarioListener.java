@@ -137,7 +137,6 @@ public class InventarioListener implements Listener {
                                 InventoryPreview.abrirInventarioPreview(plugin, player, key, inv.getPagina());
                             } else {
                                 KitManager.claimKit(player, key, plugin, true, false, false);
-
                             }
                             return;
                         }

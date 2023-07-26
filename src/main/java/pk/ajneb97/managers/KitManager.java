@@ -618,7 +618,7 @@ public class KitManager {
         return crafteos;
     }
 
-    public static void claimKit(Player jugador, String kit, PlayerKits plugin, boolean message, boolean ignoreValues, boolean comprandoKit) {
+    public static void claimKit(Player player, String kit, PlayerKits plugin, boolean message, boolean ignoreValues, boolean comprandoKit) {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
@@ -626,43 +626,47 @@ public class KitManager {
         String prefix = messages.getString("prefix");
         if (!ignoreValues) {
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
-                if (jManager.isOneTime(jugador, kit)) {
-                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("oneTimeError")));
-                    errorSonido(jugador, config);
+                if (jManager.isOneTime(player, kit)) {
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("oneTimeError")));
+                    errorSonido(player, config);
                     return;
                 }
             }
-            if (configKits.contains("Kits." + kit + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
-                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitNoPermissions")));
-                errorSonido(jugador, config);
+            if (configKits.contains("Kits." + kit + ".permission") && !player.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
+                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitNoPermissions")));
+                errorSonido(player, config);
+                if (config.getBoolean("close_inventory_no_permission")) {
+                    player.closeInventory();
+                    player.updateInventory();
+                }
                 return;
             }
             if (configKits.contains("Kits." + kit + ".cooldown")) {
-                String cooldown = Utils.getCooldown(kit, jugador, configKits, config, jManager);
+                String cooldown = Utils.getCooldown(kit, player, configKits, config, jManager);
                 if (!cooldown.equals("ready")) {
-                    jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldownError").replace("%time%", cooldown)));
-                    errorSonido(jugador, config);
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldownError").replace("%time%", cooldown)));
+                    errorSonido(player, config);
                     return;
                 }
             }
             if (!comprandoKit && configKits.contains("Kits." + kit + ".price")
-                    && !jManager.isBuyed(jugador, kit)) {
+                    && !jManager.isBuyed(player, kit)) {
                 double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
-                    double balance = econ.getBalance(jugador);
+                    double balance = econ.getBalance(player);
                     if (balance < price) {
-                        jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
+                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
                                 .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
-                        errorSonido(jugador, config);
+                        errorSonido(player, config);
                     } else {
                         //Abrir inventario confirmacion
-                        PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
+                        PlayerInventory inv = plugin.getInventarioJugador(player.getName());
                         int pag = -1;
                         if (inv != null) {
                             pag = inv.getPagina();
                         }
-                        InventarioConfirmacionDinero.crearInventario(jugador, plugin, price, kit, pag);
+                        InventarioConfirmacionDinero.crearInventario(player, plugin, price, kit, pag);
                     }
                     return;
                 }
@@ -674,9 +678,9 @@ public class KitManager {
         //Estos contents son solo del inventario, ignoran armadura y offhand
         ItemStack[] contents = null;
         if (version.contains("1.8")) {
-            contents = jugador.getInventory().getContents();
+            contents = player.getInventory().getContents();
         } else {
-            contents = jugador.getInventory().getStorageContents();
+            contents = player.getInventory().getStorageContents();
         }
         int espaciosUsados = 0;
         for (ItemStack content : contents) {
@@ -685,7 +689,7 @@ public class KitManager {
             }
         }
 
-        org.bukkit.inventory.PlayerInventory invJ = jugador.getInventory();
+        org.bukkit.inventory.PlayerInventory invJ = player.getInventory();
         int espaciosLibres = 36 - espaciosUsados;
         int cantidadItems = 0; //items normales
         String itemCabeza = null;
@@ -739,35 +743,35 @@ public class KitManager {
 
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
-            jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noSpaceError")));
-            errorSonido(jugador, config);
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noSpaceError")));
+            errorSonido(player, config);
             return;
         }
 
         if (!ignoreValues) {
             if (comprandoKit && configKits.contains("Kits." + kit + ".price")
-                    && !jManager.isBuyed(jugador, kit)) {
+                    && !jManager.isBuyed(player, kit)) {
                 double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
-                    econ.withdrawPlayer(jugador, price);
+                    econ.withdrawPlayer(player, price);
                 }
                 if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getString("Kits." + kit + ".one_time_buy").equals("true")) {
-                    jManager.setBuyed(jugador, kit);
+                    jManager.setBuyed(player, kit);
                     return;
                 }
             }
 
             if (configKits.contains("Kits." + kit + ".cooldown")) {
-                if (!jugador.isOp() && !jugador.hasPermission("playerkits.admin") && !jugador.hasPermission("playerkits.bypasscooldown")) {
+                if (!player.isOp() && !player.hasPermission("playerkits.admin") && !player.hasPermission("playerkits.bypasscooldown")) {
                     long millis = System.currentTimeMillis();
-                    jManager.setCooldown(jugador, kit, millis);
+                    jManager.setCooldown(player, kit, millis);
                 }
             }
 
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
-                if (!jugador.isOp() && !jugador.hasPermission("playerkits.admin")) {
-                    jManager.setOneTime(jugador, kit);
+                if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
+                    jManager.setOneTime(player, kit);
                 }
             }
 
@@ -775,7 +779,7 @@ public class KitManager {
                 String[] separados = config.getString("kit_claim_sound").split(";");
                 try {
                     Sound sound = Sound.valueOf(separados[0]);
-                    jugador.playSound(jugador.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
+                    player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
                 } catch (Exception ex) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                 }
@@ -783,13 +787,13 @@ public class KitManager {
         }
 
         if (ejecutarComandosPrimero) {
-            ejecutarComandos(configKits, kit, jugador);
+            ejecutarComandos(configKits, kit, player);
         }
 
         if (configKits.contains("Kits." + kit + ".Items")) {
             for (String i : configKits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
                 String path = "Kits." + kit + ".Items." + i;
-                ItemStack item = KitManager.getItem(configKits, path, config, jugador);
+                ItemStack item = KitManager.getItem(configKits, path, config, player);
 
                 // TODO: pleaseeee
                 if (itemCabeza != null && i.equals(itemCabeza)) {
@@ -803,28 +807,28 @@ public class KitManager {
                 } else if (itemOffhand != null && i.equals(itemOffhand)) {
                     invJ.setItemInOffHand(item);
                 } else {
-                    if (tirarItems && jugador.getInventory().firstEmpty() == -1) {
-                        jugador.getWorld().dropItemNaturally(jugador.getLocation(), item);
+                    if (tirarItems && player.getInventory().firstEmpty() == -1) {
+                        player.getWorld().dropItemNaturally(player.getLocation(), item);
                     } else {
-                        jugador.getInventory().addItem(item);
+                        player.getInventory().addItem(item);
                     }
                 }
             }
         }
 
         if (!ejecutarComandosPrimero) {
-            ejecutarComandos(configKits, kit, jugador);
+            ejecutarComandos(configKits, kit, player);
         }
 
         if (message) {
             String kitReceived = messages.getString("kitReceived").replace("%name%", kit);
             if (!kitReceived.equals("") && !kitReceived.isEmpty()) {
-                jugador.sendMessage(MessageUtils.getMensajeColor(prefix + kitReceived));
+                player.sendMessage(MessageUtils.getMensajeColor(prefix + kitReceived));
             }
         }
 
         if (config.getBoolean("close_inventory_on_claim")) {
-            jugador.closeInventory();
+            player.closeInventory();
         }
     }
 
