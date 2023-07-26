@@ -268,19 +268,7 @@ public class KitManager {
         }
 
 
-        //todo ???
-        if (!Utils.isLegacy()) {
-            if (id == Material.getMaterial("PLAYER_HEAD")) {
-                Utils.saveSkull(item, kitConfig, path, "");
-            }
-        } else {
-            if (id == Material.valueOf("SKULL_ITEM") && datavalue == 3) {
-                Utils.saveSkull(item, kitConfig, path, "");
-                idtext = "SKULL_ITEM";
-            }
-
-        }
-
+        Utils.saveSkull(item, kitConfig, path);
         Utils.saveAttributes(item, kitConfig, path);
         Utils.saveNBT(item, kitConfig, path);
 

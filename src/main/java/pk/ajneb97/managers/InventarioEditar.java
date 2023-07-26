@@ -18,8 +18,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import pk.ajneb97.inventory.KitEditando;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.inventory.KitEditando;
 import pk.ajneb97.utils.Utils;
 
 import java.util.ArrayList;
@@ -537,7 +537,7 @@ public class InventarioEditar implements Listener {
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&7Place item here &6>>"));
         item.setItemMeta(meta);
-        item = Utils.setSkull(item, "d513d666-0992-42c7-9aa6-e518a83e0b38", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
+        item = Utils.setSkull(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
         inv.setItem(10, item);
 
         if (!Utils.isLegacy()) {
@@ -548,7 +548,7 @@ public class InventarioEditar implements Listener {
         meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6<< &7Place item here"));
         item.setItemMeta(meta);
-        item = Utils.setSkull(item, "2391d533-ab09-434d-9980-adafde4057a3", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
+        item = Utils.setSkull(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
         inv.setItem(12, item);
 
         String name = "none";
@@ -751,52 +751,41 @@ public class InventarioEditar implements Listener {
         } else {
             path = "Kits." + kit + "." + tipoDisplay;
         }
-        if (item != null) {
-            Material id = item.getType();
-            int datavalue = 0;
-            if (Utils.isLegacy()) {
-                if (id == Material.POTION) {
-                    datavalue = item.getDurability();
-                } else {
-                    datavalue = item.getData().getData();
-                }
-            }
-            kits.set(path + ".display_item_skulldata", null);
-            kits.set(path + ".display_item_custom_model_data", null);
-            if (datavalue != 0) {
-                kits.set(path + ".display_item", item.getType() + ":" + datavalue);
-            } else {
-                kits.set(path + ".display_item", String.valueOf(item.getType()));
-            }
-
-            kits.set(path + ".display_item_leathercolor", null);
-            if (id.equals(Material.LEATHER_BOOTS) || id.equals(Material.LEATHER_CHESTPLATE)
-                    || id.equals(Material.LEATHER_HELMET) || id.equals(Material.LEATHER_LEGGINGS)) {
-                LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-                kits.set(path + ".display_item_leathercolor", String.valueOf(meta.getColor().asRGB()));
-            }
-
-            if (Utils.isNew()) {
-                ItemMeta meta = item.getItemMeta();
-                if (meta.hasCustomModelData()) {
-                    kits.set(path + ".display_item_custom_model_data", meta.getCustomModelData());
-                }
-            }
-
-            Utils.saveSkullDisplay(item, kits, path);
-
-            /*if (!Utils.isLegacy()) {
-                if (id == Material.getMaterial("PLAYER_HEAD")) {
-                }
-            } else {
-                if (id == Material.valueOf("SKULL_ITEM") && datavalue == 3) {
-                    Utils.saveSkullDisplay(item, kits, path);
-                }
-
-            }*/
-        } else {
+        if (item == null) {
             kits.set(path + ".display_item", null);
+            return;
         }
+
+        Material id = item.getType();
+        int datavalue = 0;
+        if (Utils.isLegacy()) {
+            if (id == Material.POTION) {
+                datavalue = item.getDurability();
+            } else {
+                datavalue = item.getData().getData();
+            }
+        }
+
+        if (datavalue != 0) {
+            kits.set(path + ".display_item", item.getType() + ":" + datavalue);
+        } else {
+            kits.set(path + ".display_item", String.valueOf(item.getType()));
+        }
+
+        if (id.equals(Material.LEATHER_BOOTS) || id.equals(Material.LEATHER_CHESTPLATE)
+                || id.equals(Material.LEATHER_HELMET) || id.equals(Material.LEATHER_LEGGINGS)) {
+            LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+            kits.set(path + ".display_item_leathercolor", String.valueOf(meta.getColor().asRGB()));
+        }
+
+        if (Utils.isNew()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta.hasCustomModelData()) {
+                kits.set(path + ".display_item_custom_model_data", meta.getCustomModelData());
+            }
+        }
+
+        Utils.saveSkullDisplay(item, kits, path);
     }
 
     @SuppressWarnings("deprecation")

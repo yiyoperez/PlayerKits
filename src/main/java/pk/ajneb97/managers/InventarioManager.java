@@ -92,8 +92,8 @@ public class InventarioManager {
                 item.setItemMeta(meta);
 
                 if (invSection.contains(key + ".skulldata")) {
-                    String[] skulldata = invSection.getString(key + ".skulldata").split(";");
-                    item = Utils.setSkull(item, skulldata[0], skulldata[1]);
+                    String skulldata = invSection.getString(key + ".skulldata");
+                    item = Utils.setSkull(item, skulldata);
                 }
 
                 if (invSection.contains(key + ".type")) {
@@ -241,8 +241,8 @@ public class InventarioManager {
         }
         item.setItemMeta(meta);
         if (configKits.contains(path + ".display_item_skulldata")) {
-            String[] skulldata = configKits.getString(path + ".display_item_skulldata").split(";");
-            item = Utils.setSkull(item, skulldata[0], skulldata[1]);
+            String skulldata = configKits.getString(path + ".display_item_skulldata");
+            item = Utils.setSkull(item, skulldata);
         }
 
 //		else {

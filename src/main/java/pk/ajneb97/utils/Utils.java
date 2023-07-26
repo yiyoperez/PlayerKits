@@ -99,10 +99,8 @@ public class Utils {
         }
 
         if (!skulldata.isEmpty()) {
-            String[] sep = skulldata.split(";");
-            stack = Utils.setSkull(stack, sep[0], sep[1]);
+            stack = Utils.setSkull(stack, skulldata);
         }
-
 
         return stack;
     }
@@ -134,8 +132,8 @@ public class Utils {
         }
         //item = Utils.setUnbreakable(item);
         if (kits.contains(path + ".display_item_skulldata")) {
-            String[] skulldata = kits.getString(path + ".display_item_skulldata").split(";");
-            item = Utils.setSkull(item, skulldata[0], skulldata[1]);
+            String skulldata = kits.getString(path + ".display_item_skulldata");
+            item = Utils.setSkull(item, skulldata);
         }
 
         return item;
@@ -183,39 +181,37 @@ public class Utils {
         NBTCompound skullOwnerCompound = nbtItem.getCompound("SkullOwner");
         if (skullOwnerCompound == null) return;
 
-        Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info("save skull display " + skullOwnerCompound.asNBTString());
+        String value = skullOwnerCompound
+                .getOrCreateCompound("Properties")
+                .getCompoundList("textures")
+                .get(0)
+                .getString("Value");
 
-        String ID = skullOwnerCompound.getString("Id");
-        String value = skullOwnerCompound.getString("Value");
-
-        config.set(path + ".display_item_skulldata", ID + ";" + value);
+        config.set(path + ".display_item_skulldata", value);
     }
 
 
     // Saving an skull in items.
-    public static void saveSkull(ItemStack item, FileConfiguration config, String path, String nombreJugador) {
+    public static void saveSkull(ItemStack item, FileConfiguration config, String path) {
         NBTItem nbtItem = new NBTItem(item);
         if (!nbtItem.hasNBTData()) return;
 
         NBTCompound skullOwnerCompound = nbtItem.getCompound("SkullOwner");
         if (skullOwnerCompound == null) return;
 
-        Bukkit.getPluginManager().getPlugin("PlayerKits").getLogger().info("save skull" + skullOwnerCompound.asNBTString());
+        String value = skullOwnerCompound.getOrCreateCompound("Properties")
+                .getCompoundList("textures")
+                .get(0)
+                .getString("Value");
 
-        String ID = skullOwnerCompound.getString("Id");
-        String name = skullOwnerCompound.getString("Name");
-        String value = skullOwnerCompound.getString("Value");
-
-        config.set(path + ".skull-id", ID);
-        config.set(path + ".skull-owner", name);
         config.set(path + ".skull-texture", value);
     }
 
-    public static ItemStack setSkull(ItemStack item, String id, String texture) {
+    public static ItemStack setSkull(ItemStack item, String texture) {
         NBTItem nbtItem = new NBTItem(item);
         NBTCompound compound = nbtItem.getOrCreateCompound("SkullOwner");
 
-        compound.setUUID("Id", UUID.fromString(id));
+        compound.setUUID("Id", UUID.randomUUID());
         compound.getOrCreateCompound("Properties")
                 .getCompoundList("textures")
                 .addCompound()
@@ -225,16 +221,14 @@ public class Utils {
     }
 
     public static ItemStack setSkull(ItemStack item, String path, FileConfiguration config) {
-        String idPath = path + ".skull-id";
         String texturePath = path + ".skull-texture";
 
         NBTItem nbtItem = new NBTItem(item);
         NBTCompound compound = nbtItem.getOrCreateCompound("SkullOwner");
 
-        boolean hasID = config.contains(idPath);
         boolean hasTexture = config.contains(texturePath);
 
-        compound.setUUID("Id", hasID ? UUID.fromString(idPath) : UUID.randomUUID());
+        compound.setUUID("Id", UUID.randomUUID());
 
         if (hasTexture) {
             compound.getOrCreateCompound("Properties")
