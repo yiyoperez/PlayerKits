@@ -14,7 +14,7 @@ public class Checks {
     public static boolean mainInventoryContainsBadItems(PlayerKits plugin, Player player) {
         boolean badItems = false;
 
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("Inventory");
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("inventory.items");
 
         if (section != null) {
             for (String key : section.getKeys(false)) {

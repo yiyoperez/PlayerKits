@@ -4,6 +4,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -50,26 +51,28 @@ public class InventarioManager {
         String pathInventory = MessageUtils.getMensajeColor(getInventoryPageName(config, pagina));
         String pathInventoryM = ChatColor.stripColor(pathInventory);
         Inventory inv = jugador.getOpenInventory().getTopInventory();
-        int paginasTotales = getCurrentPages(configKits);
         if (inv == null || !ChatColor.stripColor(jugador.getOpenInventory().getTitle()).equals(pathInventoryM)) {
             return false;
         }
 
-        if (config.contains("Inventory")) {
-            for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
+        int paginasTotales = getCurrentPages(configKits);
+
+        ConfigurationSection invSection = config.getConfigurationSection("inventory.items");
+        if (!invSection.getKeys(false).isEmpty()) {
+            for (String key : invSection.getKeys(false)) {
                 int slot = Integer.parseInt(key);
 
-                ItemStack item = Utils.getItem(config.getString("Inventory." + key + ".id"), 1, "");
+                ItemStack item = Utils.getItem(invSection.getString(key + ".id"), 1, "");
                 ItemMeta meta = item.getItemMeta();
-                if (config.contains("Inventory." + key + ".name")) {
-                    String name = config.getString("Inventory." + key + ".name");
+                if (invSection.contains(key + ".name")) {
+                    String name = invSection.getString(key + ".name");
                     if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                         name = PlaceholderAPI.setPlaceholders(jugador, name);
                     }
                     meta.setDisplayName(MessageUtils.getMensajeColor(name));
                 }
-                if (config.contains("Inventory." + key + ".lore")) {
-                    List<String> lore = config.getStringList("Inventory." + key + ".lore");
+                if (invSection.contains(key + ".lore")) {
+                    List<String> lore = invSection.getStringList(key + ".lore");
                     for (int i = 0; i < lore.size(); i++) {
                         String linea = lore.get(i);
                         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -81,24 +84,24 @@ public class InventarioManager {
                 }
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
                 if (Utils.isNew()) {
-                    if (config.contains("Inventory." + key + ".custom_model_data")) {
-                        int customModelData = config.getInt("Inventory." + key + ".custom_model_data");
+                    if (invSection.contains(key + ".custom_model_data")) {
+                        int customModelData = invSection.getInt(key + ".custom_model_data");
                         meta.setCustomModelData(customModelData);
                     }
                 }
                 item.setItemMeta(meta);
 
-                if (config.contains("Inventory." + key + ".skulldata")) {
-                    String[] skulldata = config.getString("Inventory." + key + ".skulldata").split(";");
+                if (invSection.contains(key + ".skulldata")) {
+                    String[] skulldata = invSection.getString(key + ".skulldata").split(";");
                     item = Utils.setSkull(item, skulldata[0], skulldata[1]);
                 }
 
-                if (config.contains("Inventory." + key + ".type")) {
-                    if (config.getString("Inventory." + key + ".type").equals("previous_page")) {
+                if (invSection.contains(key + ".type")) {
+                    if (invSection.getString(key + ".type").equals("previous_page")) {
                         if (pagina == 1) {
                             continue;
                         }
-                    } else if (config.getString("Inventory." + key + ".type").equals("next_page")) {
+                    } else if (invSection.getString(key + ".type").equals("next_page")) {
                         if (paginasTotales <= pagina) {
                             continue;
                         }
@@ -108,9 +111,12 @@ public class InventarioManager {
             }
         }
 
+
         JugadorManager manager = plugin.getJugadorManager();
-        if (configKits.contains("Kits")) {
-            for (String key : configKits.getConfigurationSection("Kits").getKeys(false)) {
+
+        ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
+        if (!kitsSection.getKeys(false).isEmpty()) {
+            for (String key : kitsSection.getKeys(false)) {
                 if (configKits.contains("Kits." + key + ".slot")) {
                     int slot = configKits.getInt("Kits." + key + ".slot");
                     int page = 1;
@@ -168,6 +174,7 @@ public class InventarioManager {
                 }
             }
         }
+
         return true;
     }
 
@@ -248,10 +255,10 @@ public class InventarioManager {
     }
 
     public static String getInventoryPageName(FileConfiguration config, int page) {
-        String defaultPage = config.getString("inventory_pages_names.1");
-        for (String key : config.getConfigurationSection("inventory_pages_names").getKeys(false)) {
+        String defaultPage = config.getString("inventory.pages_names.1");
+        for (String key : config.getConfigurationSection("inventory.pages_names").getKeys(false)) {
             if (key.equals(String.valueOf(page))) {
-                return config.getString("inventory_pages_names." + key);
+                return config.getString("inventory.pages_names." + key);
             }
         }
         return defaultPage;

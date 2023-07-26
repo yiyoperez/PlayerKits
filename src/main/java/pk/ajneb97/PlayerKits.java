@@ -400,16 +400,23 @@ public class PlayerKits extends JavaPlugin {
         config.set("Inventory.18.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
         config.set("Inventory.26.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
 
-        config.set("Inventory.0.name", " ");
-        config.set("Inventory.8.name", " ");
-        config.set("Inventory.36.name", " ");
-        config.set("Inventory.44.name", " ");
-        config.set("Inventory.18.name", "&6Previous Page");
-        config.set("Inventory.18.skulldata", "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
-        config.set("Inventory.18.type", "previous_page");
-        config.set("Inventory.26.name", "&6Next Page");
-        config.set("Inventory.26.skulldata", "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
-        config.set("Inventory.26.type", "next_page");
+        config.set("inventory.items.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("inventory.items.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("inventory.items.36.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("inventory.items.44.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
+        config.set("inventory.items.18.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        config.set("inventory.items.26.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+
+        config.set("inventory.items.0.name", " ");
+        config.set("inventory.items.8.name", " ");
+        config.set("inventory.items.36.name", " ");
+        config.set("inventory.items.44.name", " ");
+        config.set("inventory.items.18.name", "&6Previous Page");
+        config.set("inventory.items.18.skulldata", "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
+        config.set("inventory.items.18.type", "previous_page");
+        config.set("inventory.items.26.name", "&6Next Page");
+        config.set("inventory.items.26.skulldata", "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
+        config.set("inventory.items.26.type", "next_page");
 
         this.saveConfig();
     }

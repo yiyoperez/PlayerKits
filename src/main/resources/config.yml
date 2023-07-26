@@ -7,9 +7,6 @@ hide_kits_with_permissions: false
 drop_items_if_full_inventory: false
 preview_inventory_requires_permission: false
 
-inventory:
-  size: 45
-
 preview-inventory:
   enabled: true
   size: 54
@@ -24,6 +21,9 @@ mysql_database:
   password: root
   database: database
 
-inventory_pages_names:
-  1: "&9Kits"
-  2: "&bVIP Kits"
+inventory:
+  size: 45
+  pages_names:
+    1: "&9Kits"
+    2: "&bVIP Kits"
+  items: {}

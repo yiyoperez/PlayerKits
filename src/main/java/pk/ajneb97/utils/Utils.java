@@ -151,8 +151,8 @@ public class Utils {
                 }
             }
         }
-        if (config.contains("Inventory")) {
-            for (String key : config.getConfigurationSection("Inventory").getKeys(false)) {
+        if (config.contains("inventory.items")) {
+            for (String key : config.getConfigurationSection("inventory.items").getKeys(false)) {
                 int slotOcupado = Integer.parseInt(key);
                 slotsOcupados.add(slotOcupado);
             }
