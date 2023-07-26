@@ -608,13 +608,13 @@ public class KitManager {
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
                 if (jManager.isOneTime(player, kit)) {
                     player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("oneTimeError")));
-                    errorSonido(player, config);
+                    errorSound(player, config);
                     return;
                 }
             }
             if (configKits.contains("Kits." + kit + ".permission") && !player.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
                 player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitNoPermissions")));
-                errorSonido(player, config);
+                errorSound(player, config);
                 if (config.getBoolean("close_inventory_no_permission")) {
                     player.closeInventory();
                     player.updateInventory();
@@ -625,7 +625,7 @@ public class KitManager {
                 String cooldown = Utils.getCooldown(kit, player, configKits, config, jManager);
                 if (!cooldown.equals("ready")) {
                     player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldownError").replace("%time%", cooldown)));
-                    errorSonido(player, config);
+                    errorSound(player, config);
                     return;
                 }
             }
@@ -638,7 +638,7 @@ public class KitManager {
                     if (balance < price) {
                         player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
                                 .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
-                        errorSonido(player, config);
+                        errorSound(player, config);
                     } else {
                         //Abrir inventario confirmacion
                         PlayerInventory inv = plugin.getInventarioJugador(player.getName());
@@ -721,10 +721,9 @@ public class KitManager {
         boolean tirarItems = config.getBoolean("drop_items_if_full_inventory");
         boolean ejecutarComandosPrimero = config.getBoolean("commands_before_items");
 
-
         if (espaciosLibres < cantidadItems && !tirarItems) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noSpaceError")));
-            errorSonido(player, config);
+            errorSound(player, config);
             return;
         }
 
@@ -812,7 +811,7 @@ public class KitManager {
         }
     }
 
-    public static void errorSonido(Player jugador, FileConfiguration config) {
+    public static void errorSound(Player jugador, FileConfiguration config) {
         if (config.getString("sounds.error_sound").equals("none")) {
             return;
         }
