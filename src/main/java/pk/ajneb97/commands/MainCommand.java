@@ -78,7 +78,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        //TODO: This option gets stuck player is an admin, it doesn't let him use subcommands.
         if (quickClaimMethod(player, args)) return true;
 
         String subCommand = args[0].toLowerCase();
