@@ -386,19 +386,19 @@ public class PlayerKits extends JavaPlugin {
     public void populateConfigIfEmpty() {
         FileConfiguration config = getConfig();
 
-        // Not sure if it works.
-        if (config.getKeys(true).isEmpty()) return;
+        boolean containsSounds = false;
+        for (String key : config.getKeys(false)) {
+            containsSounds = key.startsWith("kit_");
+            break;
+        }
 
-        config.set("kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
-        config.set("kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
-        config.set("kit_error_sound", Utils.isLegacy() ? "LEVEL_UP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+        if (!containsSounds) {
+            config.set("kit_page_sound", Utils.isLegacy() ? "LAVA_POP;10;1" : "BLOCK_LAVA_POP;10;1");
+            config.set("kit_claim_sound", Utils.isLegacy() ? "NOTE_PLING;10;0.1" : "BLOCK_NOTE_BLOCK_PLING;10;0.1");
+            config.set("kit_error_sound", Utils.isLegacy() ? "LEVEL_UP;10;1.5" : "ENTITY_PLAYER_LEVELUP;10;1.5");
+        }
 
-        config.set("Inventory.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Inventory.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Inventory.36.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Inventory.44.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
-        config.set("Inventory.18.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
-        config.set("Inventory.26.id", Utils.isLegacy() ? "SKULL_ITEM:3" : "PLAYER_HEAD");
+        if (!config.getConfigurationSection("inventory.items").getKeys(false).isEmpty()) return;
 
         config.set("inventory.items.0.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
         config.set("inventory.items.8.id", Utils.isLegacy() ? "STAINED_GLASS_PANE:15" : "BLACK_STAINED_GLASS_PANE");
