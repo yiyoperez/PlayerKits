@@ -9,3 +9,11 @@ commands:
   kit:
     description: Main command of PlayerKits
     aliases: kits
+
+permissions:
+  playerkits.admin:
+    default: op
+    children:
+      playerkits.bypasscooldown: true
+  playerkits.bypasscooldown:
+    default: op
