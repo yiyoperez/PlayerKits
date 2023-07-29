@@ -98,24 +98,22 @@ Also, almost all item attributes will be stored in the kit, so they are given co
 
 ### How to Start
 
-To create a new kit you just need to have some items on your inventory and then execute the command /kit create <name>.
-<br>
-To claim the kit you have two options:
+To create a new kit you just need to have some items on your inventory and then execute the command `/kit create <name>`.
 
-- Use the /kit command and click on the kit item inside the GUI.
-- Use the /kit claim <name> command.
 
+To claim the kit you have two options.
+1) Use the `/kit` command and click on the kit item inside the GUI.
+2) Use the `/kit claim <name>` command.
 > ℹ Or use `/kit <name>` if you have `claim_kit_short_command` option set to `true`
 
-You can also edit the kit directly from Minecraft without touching the config, using the /kit edit <kit> command.
+
+You can also edit the kit directly from Minecraft without touching the config, using the `/kit edit <kit>` command.
 
 <img src="assets/editing.png" width="80%">
 
 ---
 
 ### More
-
----
 
   <details>
   <summary>Config options</summary>
