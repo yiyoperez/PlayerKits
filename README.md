@@ -15,11 +15,94 @@ I could probably accept some feature & pull requests, I'm also looking to fix er
 
 ---
 
+### **DISCLAIMER**
+
+**ℹ THIS PROJECT IS IN BEING RECODED, FEATURES, FUNCTIONS, PREVIOUS CONFIG MAY NOT WORK!**
+<br>
+**⚠ USE AT YOUR OWN WILL ⚠**
+<br>
+
+**ℹ THIS PROJECT IS IN BEING RECODED, FEATURES, FUNCTIONS, PREVIOUS CONFIG MAY NOT WORK!**
+<br>
+**⚠ USE AT YOUR OWN WILL ⚠**
+<br>
+
+---
+
+![](assets/playerkits.png)
+![](assets/playerkits.webp)
+
+### What can I do with PlayerKits?
+
+This plugin allows you to create a variety of kits and put them on a GUI Inventory.
+<br>
+Using <span style="color:red">/kit</span> players will be able to claim these kits if they have the correct permission.
+<br>
+Kits can also have a cooldown, so users can't claim them everytime.
+
+What makes **<span style="color:yellow">Player</span><span style="color:light_gray">Kits</span>** special is its easy way to create kits, just having the items on your inventory and executing a
+command.
+<br>
+You can edit kits properties by using <span style="color:red">/kit edit</span> command.
+<br>
+Also, almost all item attributes will be stored in the kit, so they are given correctly.
+
+<details>
+<summary>Features</summary>
+
+- ✓ GUI Inventory to claim Kits.
+- ✓ Command to claim Kits.
+- ✓ Configurable display item in GUI:​
+
+  Item, name, lore.
+  Different item when player doesn't have permission.
+  Different item when player hasn't buyed the kit.
+  Different lore when kit is in cooldown.
+
+- ✓ Cooldown for kits.
+- ✓ Permissions for kits.
+- ✓ Price for kits.
+- ✓ One Time Buy kits
+- ✓ Execute commands when giving a kit.
+- ✓ Customizable Kit Preview.
+- ✓ Pages System.
+- ✓ Edit Kits from Game.
+- ✓ First join kit.
+- ✓ One time use kit.
+- ✓ 1.16 HEX Color support for kit items.
+- ✓ Auto Armor Equip.
+- ✓ Auto Offhand item Equip.
+- ✓ Configurable GUI.
+- ✓ MySQL support for player data.
+- ✓ Kits will save Item Attributes.
+    - Name, Lore.
+    - %player% variable in name and lore.
+    - PlaceholderAPI static variables in name and lore.
+    - Enchantments.
+    - Potion Effects.
+    - Leather Armor Color.
+    - Book Enchantments.
+    - Written Books.
+    - Fireworks Attributes.
+    - Banner, Shields Attributes.
+    - Skull Textures.
+    - Item Flags.
+    - Unbreakable Tag.
+    - Attributes Modifiers.
+    - NBT Tags.
+
+- ✓ Works in 1.8+.
+- ✓ Messages translation.
+
+</details>
+
+---
+
 ### More
 
 ---
 <details>
-<summary>Kits</summary>
+<summary>Kit options</summary>
 
 <!> Please don't use this, it needs to get updated.
 
@@ -100,7 +183,7 @@ one_time: true
 </details>
 
 <details>
-<summary>Config</summary>
+<summary>Config options</summary>
 
 <!> Please don't use this, it needs to get updated.
 
