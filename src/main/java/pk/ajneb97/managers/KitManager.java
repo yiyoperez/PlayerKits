@@ -39,6 +39,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.inventory.PlayerInventory;
+import pk.ajneb97.models.PlayerData;
+import pk.ajneb97.models.PlayerKit;
+import pk.ajneb97.utils.Cooldown;
 import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
 
@@ -334,8 +337,7 @@ public class KitManager {
             lore = kitConfig.getStringList(path + ".lore");
             for (int i = 0; i < lore.size(); i++) {
                 if (placeholderAPI) {
-                    String nueva = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i))
-                            .replace("%player%", jugador.getName()));
+                    String nueva = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i)).replace("%player%", jugador.getName()));
                     lore.set(i, nueva);
                 } else {
                     lore.set(i, MessageUtils.getMensajeColor(lore.get(i).replace("%player%", jugador.getName())));
@@ -467,8 +469,7 @@ public class KitManager {
 
                 boolean flicker = Boolean.parseBoolean(sep[3]);
                 boolean trail = Boolean.parseBoolean(sep[4]);
-                meta.addEffect(FireworkEffect.builder().flicker(flicker).trail(trail).with(Type.valueOf(type))
-                        .withColor(coloresList).withFade(coloresListFade).build());
+                meta.addEffect(FireworkEffect.builder().flicker(flicker).trail(trail).with(Type.valueOf(type)).withColor(coloresList).withFade(coloresListFade).build());
             }
             int power = kitConfig.getInt(path + ".firework-power");
             meta.setPower(power);
@@ -548,8 +549,7 @@ public class KitManager {
         if (kitConfig.contains(path + ".name")) {
             if (placeholderAPI) {
                 String nombre = MessageUtils.getMensajeColor(kitConfig.getString(path + ".name"));
-                String nueva = PlaceholderAPI.setPlaceholders(jugador, nombre)
-                        .replace("%player%", jugador.getName());
+                String nueva = PlaceholderAPI.setPlaceholders(jugador, nombre).replace("%player%", jugador.getName());
                 crafteosMeta.setDisplayName(nueva);
             } else {
                 crafteosMeta.setDisplayName(MessageUtils.getMensajeColor(kitConfig.getString(path + ".name").replace("%player%", jugador.getName())));
@@ -602,19 +602,23 @@ public class KitManager {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
-        JugadorManager jManager = plugin.getJugadorManager();
         String prefix = messages.getString("prefix");
+
+        PlayerManager playerManager = plugin.getPlayerManager();
+        PlayerData playerData = playerManager.getOrCreatePlayer(player);
+        PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, kit);
+
         if (!ignoreValues) {
-            if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
-                if (jManager.isOneTime(player, kit)) {
+            if (configKits.contains("Kits." + kit + ".one_time") && configKits.getBoolean("Kits." + kit + ".one_time")) {
+                if (playerKit.isOneTime()) {
                     player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("oneTimeError")));
-                    errorSound(player, config);
+                    playErrorSound(player, config);
                     return;
                 }
             }
             if (configKits.contains("Kits." + kit + ".permission") && !player.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
                 player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitNoPermissions")));
-                errorSound(player, config);
+                playErrorSound(player, config);
                 if (config.getBoolean("close_inventory_no_permission")) {
                     player.closeInventory();
                     player.updateInventory();
@@ -622,23 +626,25 @@ public class KitManager {
                 return;
             }
             if (configKits.contains("Kits." + kit + ".cooldown")) {
-                String cooldown = Utils.getCooldown(kit, player, configKits, config, jManager);
-                if (!cooldown.equals("ready")) {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldownError").replace("%time%", cooldown)));
-                    errorSound(player, config);
+                if (playerData.hasCooldown(kit)) {
+                    Cooldown cooldown = playerData.getCooldown(kit);
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeft())));
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftTimer())));
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftSeconds())));
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftPlainSeconds())));
+                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
+                    playErrorSound(player, config);
                     return;
                 }
             }
-            if (!comprandoKit && configKits.contains("Kits." + kit + ".price")
-                    && !jManager.isBuyed(player, kit)) {
+            if (!comprandoKit && configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
                 double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
                     double balance = econ.getBalance(player);
                     if (balance < price) {
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
-                                .replace("%current_money%", balance + "").replace("%required_money%", price + "")));
-                        errorSound(player, config);
+                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError").replace("%current_money%", balance + "").replace("%required_money%", price + "")));
+                        playErrorSound(player, config);
                     } else {
                         //Abrir inventario confirmacion
                         PlayerInventory inv = plugin.getInventarioJugador(player.getName());
@@ -681,28 +687,22 @@ public class KitManager {
             for (String i : configKits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
                 String name = configKits.getString("Kits." + kit + ".Items." + i + ".id");
                 if (configKits.contains("Kits." + kit + ".auto_armor") && configKits.getString("Kits." + kit + ".auto_armor").equals("true")) {
-                    if (name.contains("_HELMET") && itemCabeza == null
-                            && (invJ.getHelmet() == null || invJ.getHelmet().getType().equals(Material.AIR))) {
+                    if (name.contains("_HELMET") && itemCabeza == null && (invJ.getHelmet() == null || invJ.getHelmet().getType().equals(Material.AIR))) {
                         itemCabeza = i;
                         continue;
-                    } else if (name.contains("_CHESTPLATE") && itemPechera == null
-                            && (invJ.getChestplate() == null || invJ.getChestplate().getType().equals(Material.AIR))) {
+                    } else if (name.contains("_CHESTPLATE") && itemPechera == null && (invJ.getChestplate() == null || invJ.getChestplate().getType().equals(Material.AIR))) {
                         itemPechera = i;
                         continue;
-                    } else if (name.contains("_LEGGINGS") && itemPantalones == null
-                            && (invJ.getLeggings() == null || invJ.getLeggings().getType().equals(Material.AIR))) {
+                    } else if (name.contains("_LEGGINGS") && itemPantalones == null && (invJ.getLeggings() == null || invJ.getLeggings().getType().equals(Material.AIR))) {
                         itemPantalones = i;
                         continue;
-                    } else if (name.contains("_BOOTS") && itemBotas == null
-                            && (invJ.getBoots() == null || invJ.getBoots().getType().equals(Material.AIR))) {
+                    } else if (name.contains("_BOOTS") && itemBotas == null && (invJ.getBoots() == null || invJ.getBoots().getType().equals(Material.AIR))) {
                         itemBotas = i;
                         continue;
-                    } else if ((name.equals("SKULL_ITEM") || name.equals("PLAYER_HEAD")) && itemCabeza == null
-                            && (invJ.getHelmet() == null || invJ.getHelmet().getType().equals(Material.AIR))) {
+                    } else if ((name.equals("SKULL_ITEM") || name.equals("PLAYER_HEAD")) && itemCabeza == null && (invJ.getHelmet() == null || invJ.getHelmet().getType().equals(Material.AIR))) {
                         itemCabeza = i;
                         continue;
-                    } else if (!version.contains("1.8") && name.equals("ELYTRA") && itemPechera == null
-                            && (invJ.getChestplate() == null || invJ.getChestplate().getType().equals(Material.AIR))) {
+                    } else if (!version.contains("1.8") && name.equals("ELYTRA") && itemPechera == null && (invJ.getChestplate() == null || invJ.getChestplate().getType().equals(Material.AIR))) {
                         itemPechera = i;
                         continue;
                     }
@@ -723,34 +723,32 @@ public class KitManager {
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noSpaceError")));
-            errorSound(player, config);
+            playErrorSound(player, config);
             return;
         }
 
         if (!ignoreValues) {
-            if (comprandoKit && configKits.contains("Kits." + kit + ".price")
-                    && !jManager.isBuyed(player, kit)) {
+            if (comprandoKit && configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
                 double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
                     econ.withdrawPlayer(player, price);
                 }
                 if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getString("Kits." + kit + ".one_time_buy").equals("true")) {
-                    jManager.setBuyed(player, kit);
+                    playerKit.setBought(true);
                     return;
                 }
             }
 
             if (configKits.contains("Kits." + kit + ".cooldown")) {
-                if (!player.isOp() && !player.hasPermission("playerkits.admin") && !player.hasPermission("playerkits.bypasscooldown")) {
-                    long millis = System.currentTimeMillis();
-                    jManager.setCooldown(player, kit, millis);
+                if (!player.hasPermission("playerkits.bypasscooldown")) {
+                    playerData.registerCooldown(kit, new Cooldown(configKits.getInt("Kits." + kit + ".cooldown") * 1000L));
                 }
             }
 
-            if (configKits.contains("Kits." + kit + ".one_time") && configKits.getString("Kits." + kit + ".one_time").equals("true")) {
-                if (!player.isOp() && !player.hasPermission("playerkits.admin")) {
-                    jManager.setOneTime(player, kit);
+            if (configKits.contains("Kits." + kit + ".one_time") && configKits.getBoolean("Kits." + kit + ".one_time")) {
+                if (!player.hasPermission("playerkits.admin")) {
+                    playerKit.setOneTime(true);
                 }
             }
 
@@ -811,7 +809,7 @@ public class KitManager {
         }
     }
 
-    public static void errorSound(Player jugador, FileConfiguration config) {
+    public static void playErrorSound(Player jugador, FileConfiguration config) {
         if (config.getString("sounds.error_sound").equals("none")) {
             return;
         }
@@ -826,8 +824,7 @@ public class KitManager {
 
     public static boolean getArmadura(ItemStack item) {
         String name = item.getType().name();
-        return name.contains("_HELMET") || name.contains("_CHESTPLATE") ||
-                name.contains("_LEGGINGS") || name.contains("_BOOTS");
+        return name.contains("_HELMET") || name.contains("_CHESTPLATE") || name.contains("_LEGGINGS") || name.contains("_BOOTS");
     }
 
     public static void ejecutarComandos(FileConfiguration configKits, String kit, Player jugador) {

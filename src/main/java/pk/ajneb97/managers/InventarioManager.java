@@ -16,6 +16,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.inventory.PlayerInventory;
+import pk.ajneb97.models.PlayerData;
+import pk.ajneb97.models.PlayerKit;
+import pk.ajneb97.utils.Cooldown;
 import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
 
@@ -43,20 +46,21 @@ public class InventarioManager {
         }, 0L, 20L);
     }
 
-    protected boolean update(Player jugador, int pagina) {
+    protected boolean update(Player player, int pagina) {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
 
         String pathInventory = MessageUtils.getMensajeColor(getInventoryPageName(config, pagina));
         String pathInventoryM = ChatColor.stripColor(pathInventory);
-        Inventory inv = jugador.getOpenInventory().getTopInventory();
-        if (inv == null || !ChatColor.stripColor(jugador.getOpenInventory().getTitle()).equals(pathInventoryM)) {
+        Inventory inv = player.getOpenInventory().getTopInventory();
+        if (inv == null || !ChatColor.stripColor(player.getOpenInventory().getTitle()).equals(pathInventoryM)) {
             return false;
         }
 
         int paginasTotales = getCurrentPages(configKits);
 
+        // TODO: Move away.
         ConfigurationSection invSection = config.getConfigurationSection("inventory.items");
         if (!invSection.getKeys(false).isEmpty()) {
             for (String key : invSection.getKeys(false)) {
@@ -67,7 +71,7 @@ public class InventarioManager {
                 if (invSection.contains(key + ".name")) {
                     String name = invSection.getString(key + ".name");
                     if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                        name = PlaceholderAPI.setPlaceholders(jugador, name);
+                        name = PlaceholderAPI.setPlaceholders(player, name);
                     }
                     meta.setDisplayName(MessageUtils.getMensajeColor(name));
                 }
@@ -76,7 +80,7 @@ public class InventarioManager {
                     for (int i = 0; i < lore.size(); i++) {
                         String linea = lore.get(i);
                         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                            linea = PlaceholderAPI.setPlaceholders(jugador, linea);
+                            linea = PlaceholderAPI.setPlaceholders(player, linea);
                         }
                         lore.set(i, MessageUtils.getMensajeColor(linea));
                     }
@@ -111,8 +115,7 @@ public class InventarioManager {
             }
         }
 
-
-        JugadorManager manager = plugin.getJugadorManager();
+        PlayerManager playerManager = plugin.getPlayerManager();
 
         ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
         if (!kitsSection.getKeys(false).isEmpty()) {
@@ -124,16 +127,19 @@ public class InventarioManager {
                         page = configKits.getInt("Kits." + key + ".page");
                     }
                     if (page == pagina) {
-                        if (configKits.contains("Kits." + key + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
+                        if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
                             if (config.getBoolean("hide_kits_with_permissions")) {
                                 continue;
                             }
                         }
-                        if (configKits.contains("Kits." + key + ".permission") && !jugador.hasPermission(configKits.getString("Kits." + key + ".permission"))
+                        PlayerData playerData = playerManager.getOrCreatePlayer(player);
+                        PlayerKit playerKit = playerData.getPlayerKit(key);
+
+                        if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))
                                 && configKits.contains("Kits." + key + ".noPermissionsItem")) {
                             ItemStack item = crearItemBase("Kits." + key + ".noPermissionsItem", key, configKits);
                             inv.setItem(slot, item);
-                        } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getString("Kits." + key + ".one_time_buy").equals("true") && !manager.isBuyed(jugador, key)
+                        } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getBoolean("Kits." + key + ".one_time_buy") && !playerKit.isBought()
                                 && configKits.contains("Kits." + key + ".noBuyItem")) {
                             ItemStack item = crearItemBase("Kits." + key + ".noBuyItem", key, configKits);
                             inv.setItem(slot, item);
@@ -141,17 +147,18 @@ public class InventarioManager {
                             if (configKits.contains("Kits." + key + ".display_item")) {
                                 ItemStack item = crearItemBase("Kits." + key, key, configKits);
                                 ItemMeta meta = item.getItemMeta();
-                                if (configKits.contains("Kits." + key + ".one_time") && configKits.getString("Kits." + key + ".one_time").equals("true")
-                                        && manager.isOneTime(jugador, key)) {
+                                if (configKits.contains("Kits." + key + ".one_time") && configKits.getBoolean("Kits." + key + ".one_time")
+                                        && playerKit.isOneTime()) {
                                     List<String> lore = messages.getStringList("kitOneTimeLore");
                                     lore.replaceAll(MessageUtils::getMensajeColor);
                                     meta.setLore(lore);
                                 } else {
                                     if (configKits.contains("Kits." + key + ".cooldown")) {
-                                        String cooldown = Utils.getCooldown(key, jugador, configKits, config, manager);
-                                        if (!cooldown.equals("ready")) {
+                                        //TODO
+                                        if (playerData.hasCooldown(key)) {
                                             List<String> lore = messages.getStringList("kitInCooldownLore");
-                                            lore.replaceAll(s -> MessageUtils.getMensajeColor(s.replace("%time%", cooldown)));
+                                            Cooldown cooldown = playerData.getCooldown(key);
+                                            lore.replaceAll(s -> MessageUtils.getMensajeColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
                                             meta.setLore(lore);
                                         }
                                     }

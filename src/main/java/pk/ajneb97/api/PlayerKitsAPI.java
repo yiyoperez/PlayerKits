@@ -1,11 +1,11 @@
 package pk.ajneb97.api;
 
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.managers.JugadorManager;
-import pk.ajneb97.utils.Utils;
+import pk.ajneb97.managers.PlayerManager;
+import pk.ajneb97.models.PlayerData;
+import pk.ajneb97.utils.Cooldown;
 
 public class PlayerKitsAPI {
 
@@ -15,18 +15,24 @@ public class PlayerKitsAPI {
         PlayerKitsAPI.plugin = plugin;
     }
 
+    public static boolean hasCooldown(Player player, String kit) {
+        PlayerManager playerManager = plugin.getPlayerManager();
+        PlayerData playerData = playerManager.getOrCreatePlayer(player);
+
+        return playerData.hasCooldown(kit);
+    }
+
+    //TODO
     public static String getCooldown(Player player, String kit) {
-        FileConfiguration messages = plugin.getMessages();
-        FileConfiguration configKits = plugin.getKits();
-        JugadorManager jManager = plugin.getJugadorManager();
-        String cooldown = Utils.getCooldown(kit, player, configKits, messages, jManager);
-        if (cooldown.equals("ready")) {
-            return ChatColor.translateAlternateColorCodes('&', messages.getString("cooldownPlaceholderReady"));
-        } else if (cooldown.equals("no_existe")) {
+        PlayerManager playerManager = plugin.getPlayerManager();
+        PlayerData playerData = playerManager.getOrCreatePlayer(player);
+
+        Cooldown cooldown = playerData.getCooldown(kit);
+        if (cooldown == null){
             return null;
-        } else {
-            return cooldown;
         }
+
+        return cooldown.getTimeLeftPlainSeconds();
     }
 
     public static String getNBTSeparationCharacter() {

@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.utils.PluginLogger;
 
 /**
  * This class will automatically register as a placeholder expansion
@@ -93,25 +94,24 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
      */
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {
-
         if (player == null) {
             return "";
         }
 
-        // %playerkits_cooldown_<kit>%
-        if (identifier.startsWith("cooldown_")) {
-            String kit = identifier.replace("cooldown_", "");
-            String result = PlayerKitsAPI.getCooldown(player, kit);
-            if (result == null) {
-                return "%playerkits_" + identifier + "%";
-            } else {
-                return result;
-            }
+        String lower = identifier.toLowerCase().split("_")[0];
+        String yes = getPlaceholderAPI().getPlaceholderAPIConfig().booleanTrue();
+        String no = getPlaceholderAPI().getPlaceholderAPIConfig().booleanFalse();
 
+        String kit = identifier.split("_")[1];
+        PluginLogger.info("Kit " + kit);
+        switch (lower) {
+            case "cooldown":
+                String result = PlayerKitsAPI.getCooldown(player, kit);
+                return result == null ? no : result;
+            case "waiting":
+                return PlayerKitsAPI.hasCooldown(player, kit) ? yes : no;
+            default:
+                return identifier;
         }
-
-        // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%) 
-        // was provided
-        return null;
     }
 }

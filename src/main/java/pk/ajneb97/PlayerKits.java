@@ -18,11 +18,10 @@ import pk.ajneb97.managers.InventarioConfirmacionDinero;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioListener;
 import pk.ajneb97.managers.InventoryPreview;
-import pk.ajneb97.managers.JugadorManager;
 import pk.ajneb97.managers.PlayerDataSaveTask;
 import pk.ajneb97.managers.PlayerListeners;
-import pk.ajneb97.mysql.ConexionMySQL;
-import pk.ajneb97.mysql.MySQL;
+import pk.ajneb97.managers.PlayerManager;
+import pk.ajneb97.utils.TimeUtils;
 import pk.ajneb97.utils.Utils;
 
 import java.io.File;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
 import java.util.ArrayList;
 
 public class PlayerKits extends JavaPlugin {
@@ -48,9 +46,8 @@ public class PlayerKits extends JavaPlugin {
     private static Economy economy = null;
     private final ArrayList<PlayerInventory> playerInventories = new ArrayList<>();
 
-    private JugadorManager jugadorManager;
+    private PlayerManager playerManager;
 
-    private ConexionMySQL conexionDatabase;
     public static final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
 
     private PlayerDataSaveTask playerDataSaveTask;
@@ -60,6 +57,7 @@ public class PlayerKits extends JavaPlugin {
         registerConfig();
         registerMessages();
         registerPlayers();
+        new TimeUtils().setStrings(getMessages());
 
         registerEvents();
         registerCommands();
@@ -68,11 +66,7 @@ public class PlayerKits extends JavaPlugin {
 
         populateConfigIfEmpty();
 
-        if (MySQL.isEnabled(getConfig())) {
-            conexionDatabase = new ConexionMySQL();
-            conexionDatabase.setupMySql(this, getConfig());
-        }
-        jugadorManager = new JugadorManager(this);
+        this.playerManager = new PlayerManager(this);
         PlayerKitsAPI api = new PlayerKitsAPI(this);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -85,7 +79,7 @@ public class PlayerKits extends JavaPlugin {
     }
 
     public void onDisable() {
-        jugadorManager.guardarJugadores();
+        playerManager.saveServerPlayerData();
         if (kits != null) {
             saveKits();
         }
@@ -103,6 +97,10 @@ public class PlayerKits extends JavaPlugin {
         pm.registerEvents(new PlayerListeners(this), this);
         pm.registerEvents(new InventarioEditar(this), this);
         pm.registerEvents(new InventarioConfirmacionDinero(this), this);
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     public void agregarInventarioJugador(PlayerInventory inv) {
@@ -267,13 +265,6 @@ public class PlayerKits extends JavaPlugin {
         return economy;
     }
 
-    public Connection getConnection() {
-        return this.conexionDatabase.getConnection();
-    }
-
-    public JugadorManager getJugadorManager() {
-        return jugadorManager;
-    }
 
     public void populateConfigIfEmpty() {
         FileConfiguration config = getConfig();

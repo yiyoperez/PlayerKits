@@ -14,11 +14,13 @@ import pk.ajneb97.PlayerKits;
 import pk.ajneb97.managers.InventarioEditar;
 import pk.ajneb97.managers.InventarioManager;
 import pk.ajneb97.managers.InventoryPreview;
-import pk.ajneb97.managers.JugadorManager;
 import pk.ajneb97.managers.KitManager;
+import pk.ajneb97.managers.PlayerManager;
+import pk.ajneb97.models.PlayerData;
+import pk.ajneb97.models.PlayerKit;
 import pk.ajneb97.utils.Checks;
+import pk.ajneb97.utils.Cooldown;
 import pk.ajneb97.utils.MessageUtils;
-import pk.ajneb97.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             String subCommand = args[0].toLowerCase();
             switch (subCommand) {
                 case "reload":
+                    plugin.reloadPlayers();
                     plugin.reloadConfig();
                     plugin.reloadKits();
                     plugin.reloadMessages();
@@ -419,7 +422,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     public void reset(CommandSender sender, String[] args) {
         FileConfiguration kits = plugin.getKits();
         FileConfiguration messages = plugin.getMessages();
-        // /kits reset <kit> <player>
         if (args.length < 3) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandResetError")));
             return;
@@ -432,11 +434,21 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (plugin.getJugadorManager().resetKit(name, kit)) {
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetCorrect").replace("%kit%", args[1]).replace("%player%", name)));
-        } else {
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetFail").replace("%kit%", args[1]).replace("%player%", name)));
+        Player target = Bukkit.getPlayer(name);
+        if (target == null) {
+
+            return;
         }
+
+        PlayerManager playerManager = plugin.getPlayerManager();
+        PlayerData playerData = playerManager.getOrCreatePlayer(target);
+        PlayerKit playerKit = playerManager.getOrCreatePlayerKit(target, kit);
+
+        playerKit.setCooldown(-1);
+        playerData.removeCooldown(kit);
+        sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetCorrect").replace("%kit%", args[1]).replace("%player%", name)));
+
+        //sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetFail").replace("%kit%", args[1]).replace("%player%", name)));
     }
 
     private void reloadArgument(Player player) {
@@ -448,6 +460,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         plugin.reloadConfig();
         plugin.reloadMessages();
+        plugin.reloadPlayers();
         plugin.reloadKits();
 
         plugin.reloadPlayerDataSaveTask();

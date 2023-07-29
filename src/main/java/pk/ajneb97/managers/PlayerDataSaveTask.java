@@ -2,6 +2,7 @@ package pk.ajneb97.managers;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.utils.PluginLogger;
 
 public class PlayerDataSaveTask {
 
@@ -32,6 +33,7 @@ public class PlayerDataSaveTask {
     }
 
     public void execute() {
-        plugin.getJugadorManager().guardarJugadores();
+        PluginLogger.info("Saving player data automatically.");
+        plugin.getPlayerManager().saveServerPlayerData();
     }
 }
