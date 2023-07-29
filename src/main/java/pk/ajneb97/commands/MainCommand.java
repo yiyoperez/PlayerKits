@@ -147,7 +147,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
     private void helpArgument(CommandSender sender) {
         FileConfiguration messages = plugin.getMessages();
-        for (String helpMessage : messages.getStringList("command-help-message")) {
+        for (String helpMessage : messages.getStringList("command.help-message")) {
             sender.sendMessage(MessageUtils.getMensajeColor(helpMessage));
         }
     }
@@ -276,48 +276,45 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
     private void listArgument(Player player) {
         FileConfiguration kits = plugin.getKits();
-        FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.admin") && !player.hasPermission("playerkits.list")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
             return;
         }
 
-        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandList")));
-        JugadorManager jManager = plugin.getJugadorManager();
+        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("command.list.header")));
 
         // There is no kits available.
         if (!kits.contains("Kits")) {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandListEmpty")));
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("command.list.empty")));
             return;
         }
 
-        StringJoiner list = new StringJoiner(messages.getString("commandListKitDisplayFormat", "&r, "));
+        PlayerManager playerManager = plugin.getPlayerManager();
+        PlayerData playerData = playerManager.getOrCreatePlayer(player);
+
+        StringJoiner list = new StringJoiner(messages.getString("command.list.format", "&r, "));
         for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
+            PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, key);
             if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.list")) {
                 if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
-                    list.add(messages.getString("commandListKitNoPermissions").replace("%kit%", key));
+                    list.add(messages.getString("command.list.cooldown").replace("%kit%", key));
                 } else {
-                    if (kits.contains("Kits." + key + ".one_time") && kits.getBoolean("Kits." + key + ".one_time") && jManager.isOneTime(player, key)) {
-                        list.add(messages.getString("commandListKitOneTime").replace("%kit%", key));
+                    if (kits.contains("Kits." + key + ".one_time") && kits.getBoolean("Kits." + key + ".one_time") && playerKit.isOneTime()) {
+                        list.add(messages.getString("command.list.one-time").replace("%kit%", key));
                     } else {
-                        boolean cooldownReady = true;
-                        if (kits.contains("Kits." + key + ".cooldown")) {
-                            String cooldown = Utils.getCooldown(key, player, kits, config, jManager);
-                            if (!cooldown.equals("ready")) {
-                                cooldownReady = false;
-                                list.add(messages.getString("commandListKitInCooldown").replace("%kit%", key).replace("%time%", cooldown));
-                            }
-                        }
-                        if (cooldownReady) {
-                            list.add(messages.getString("commandListKit").replace("%kit%", key));
+                        if (kits.contains("Kits." + key + ".cooldown") && playerData.hasCooldown(key)) {
+                            Cooldown cooldown = playerData.getCooldown(key);
+                            list.add(messages.getString("command.list.cooldown").replace("%kit%", key).replace("%time%", cooldown.getTimeLeftRoundedSeconds()));
+                        } else {
+                            list.add(messages.getString("command.list.available").replace("%kit%", key));
                         }
                     }
                 }
             }
         }
 
-        player.sendMessage(MessageUtils.getMensajeColor(String.valueOf(list)));
+        player.sendMessage(MessageUtils.getMensajeColor(list.toString()));
     }
 
     private void claimArgument(Player player, String[] args) {
