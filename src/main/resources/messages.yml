@@ -14,12 +14,18 @@ kitCreated: "&aKit &7%name% &acreated correctly."
 kitRemoved: "&aKit &7%name% &aremoved correctly."
 kitReceived: "&aKit &7%name% &areceived."
 configReload: "&aConfig Reloaded."
-seconds: 's'
-minutes: 'm'
-hours: 'h'
-days: 'd'
-cooldownPlaceholderReady: "&a&lReady!"
-cooldownError: "&cYou need to wait &7%time% &cto claim this kit again."
+cooldown:
+  days: ' days'
+  day: ' day'
+  hours: ' hours'
+  hour: ' hour'
+  minutes: ' minutes'
+  minute: ' minute'
+  seconds: ' seconds'
+  second: ' second'
+  ready: "&a&lReady!"
+  wait: "&cYou need to wait &7%time% &cto claim this kit again."
+
 kitNoPermissions: "&cYou don't have permissions to claim this kit."
 kitInCooldownLore:
   - "&cYou need to wait &7%time%"
