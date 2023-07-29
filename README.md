@@ -30,7 +30,6 @@ I could probably accept some feature & pull requests, I'm also looking to fix er
 ---
 
 ![](assets/playerkits.png)
-![](assets/playerkits.webp)
 
 ### What can I do with PlayerKits?
 
@@ -40,7 +39,8 @@ Using <span style="color:red">/kit</span> players will be able to claim these ki
 <br>
 Kits can also have a cooldown, so users can't claim them everytime.
 
-What makes **<span style="color:yellow">Player</span><span style="color:light_gray">Kits</span>** special is its easy way to create kits, just having the items on your inventory and executing a
+What makes **<span style="color:yellow">Player</span><span style="color:light_gray">Kits</span>** special is its easy
+way to create kits, just having the items on your inventory and executing a
 command.
 <br>
 You can edit kits properties by using <span style="color:red">/kit edit</span> command.
@@ -96,24 +96,102 @@ Also, almost all item attributes will be stored in the kit, so they are given co
 
 </details>
 
+### How to Start
+
+To create a new kit you just need to have some items on your inventory and then execute the command /kit create <name>.
+<br>
+To claim the kit you have two options:
+
+- Use the /kit command and click on the kit item inside the GUI.
+- Use the /kit claim <name> command.
+
+> ℹ Or use `/kit <name>` if you have `claim_kit_short_command` option set to `true`
+
+You can also edit the kit directly from Minecraft without touching the config, using the /kit edit <kit> command.
+
+<img src="assets/editing.png" width="80%">
+
 ---
 
 ### More
 
 ---
+
+  <details>
+  <summary>Config options</summary>
+
+<!> Please don't use this, it needs to get updated.
+
+  ```yaml
+# Here you can define the sound name for specific events. 
+# Use these sounds for 1.8: https://github.com/Attano/Spigot-1.8/blob/master/org/bukkit/Sound.java
+# And these sounds for newer versions: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+# Format: Sound;Volume;Pitch
+# You can set the options to 'none' for not setting any sound.
+kit_error_sound: BLOCK_NOTE_BLOCK_PLING;10;0.1
+kit_claim_sound: ENTITY_PLAYER_LEVELUP;10;1.5
+
+# This will define the time in seconds in which player kit data is saved automatically.
+player_data_save_time: 300
+
+# If this option is enabled, players without permissions to claim certain kit will not be able to preview it.
+preview_inventory_requires_permission: false
+
+# If this option is enabled, players will be able to use /kit <name> command instead of /kit claim <name>
+claim_kit_short_command: false
+
+# Here you need to define the title of the kits inventory per page.
+inventory_pages_names:
+1: "&9Kits"
+2: "&bVIP Kits"
+
+# Enabling this will fix some nbt issues especially with AdvancedEnchantments plugin. If you modify this option you must save your kits again.
+nbt_alternative_data_save: false
+
+# You can modify the GUI Inventory as you like by adding items here. 
+# The section name (in this case 0) is the slot.
+# You can also add a command to the item if you want. You can also use skulldata. You can use PlaceholderAPI variables on the name and lore.
+# You can use the custom_model_data option if you need to
+0:
+id: BLACK_STAINED_GLASS_PANE
+name: "&6Go Back"
+lore:
+  - "line1"
+  - "line2"
+command: chestcommands open %player% mainmenu
+custom_model_data: 5
+
+# Here you can modify the slot and properties of the next page and previous page items. Just remember to leave the "type" intact.
+18:
+id: PLAYER_HEAD
+skulldata: "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=="
+type: previous_page
+name: "&6Previous Page"
+26:
+id: PLAYER_HEAD
+skulldata: "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19"
+type: next_page
+name: "&6Next Page"
+```
+
+---
+
+</details>
 <details>
 <summary>Kit options</summary>
 
 <!> Please don't use this, it needs to get updated.
 
 ```yaml
+
 #The position of the kit in the GUI Inventory. If you don't want to show the kit you can remove this option.
 slot: 10
 
 #The page of the inventory where the kit will show. If you want to show the item in the first page, you don't need to add this option.
 page: 2
 
-#Attributes of the item in the inventory. For the display_name you need to use a valid item name. For latest Minecraft version use this link as reference: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+#Attributes of the item in the inventory. For the display_name you need to use a valid item name.
+# For latest Minecraft version use this link as reference: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 #If you want to set a textured skull the display_item must be "PLAYER HEAD" or "SKULL_ITEM:3" for 1.8-1.12 and add :
 #display_item_skulldata: "id;texture"
 display_item: IRON_AXE
@@ -176,65 +254,6 @@ first_join: true
 
 #If this option is set to true, players can claim this kit just one time.
 one_time: true
-```
-
----
-
-</details>
-
-<details>
-<summary>Config options</summary>
-
-<!> Please don't use this, it needs to get updated.
-
-```yaml
-# Here you can define the sound name for specific events. 
-# Use these sounds for 1.8: https://github.com/Attano/Spigot-1.8/blob/master/org/bukkit/Sound.java
-# And these sounds for newer versions: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-# Format: Sound;Volume;Pitch
-# You can set the options to 'none' for not setting any sound.
-kit_error_sound: BLOCK_NOTE_BLOCK_PLING;10;0.1
-kit_claim_sound: ENTITY_PLAYER_LEVELUP;10;1.5
-
-# This will define the time in seconds in which player kit data is saved automatically.
-player_data_save_time: 300
-
-# If this option is enabled, players without permissions to claim certain kit will not be able to preview it.
-preview_inventory_requires_permission: false
-
-# If this option is enabled, players will be able to use /kit <name> command instead of /kit claim <name>
-claim_kit_short_command: false
-
-# Here you need to define the title of the kits inventory per page.
-inventory_pages_names:
-1: "&9Kits"
-2: "&bVIP Kits"
-
-# Enabling this will fix some nbt issues especially with AdvancedEnchantments plugin. If you modify this option you must save your kits again.
-nbt_alternative_data_save: false
-
-# You can modify the GUI Inventory as you like by adding items here. The section name (in this case 0) is the slot. You can also add a command to the item if you want. You can also use skulldata. You can use PlaceholderAPI variables on the name and lore.
-# You can use the custom_model_data option if you need to
-0:
-id: BLACK_STAINED_GLASS_PANE
-name: "&6Go Back"
-lore:
-  - "line1"
-  - "line2"
-command: chestcommands open %player% mainmenu
-custom_model_data: 5
-
-# Here you can modify the slot and properties of the next page and previous page items. Just remember to leave the "type" intact.
-18:
-id: PLAYER_HEAD
-skulldata: "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=="
-type: previous_page
-name: "&6Previous Page"
-26:
-id: PLAYER_HEAD
-skulldata: "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19"
-type: next_page
-name: "&6Next Page"
 ```
 
 ---
