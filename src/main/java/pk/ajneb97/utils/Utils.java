@@ -8,12 +8,10 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import pk.ajneb97.managers.JugadorManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,53 +30,6 @@ public class Utils {
     public static boolean isNew() {
         return Bukkit.getVersion().contains("1.16") || Bukkit.getVersion().contains("1.17") || Bukkit.getVersion().contains("1.18")
                 || Bukkit.getVersion().contains("1.19") || Bukkit.getVersion().contains("1.20");
-    }
-
-    //TODO: Many people having problems with cooldown, take a look on this.
-    public static String getCooldown(String kit, Player jugador, FileConfiguration kitConfig, FileConfiguration messages, JugadorManager jManager) {
-        //1000millis claimea un kit de 5 segundos
-        //6000millis puede claimearlo otra vez (timecooldown)
-
-        long timecooldown = jManager.getCooldown(jugador, kit);
-
-        long millis = System.currentTimeMillis();
-        if (!kitConfig.contains("Kits." + kit + ".cooldown")) {
-            return "no_existe";
-        }
-        long cooldown = kitConfig.getLong("Kits." + kit + ".cooldown");
-        long cooldownmil = cooldown * 1000;
-
-        long espera = millis - timecooldown;
-        long esperaDiv = espera / 1000;
-        long esperatotalseg = cooldown - esperaDiv;
-        long esperatotalmin = esperatotalseg / 60;
-        long esperatotalhour = esperatotalmin / 60;
-        long esperatotalday = esperatotalhour / 24;
-        if (((timecooldown + cooldownmil) > millis) && (timecooldown != 0)) {
-            if (esperatotalseg > 59) {
-                esperatotalseg = esperatotalseg - 60 * esperatotalmin;
-            }
-            String time = esperatotalseg + messages.getString("seconds");
-            if (esperatotalmin > 59) {
-                esperatotalmin = esperatotalmin - 60 * esperatotalhour;
-            }
-            if (esperatotalmin > 0) {
-                time = esperatotalmin + messages.getString("minutes") + " " + time;
-            }
-            if (esperatotalhour > 24) {
-                esperatotalhour = esperatotalhour - 24 * esperatotalday;
-            }
-            if (esperatotalhour > 0) {
-                time = esperatotalhour + messages.getString("hours") + " " + time;
-            }
-            if (esperatotalday > 0) {
-                time = esperatotalday + messages.getString("days") + " " + time;
-            }
-
-            return time;
-        } else {
-            return "ready";
-        }
     }
 
     @SuppressWarnings("deprecation")
