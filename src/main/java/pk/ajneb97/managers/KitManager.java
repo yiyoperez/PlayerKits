@@ -53,9 +53,17 @@ import java.util.Set;
 
 public class KitManager {
 
+    private final PlayerKits plugin;
 
-    public static boolean save(String kitName, FileConfiguration configKits, FileConfiguration config, Player jugador) {
-        ItemStack[] contents = jugador.getInventory().getContents();
+    public KitManager(PlayerKits plugin) {
+        this.plugin = plugin;
+    }
+
+    public boolean save(Player player, String kitName) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration configKits = plugin.getKits();
+
+        ItemStack[] contents = player.getInventory().getContents();
         int c = 1;
         for (ItemStack content : contents) {
             if (content != null && !content.getType().equals(Material.AIR)) {
@@ -599,7 +607,7 @@ public class KitManager {
         return crafteos;
     }
 
-    public static void claimKit(Player player, String kit, PlayerKits plugin, boolean message, boolean ignoreValues, boolean comprandoKit) {
+    public void claimKit(Player player, String kit, boolean message, boolean ignoreValues, boolean comprandoKit) {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
@@ -810,7 +818,7 @@ public class KitManager {
         }
     }
 
-    public static void playErrorSound(Player jugador, FileConfiguration config) {
+    public void playErrorSound(Player jugador, FileConfiguration config) {
         if (config.getString("sounds.error_sound").equals("none")) {
             return;
         }
@@ -828,19 +836,36 @@ public class KitManager {
         return name.contains("_HELMET") || name.contains("_CHESTPLATE") || name.contains("_LEGGINGS") || name.contains("_BOOTS");
     }
 
-    public static void ejecutarComandos(FileConfiguration configKits, String kit, Player jugador) {
-        if (configKits.contains("Kits." + kit + ".Commands")) {
-            List<String> comandos = configKits.getStringList("Kits." + kit + ".Commands");
-            CommandSender consola = Bukkit.getServer().getConsoleSender();
-            for (String comando : comandos) {
-                if (comando.startsWith("msg %player% ")) {
-                    String mensaje = comando.replace("msg %player% ", "");
-                    jugador.sendMessage(MessageUtils.getMensajeColor(mensaje));
-                } else {
-                    String comandoAEnviar = comando.replace("%player%", jugador.getName());
-                    Bukkit.dispatchCommand(consola, comandoAEnviar);
+    public void ejecutarComandos(FileConfiguration configKits, String kit, Player jugador) {
+        if (!configKits.contains("Kits." + kit + ".Commands")) {
+            return;
+        }
+
+        List<String> comandos = configKits.getStringList("Kits." + kit + ".Commands");
+        CommandSender consola = Bukkit.getServer().getConsoleSender();
+        for (String comando : comandos) {
+            if (comando.startsWith("msg %player% ")) {
+                String mensaje = comando.replace("msg %player% ", "");
+                jugador.sendMessage(MessageUtils.getMensajeColor(mensaje));
+            } else {
+                String comandoAEnviar = comando.replace("%player%", jugador.getName());
+                Bukkit.dispatchCommand(consola, comandoAEnviar);
+            }
+        }
+    }
+
+    public boolean existsKit(String kitName) {
+        FileConfiguration kits = plugin.getKits();
+        ConfigurationSection section = kits.getConfigurationSection("Kits");
+
+        if (section != null) {
+            for (String key : section.getKeys(false)) {
+                if (key.equalsIgnoreCase(kitName)) {
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 }

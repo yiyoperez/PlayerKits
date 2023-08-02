@@ -103,7 +103,6 @@ public class ExpansionPlayerKits extends PlaceholderExpansion {
         String no = getPlaceholderAPI().getPlaceholderAPIConfig().booleanFalse();
 
         String kit = identifier.split("_")[1];
-        PluginLogger.info("Kit " + kit);
         switch (lower) {
             case "cooldown":
                 String result = PlayerKitsAPI.getCooldown(player, kit);
