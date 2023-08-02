@@ -1,4 +1,4 @@
-package pk.ajneb97.managers;
+package pk.ajneb97.listeners;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.managers.KitManager;
+import pk.ajneb97.managers.PlayerManager;
 
 public class PlayerListeners implements Listener {
 
@@ -30,6 +32,7 @@ public class PlayerListeners implements Listener {
         PlayerManager playerManager = plugin.getPlayerManager();
 
         playerManager.savePlayer(player);
+        playerManager.removePlayer(player);
     }
 
     public void giveFirstJoinKits(Player jugador) {

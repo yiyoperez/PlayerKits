@@ -1,4 +1,4 @@
-package pk.ajneb97.managers;
+package pk.ajneb97.listeners;
 
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pk.ajneb97.inventory.PlayerInventory;
 import pk.ajneb97.PlayerKits;
+import pk.ajneb97.managers.InventarioManager;
+import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.utils.MessageUtils;
 import pk.ajneb97.utils.Utils;
 

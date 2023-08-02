@@ -1,4 +1,4 @@
-package pk.ajneb97.managers;
+package pk.ajneb97.tasks;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import pk.ajneb97.PlayerKits;
