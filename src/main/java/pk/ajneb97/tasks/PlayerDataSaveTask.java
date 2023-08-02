@@ -25,9 +25,10 @@ public class PlayerDataSaveTask {
             public void run() {
                 if (stop) {
                     this.cancel();
-                } else {
-                    execute();
+                    return;
                 }
+
+                execute();
             }
         }.runTaskTimerAsynchronously(plugin, 0L, 20L * timeSeconds);
     }
