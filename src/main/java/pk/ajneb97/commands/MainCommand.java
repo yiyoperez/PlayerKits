@@ -464,6 +464,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
     }
 
+    // TODO: Must move to kits manager class.
     public String getKit(FileConfiguration kits, String kitName) {
         ConfigurationSection section = kits.getConfigurationSection("Kits");
 
