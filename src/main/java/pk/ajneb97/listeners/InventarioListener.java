@@ -110,6 +110,7 @@ public class InventarioListener implements Listener {
             }
         }
 
+        KitManager kitManager = plugin.getKitManager();
         ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
         if (!kitsSection.getKeys(false).isEmpty()) {
             for (String key : kitsSection.getKeys(false)) {
@@ -138,7 +139,7 @@ public class InventarioListener implements Listener {
 
                                 InventoryPreview.abrirInventarioPreview(plugin, player, key, inv.getPagina());
                             } else {
-                                KitManager.claimKit(player, key, plugin, true, false, false);
+                                kitManager.claimKit(player, key, true, false, false);
                             }
                             return;
                         }

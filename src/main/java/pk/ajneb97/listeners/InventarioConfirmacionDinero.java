@@ -78,7 +78,9 @@ public class InventarioConfirmacionDinero implements Listener {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         Player jugador = (Player) event.getWhoClicked();
+        KitManager kitManager = plugin.getKitManager();
         PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
+
         if (inv != null) {
             if (event.getCurrentItem() == null) {
                 event.setCancelled(true);
@@ -106,7 +108,7 @@ public class InventarioConfirmacionDinero implements Listener {
                             jugador.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError")
                                     .replace("%current_money%", String.valueOf(balance)).replace("%required_money%", String.valueOf(price))));
                         } else {
-                            KitManager.claimKit(jugador, kit, plugin, true, false, true);
+                            kitManager.claimKit(jugador, kit, true, false, true);
                             int pag = inv.getPagina();
                             if (pag != -1) {
                                 InventarioManager.openMainInventory(config, plugin, jugador, pag);

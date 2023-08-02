@@ -6,7 +6,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -47,11 +46,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             String subCommand = args[0].toLowerCase();
             switch (subCommand) {
                 case "reload":
+                    plugin.reloadPlayerDataSaveTask();
                     plugin.reloadPlayers();
                     plugin.reloadConfig();
                     plugin.reloadKits();
                     plugin.reloadMessages();
-                    plugin.reloadPlayerDataSaveTask();
                     sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
                     break;
                 case "give":
@@ -125,11 +124,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     private boolean quickClaimMethod(Player player, String[] args) {
         FileConfiguration kits = plugin.getKits();
         FileConfiguration config = plugin.getConfig();
+        KitManager kitManager = plugin.getKitManager();
         FileConfiguration messages = plugin.getMessages();
 
         if (config.getBoolean("claim_kit_short_command")) {
-            String kit = getKit(kits, args[0]);
-            if (kit == null) {
+            if (!kitManager.existsKit(args[1])){
                 if (player.hasPermission("playerkits.bypass.short.claim")) {
                     return false;
                 }
@@ -137,8 +136,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
-                KitManager.claimKit(player, kit, plugin, true, false, false);
+            if (kits.contains("Kits." + args[1] + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+                kitManager.claimKit(player, args[1], true, false, false);
             }
             return true;
         }
@@ -202,7 +201,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
     private void createArgument(Player player, String[] args) {
         FileConfiguration kits = plugin.getKits();
-        FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         if (!player.isOp() && !player.hasPermission("playerkits.create")) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPermissions")));
@@ -214,13 +212,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        String kit = getKit(kits, args[1]);
-        if (kit != null) {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", kit)));
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
+            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", args[1])));
             return;
         }
 
-        if (KitManager.save(args[1], kits, config, player)) {
+        if (kitManager.save(player, args[1])) {
             plugin.saveKits();
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitCreated").replace("%name%", args[1])));
         } else {
@@ -241,15 +239,16 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        String kit = getKit(kits, args[1]);
-        if (kit == null) {
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
-        kits.set("Kits." + kit, null);
+        //TODO: Create a method for this at manager.
+        kits.set("Kits." + args[1], null);
         plugin.saveKits();
-        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitRemoved").replace("%name%", kit)));
+        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitRemoved").replace("%name%", args[1])));
     }
 
     private void editArgument(Player player, String[] args) {
@@ -265,13 +264,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        String kit = getKit(kits, args[1]);
-        if (kit == null) {
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
-        InventarioEditar.crearInventario(player, kit, plugin);
+        InventarioEditar.crearInventario(player, args[1], plugin);
     }
 
     private void listArgument(Player player) {
@@ -325,14 +324,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        String kit = getKit(kits, args[1]);
-        if (kit == null) {
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
-        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.claim")) {
-            KitManager.claimKit(player, kit, plugin, true, false, false);
+        if (kits.contains("Kits." + args[1] + ".slot") || player.isOp() || player.hasPermission("playerkits.claim")) {
+            kitManager.claimKit(player, args[1],  true, false, false);
         } else {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
         }
@@ -347,18 +346,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        String kit = getKit(kits, args[1]);
-        if (kit == null) {
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
-        if (kits.contains("Kits." + kit + ".slot") || player.isOp() || player.hasPermission("playerkits.preview")) {
+        if (kits.contains("Kits." + args[1] + ".slot") || player.isOp() || player.hasPermission("playerkits.preview")) {
             boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
             if (permissionCheck) {
                 boolean hasPermission = true;
-                if (kits.contains("Kits." + kit + ".permission")) {
-                    String permission = kits.getString("Kits." + kit + ".permission");
+                if (kits.contains("Kits." + args[1] + ".permission")) {
+                    String permission = kits.getString("Kits." + args[1] + ".permission");
                     if (!player.isOp() && !player.hasPermission(permission)) {
                         hasPermission = false;
                     }
@@ -370,7 +369,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            InventoryPreview.abrirInventarioPreview(plugin, player, kit, 1);
+            InventoryPreview.abrirInventarioPreview(plugin, player, args[1], 1);
         }
     }
 
@@ -391,16 +390,17 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandGiveError")));
             return;
         }
-        String kit = getKit(kits, args[1]);
-        if (kit == null) {
+
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
         Player player = Bukkit.getPlayer(args[2]);
         if (player != null) {
-            KitManager.claimKit(player, kit, plugin, true, true, false);
-            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitGive").replace("%player%", args[2]).replace("%kit%", kit)));
+            kitManager.claimKit(player, args[1],  true, true, false);
+            sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitGive").replace("%player%", args[2]).replace("%kit%", args[1])));
         } else {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[2])));
         }
@@ -425,8 +425,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         String name = args[2];
-        String kit = getKit(kits, args[1]);
-        if (kit == null) {
+
+        KitManager kitManager = plugin.getKitManager();
+        if (!kitManager.existsKit(args[1])){
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
@@ -439,10 +440,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         PlayerManager playerManager = plugin.getPlayerManager();
         PlayerData playerData = playerManager.getOrCreatePlayer(target);
-        PlayerKit playerKit = playerManager.getOrCreatePlayerKit(target, kit);
+        PlayerKit playerKit = playerManager.getOrCreatePlayerKit(target, args[1]);
 
         playerKit.setCooldown(-1);
-        playerData.removeCooldown(kit);
+        playerData.removeCooldown(args[1]);
         sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetCorrect").replace("%kit%", args[1]).replace("%player%", name)));
 
         //sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitResetFail").replace("%kit%", args[1]).replace("%player%", name)));
@@ -455,28 +456,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
+        plugin.reloadPlayerDataSaveTask();
         plugin.reloadConfig();
         plugin.reloadMessages();
         plugin.reloadPlayers();
         plugin.reloadKits();
 
-        plugin.reloadPlayerDataSaveTask();
         player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("configReload")));
-    }
-
-    // TODO: Must move to kits manager class.
-    public String getKit(FileConfiguration kits, String kitName) {
-        ConfigurationSection section = kits.getConfigurationSection("Kits");
-
-        if (section != null) {
-            for (String key : section.getKeys(false)) {
-                if (key.equalsIgnoreCase(kitName)) {
-                    return key;
-                }
-            }
-        }
-
-        return null;
     }
 
     @Override

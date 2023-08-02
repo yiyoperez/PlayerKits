@@ -37,10 +37,11 @@ public class PlayerListeners implements Listener {
 
     public void giveFirstJoinKits(Player jugador) {
         FileConfiguration kitConfig = plugin.getKits();
+        KitManager kitManager = plugin.getKitManager();
         if (kitConfig.contains("Kits")) {
             for (String key : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
                 if (kitConfig.contains("Kits." + key + ".first_join") && kitConfig.getBoolean("Kits." + key + ".first_join")) {
-                    KitManager.claimKit(jugador, key, plugin, false, false, false);
+                    kitManager.claimKit(jugador, key, false, false, false);
                 }
             }
         }

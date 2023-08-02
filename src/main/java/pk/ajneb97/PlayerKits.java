@@ -18,6 +18,7 @@ import pk.ajneb97.listeners.InventarioConfirmacionDinero;
 import pk.ajneb97.listeners.InventarioEditar;
 import pk.ajneb97.listeners.InventarioListener;
 import pk.ajneb97.listeners.InventoryPreview;
+import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.tasks.PlayerDataSaveTask;
 import pk.ajneb97.listeners.PlayerListeners;
 import pk.ajneb97.managers.PlayerManager;
@@ -46,6 +47,7 @@ public class PlayerKits extends JavaPlugin {
     private static Economy economy = null;
     private final ArrayList<PlayerInventory> playerInventories = new ArrayList<>();
 
+    private KitManager kitManager;
     private PlayerManager playerManager;
 
     public static final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
@@ -63,10 +65,11 @@ public class PlayerKits extends JavaPlugin {
         registerCommands();
 
         setupEconomy();
-
         populateConfigIfEmpty();
 
+        this.kitManager = new KitManager(this);
         this.playerManager = new PlayerManager(this);
+
         PlayerKitsAPI api = new PlayerKitsAPI(this);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -97,6 +100,10 @@ public class PlayerKits extends JavaPlugin {
         pm.registerEvents(new PlayerListeners(this), this);
         pm.registerEvents(new InventarioEditar(this), this);
         pm.registerEvents(new InventarioConfirmacionDinero(this), this);
+    }
+
+    public KitManager getKitManager() {
+        return kitManager;
     }
 
     public PlayerManager getPlayerManager() {
