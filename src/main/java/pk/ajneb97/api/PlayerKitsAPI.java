@@ -22,7 +22,6 @@ public class PlayerKitsAPI {
         return playerData.hasCooldown(kit);
     }
 
-    //TODO
     public static String getCooldown(Player player, String kit) {
         PlayerManager playerManager = plugin.getPlayerManager();
         PlayerData playerData = playerManager.getOrCreatePlayer(player);
