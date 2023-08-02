@@ -23,6 +23,8 @@ public class PlayerListeners implements Listener {
         final Player player = event.getPlayer();
         PlayerManager playerManager = plugin.getPlayerManager();
 
+        giveFirstJoinKits(player);
+
         playerManager.loadPlayer(player);
     }
 
