@@ -2,26 +2,32 @@ package pk.ajneb97.models;
 
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.utils.Cooldown;
-import pk.ajneb97.utils.PluginLogger;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerData implements ConfigurationSerializable {
 
     private final UUID uuid;
     private final String name;
-    private HashSet<PlayerKit> kits = new HashSet<>();
+    private final Set<PlayerKit> kits = new HashSet<>();
     private final Map<String, Cooldown> cooldownMap = new HashMap<>();
 
     public PlayerData(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
+    }
+
+    public PlayerData(Player player) {
+        this.uuid = player.getUniqueId();
+        this.name = player.getName();
     }
 
     public PlayerData(Map<String, Object> map) {
@@ -31,17 +37,20 @@ public class PlayerData implements ConfigurationSerializable {
         if (map.get("kits") != null && map.get("kits") instanceof MemorySection) {
             MemorySection section = (MemorySection) map.get("kits");
 
+            // If kits are empty return.
             if (section.getKeys(false).isEmpty()) return;
 
             // Load player kits.
-            for (String key : section.getKeys(false)) {
-                kits.add(new PlayerKit(section.getConfigurationSection(key).getValues(false)));
-            }
+            section.getKeys(false)
+                    .stream()
+                    .map(key -> new PlayerKit(section.getConfigurationSection(key).getValues(false)))
+                    .forEach(kits::add);
 
-            // set kits cooldown.
-            for (PlayerKit kit : kits) {
+            kits.forEach(kit -> {
+                // If kit cooldown has expired don't add to cooldown map.
+                if (kit.getCooldown() <= System.currentTimeMillis()) return;
                 cooldownMap.put(kit.getName(), new Cooldown(kit.getCooldown()));
-            }
+            });
         }
     }
 
@@ -60,17 +69,12 @@ public class PlayerData implements ConfigurationSerializable {
                 .orElse(new PlayerKit(kit, false, false));
     }
 
-    public void setKits(HashSet<PlayerKit> kits) {
-        this.kits = kits;
-    }
-
-    public HashSet<PlayerKit> getKits() {
+    public Set<PlayerKit> getKits() {
         return kits;
     }
 
     public void registerCooldown(String kit, Cooldown cooldown) {
         cooldownMap.put(kit, cooldown);
-        PluginLogger.info("Registered kit cooldown " + kit + " (" + cooldown.getTimeLeftRoundedSeconds() + ")");
     }
 
     public void removeCooldown(String kit) {
@@ -97,9 +101,9 @@ public class PlayerData implements ConfigurationSerializable {
 
         Map<String, Object> kitsMap = new LinkedHashMap<>();
         for (PlayerKit kit : kits) {
-            if (!hasCooldown(kit.getName())) continue;
-
-            kit.setCooldown(getCooldown(kit.getName()).getRemaining());
+            if (hasCooldown(kit.getName())) {
+                kit.setCooldown(getCooldown(kit.getName()).getRemaining());
+            }
             kitsMap.put(kit.getName(), kit.serialize());
         }
         map.put("kits", kitsMap);

@@ -6,15 +6,16 @@ import org.bukkit.entity.Player;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.models.PlayerData;
 import pk.ajneb97.models.PlayerKit;
-import pk.ajneb97.utils.PluginLogger;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class PlayerManager {
 
     private final PlayerKits plugin;
-    private Set<PlayerData> playerDataSet = new HashSet<>();
+    private final Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
     public PlayerManager(PlayerKits plugin) {
         this.plugin = plugin;
@@ -23,17 +24,21 @@ public class PlayerManager {
     public void loadPlayer(Player player) {
         FileConfiguration players = plugin.getPlayers();
 
+
         // If player doesn't exists in players.yml
+
+        player.sendMessage(String.valueOf(players.contains(player.getUniqueId().toString())));
+
         if (!players.contains(player.getUniqueId().toString())) {
             // gets or create a new playerdata object
             getOrCreatePlayer(player);
             return;
         }
 
-
         // If it does exists, load data.
-        playerDataSet.add(new PlayerData(players.getConfigurationSection(player.getUniqueId().toString()).getValues(false)));
+        playerDataMap.put(player.getUniqueId(), new PlayerData(players.getConfigurationSection(player.getUniqueId().toString()).getValues(false)));
         plugin.savePlayers();
+        plugin.reloadPlayers();
     }
 
 
@@ -45,11 +50,13 @@ public class PlayerManager {
         FileConfiguration players = plugin.getPlayers();
 
         PlayerData playerData = getOrCreatePlayer(player);
-
-        playerDataSet.remove(playerData);
         players.set(player.getUniqueId().toString(), playerData.serialize());
         plugin.savePlayers();
         plugin.reloadPlayers();
+    }
+
+    public void removePlayer(Player player) {
+        playerDataMap.remove(player.getUniqueId());
     }
 
     public PlayerKit getOrCreatePlayerKit(Player player, String kit) {
@@ -67,14 +74,15 @@ public class PlayerManager {
     }
 
     public PlayerData getOrCreatePlayer(Player player) {
-        for (PlayerData data : playerDataSet) {
-            if (data.getUuid().equals(player.getUniqueId())) {
-                PluginLogger.info("Loading current data.");
-                return data;
-            }
+        boolean anyMatch = playerDataMap
+                .keySet()
+                .stream()
+                .anyMatch(uuid -> uuid == player.getUniqueId());
+
+        if (anyMatch) {
+            return playerDataMap.get(player.getUniqueId());
         }
 
-        PluginLogger.info("Creating a new player data.");
-        return new PlayerData(player.getUniqueId(), player.getName());
+        return new PlayerData(player);
     }
 }
