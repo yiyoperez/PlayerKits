@@ -19,7 +19,9 @@ import pk.ajneb97.models.PlayerData;
 import pk.ajneb97.models.PlayerKit;
 import pk.ajneb97.utils.Checks;
 import pk.ajneb97.utils.Cooldown;
+import pk.ajneb97.utils.MessageHandler;
 import pk.ajneb97.utils.MessageUtils;
+import pk.ajneb97.utils.Placeholder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,11 +32,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
     private final String prefix;
     private final PlayerKits plugin;
+    private final MessageHandler messageHandler;
 
 
     public MainCommand(PlayerKits plugin) {
         this.plugin = plugin;
         this.prefix = plugin.getMessages().getString("prefix");
+        this.messageHandler = plugin.getMessageHandler();
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -150,10 +154,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     }
 
     private void helpArgument(CommandSender sender) {
-        FileConfiguration messages = plugin.getMessages();
-        for (String helpMessage : messages.getStringList("command.help-message")) {
-            sender.sendMessage(MessageUtils.getMensajeColor(helpMessage));
-        }
+        messageHandler.sendListMessage(sender, "command.help-message");
     }
 
     private void openArgument(CommandSender sender, Player player, String[] args) {
@@ -176,14 +177,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         Player player = Bukkit.getPlayer(args[1]);
-
-        // If main inventory contains bad items return.
-        if (Checks.mainInventoryContainsBadItems(plugin, player)) return;
-
         if (player == null) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[1])));
             return;
         }
+
+        // If main inventory contains bad items return.
+        if (Checks.mainInventoryContainsBadItems(plugin, player)) return;
 
         int pag = 1;
         if (args.length >= 3) {
@@ -323,15 +323,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
     private void claimArgument(Player player, String[] args) {
         FileConfiguration kits = plugin.getKits();
-        FileConfiguration messages = plugin.getMessages();
         if (args.length < 2) {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("commandClaimError")));
+            messageHandler.sendMessage(player, "commandClaimError");
             return;
         }
 
         KitManager kitManager = plugin.getKitManager();
         if (!kitManager.existsKit(args[1])) {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
+            messageHandler.sendMessage(player, "kitDoesNotExists", new Placeholder("%name%", args[1]));
             return;
         }
 
