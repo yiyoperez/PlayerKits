@@ -30,6 +30,15 @@ public class MessageHandler {
             }
         }
 
+        // Replace prefix if any.
+        if (message.contains("%prefix%")) {
+            FileConfiguration messages = plugin.getMessages();
+            String prefix = messages.getString("prefix");
+            if (prefix != null || !prefix.isEmpty()) {
+                message = StringUtils.replace(message, new Placeholder("%prefix%", prefix));
+            }
+        }
+
         return MessageUtils.getMensajeColor(message);
     }
 
