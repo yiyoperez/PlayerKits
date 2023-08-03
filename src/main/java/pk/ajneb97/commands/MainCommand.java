@@ -292,7 +292,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, key);
             if (kits.contains("Kits." + key + ".slot") || player.isOp() || player.hasPermission("playerkits.list")) {
                 if (kits.contains("Kits." + key + ".permission") && !player.hasPermission(kits.getString("Kits." + key + ".permission"))) {
-                    list.add(messageHandler.getRawMessage("command.list.cooldown", new Placeholder("%kit%", key)));
+                    list.add(messageHandler.getRawMessage("command.list.no-permission", new Placeholder("%kit%", key)));
                 } else {
                     if (kits.contains("Kits." + key + ".one_time") && kits.getBoolean("Kits." + key + ".one_time") && playerKit.isOneTime()) {
                         list.add(messageHandler.getRawMessage("command.list.one-time", new Placeholder("%kit%", key)));
