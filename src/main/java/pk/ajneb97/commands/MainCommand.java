@@ -335,11 +335,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        if (kits.contains("Kits." + args[1] + ".slot") || player.isOp() || player.hasPermission("playerkits.claim")) {
-            kitManager.claimKit(player, args[1], true, false, false);
-        } else {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
-        }
+        kitManager.claimKit(player, args[1], true, false, false);
     }
 
     private void previewArgument(Player player, String[] args) {
