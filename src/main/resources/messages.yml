@@ -1,19 +1,32 @@
 prefix: "&8[&4PlayerKits&8] "
-noPermissions: "&cYou don't have permissions for that."
-commandCreateError: "&cYou need to use: &7/kit create <name>"
-commandDeleteError: "&cYou need to use: &7/kit delete <name>"
-commandClaimError: "&cYou need to use: &7/kit claim <kit>"
-commandGiveError: "&cYou need to use: &7/kit give <kit> <player>"
-commandEditError: "&cYou need to use: &7/kit edit <kit>"
-commandPreviewError: "&cYou need to use: &7/kit preview <kit>"
-commandOpenError: "&cYou need to use: &7/kit open <player> <page>"
-kitAlreadyExists: "&cThe kit &7%name% &calready exists on the config."
-kitDoesNotExists: "&cThe kit &7%name% &cdoesn't exists."
+
+configReload: "%prefix% &aConfig Reloaded."
+noPermissions: "%prefix% &cYou don't have permissions for that."
 inventoryEmpty: "&cYou need at least 1 item on your inventory to create a kit."
-kitCreated: "&aKit &7%name% &acreated correctly."
-kitRemoved: "&aKit &7%name% &aremoved correctly."
-kitReceived: "&aKit &7%name% &areceived."
-configReload: "&aConfig Reloaded."
+
+kitInCooldownLore:
+  - "&cYou need to wait &7%time%"
+  - "&cto claim this kit again."
+kitOneTimeLore:
+  - "&cYou can't claim this kit again."
+
+noSpaceError: "&cYou don't have enough space in your inventory."
+oneTimeError: "&cYou can't claim this kit again."
+materialNameError: "&cThere is an error on your config. Material: &7&l%material% &cis not valid at section %key%."
+
+noPreviewError: "&cThere is nothing to preview for this kit."
+previewInventoryName: "&9Kit Preview"
+backItemName: "&7Back"
+playerNotOnline: "&cPlayer &7%player% &cis not online."
+noMoneyError: "&cYou don't have enough money to claim this kit. &8(&a$&c%current_money%&7/&a$&c%required_money%&8)"
+moneyInventoryName: "&9Buy Kit Confirmation"
+moneyInventoryYes: "&a&lYES"
+moneyInventoryNo: "&c&lNO"
+moneyInventoryConfirmationName: "&6Are you sure?"
+moneyInventoryConfirmationLore:
+  - "&7This will cost you: &a$%price%"
+errorPage: "&cWrite a valid page."
+
 cooldown:
   days: ' days'
   day: ' day'
@@ -26,33 +39,36 @@ cooldown:
   ready: "&a&lReady!"
   wait: "&cYou need to wait &7%time% &cto claim this kit again."
 
-kitNoPermissions: "&cYou don't have permissions to claim this kit."
-kitInCooldownLore:
-  - "&cYou need to wait &7%time%"
-  - "&cto claim this kit again."
-noSpaceError: "&cYou don't have enough space in your inventory."
-materialNameError: "&cThere is an error on your config. Material: &7&l%material% &cis not valid at section %key%."
-oneTimeError: "&cYou can't claim this kit again."
-kitOneTimeLore:
-  - "&cYou can't claim this kit again."
-previewInventoryName: "&9Kit Preview"
-backItemName: "&7Back"
-playerNotOnline: "&cPlayer &7%player% &cis not online."
-kitGive: "&aKit &7%kit% &agiven to &e%player%&a!"
-noMoneyError: "&cYou don't have enough money to claim this kit. &8(&a$&c%current_money%&7/&a$&c%required_money%&8)"
-moneyInventoryName: "&9Buy Kit Confirmation"
-moneyInventoryYes: "&a&lYES"
-moneyInventoryNo: "&c&lNO"
-moneyInventoryConfirmationName: "&6Are you sure?"
-moneyInventoryConfirmationLore:
-  - "&7This will cost you: &a$%price%"
-kitInventoryOpen: "&aOpening Kits inventory for &e%player%&a."
-errorPage: "&cWrite a valid page."
-commandResetError: "&cYou need to use: &7/kit reset <kit> <player>"
-kitResetCorrect: "&aKit &7%kit% &areset for &7%player%&a!"
-kitResetFail: "&cNot possible to reset kit &7%kit% &cfor &7%player%&c!"
-noPreviewError: "&cThere is nothing to preview for this kit."
-cantPreviewError: "&cYou can't preview this kit."
+kit:
+  edit:
+    usage: "&cYou need to use: &7/kit edit <kit>"
+  claim:
+    usage: "&cYou need to use: &7/kit claim <kit>"
+    success: "&aKit &7%name% &aclaimed."
+  preview:
+    usage: "&cYou need to use: &7/kit preview <kit>"
+  create:
+    usage: "&cYou need to use: &7/kit create <name>"
+    success: "&aKit &7%name% &acreated correctly."
+  delete:
+    usage: "&cYou need to use: &7/kit delete <name>"
+    success: "&aKit &7%name% &adeleted correctly."
+  open:
+    usage: "&cYou need to use: &7/kit open <player> <page>"
+    success: "&aOpening Kits inventory for &e%player%&a."
+  reset:
+    usage: "%prefix% &cYou need to use: &7/kit reset <kit> <player>"
+    success: "&aKit &7%kit% &areset for &7%player%&a!"
+    failed: "&cNot possible to reset kit &7%kit% &cfor &7%player%&c!"
+  give:
+    usage: "&cYou need to use: &7/kit give <kit> <player>"
+    success: "&aKit &7%kit% &agiven to &e%player%&a!"
+    notify: "&aYou have given kit &f\"%name%\"&a!"
+  error:
+    cantPreview: "&cYou can't preview this kit."
+    notFound: "%prefix% &cThe kit &7%name% &cdoesn't exists."
+    noPermissions: "&cYou don't have permissions to claim this kit."
+    alreadyExists: "&cThe kit &7%name% &calready exists on the config."
 
 command:
   list:
