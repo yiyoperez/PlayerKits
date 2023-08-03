@@ -133,7 +133,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         FileConfiguration messages = plugin.getMessages();
 
         if (config.getBoolean("claim_kit_short_command")) {
-            if (!kitManager.existsKit(args[1])){
+            if (!kitManager.existsKit(args[0])) {
                 if (player.hasPermission("playerkits.bypass.short.claim")) {
                     return false;
                 }
@@ -141,8 +141,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
 
-            if (kits.contains("Kits." + args[1] + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
-                kitManager.claimKit(player, args[1], true, false, false);
+            if (kits.contains("Kits." + args[0] + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
+                kitManager.claimKit(player, args[0], true, false, false);
             }
             return true;
         }
