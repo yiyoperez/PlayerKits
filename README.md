@@ -100,10 +100,11 @@ Also, almost all item attributes will be stored in the kit, so they are given co
 
 To create a new kit you just need to have some items on your inventory and then execute the command `/kit create <name>`.
 
-
 To claim the kit you have two options.
+
 1) Use the `/kit` command and click on the kit item inside the GUI.
 2) Use the `/kit claim <name>` command.
+
 > ℹ Or use `/kit <name>` if you have `claim_kit_short_command` option set to `true`
 
 
@@ -278,11 +279,28 @@ one_time: true
 <details>
 <summary>Placeholders</summary>
 
-The plugin has the following placeholder format `%playerkits_<identifier>_<kit>%`
 
-⚠ PlaceholderAPI is required to use them those variables.
+**Local** placeholders.
 
-| Placeholder 	 | Description 	                                                                                                |
+> Time placeholders, they can be used in cooldown related messages.
+
+| Placeholder 	    | Description 	                                             |
+|------------------|-----------------------------------------------------------|
+| %timer%    	     | Returns remaining cooldown as timer.             	        |
+| %seconds%        | Returns remaining cooldown as seconds                     |
+| %plainseconds%   | Returns remaining cooldown as plain seconds.              |
+| %roundedseconds% | Returns remaining cooldown as rounded seconds.            |
+| %timeleft%       | Returns remaining cooldown as timer then rounded seconds. |
+
+---
+
+**PlaceholderAPI** placeholders.
+
+> ⚠ PlaceholderAPI is required to use them these variables.
+>
+> The plugin has the following placeholder format `%playerkits_<identifier>_<kit>%`
+
+| Identifier 	  | Description 	                                                                                                |
 |---------------|--------------------------------------------------------------------------------------------------------------|
 | cooldown    	 | Returns kit cooldown string in plain seconds.             	                                                  |
 | waiting       | Returns yes or no if player is waiting/in cooldown for that kit.	<br/>(Configured at placeholderapi config.) |
