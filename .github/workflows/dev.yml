@@ -1,8 +1,8 @@
-name: Java CI
+name: Java CI Dev branch
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
 
 jobs:
   build:
@@ -17,9 +17,3 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots package
-      - name: Upload Artifacts
-        run: mkdir staging && cp jars/*.jar staging
-      - uses: actions/upload-artifact@v3
-        with:
-          name: PlayerKits
-          path: staging
