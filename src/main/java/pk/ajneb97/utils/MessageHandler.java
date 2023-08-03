@@ -42,13 +42,26 @@ public class MessageHandler {
         return MessageUtils.getMensajeColor(message);
     }
 
-    public String getMessage(CommandSender sender, String path, List<Placeholder> placeholders) {
+    public String getRawMessage(String path) {
         FileConfiguration messages = plugin.getMessages();
         String message = messages.getString(path);
         if (message == null) {
-            return intercept(sender, String.format("Message was not found in path %s", path));
+            return String.format("Message was not found in path %s", path);
         }
 
+        return message;
+    }
+
+    public String getRawMessage(String path, Placeholder... placeholders) {
+        return getRawMessage(path, Arrays.asList(placeholders));
+    }
+
+    public String getRawMessage(String path, List<Placeholder> placeholders) {
+        return StringUtils.replace(getRawMessage(path), placeholders);
+    }
+
+    public String getMessage(CommandSender sender, String path, List<Placeholder> placeholders) {
+        String message = getRawMessage(path, placeholders);
         return StringUtils.replace(intercept(sender, message), placeholders);
     }
 
