@@ -41,7 +41,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
 
-        if (!(sender instanceof Player) && args.length > 0) {
+        if (!(sender instanceof Player)) {
+
+            if (args.length == 0) {
+                helpArgument(sender);
+                return true;
+            }
 
             String subCommand = args[0].toLowerCase();
             switch (subCommand) {
@@ -213,7 +218,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitAlreadyExists").replace("%name%", args[1])));
             return;
         }
@@ -240,7 +245,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
@@ -265,7 +270,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
@@ -325,13 +330,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
         if (kits.contains("Kits." + args[1] + ".slot") || player.isOp() || player.hasPermission("playerkits.claim")) {
-            kitManager.claimKit(player, args[1],  true, false, false);
+            kitManager.claimKit(player, args[1], true, false, false);
         } else {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
         }
@@ -347,7 +352,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
@@ -392,14 +397,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
 
         Player player = Bukkit.getPlayer(args[2]);
         if (player != null) {
-            kitManager.claimKit(player, args[1],  true, true, false);
+            kitManager.claimKit(player, args[1], true, true, false);
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitGive").replace("%player%", args[2]).replace("%kit%", args[1])));
         } else {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("playerNotOnline").replace("%player%", args[2])));
@@ -427,7 +432,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         String name = args[2];
 
         KitManager kitManager = plugin.getKitManager();
-        if (!kitManager.existsKit(args[1])){
+        if (!kitManager.existsKit(args[1])) {
             sender.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitDoesNotExists").replace("%name%", args[1])));
             return;
         }
