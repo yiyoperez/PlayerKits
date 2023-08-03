@@ -39,9 +39,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        FileConfiguration config = plugin.getConfig();
-
-
         if (!(sender instanceof Player)) {
 
             if (args.length == 0) {
@@ -80,6 +77,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             //Verify main inventory items.
 
             if (Checks.mainInventoryContainsBadItems(plugin, player)) return true;
+
+            FileConfiguration config = plugin.getConfig();
 
             // Finally open inventory to player.
             InventarioManager.openMainInventory(config, plugin, player, 1);

@@ -43,7 +43,9 @@ import pk.ajneb97.listeners.InventarioConfirmacionDinero;
 import pk.ajneb97.models.PlayerData;
 import pk.ajneb97.models.PlayerKit;
 import pk.ajneb97.utils.Cooldown;
+import pk.ajneb97.utils.MessageHandler;
 import pk.ajneb97.utils.MessageUtils;
+import pk.ajneb97.utils.Placeholder;
 import pk.ajneb97.utils.Utils;
 
 import java.util.ArrayList;
@@ -607,11 +609,12 @@ public class KitManager {
         return crafteos;
     }
 
-    public void claimKit(Player player, String kit, boolean message, boolean ignoreValues, boolean comprandoKit) {
+    public void claimKit(Player player, String kit, boolean notify, boolean ignoreValues, boolean comprandoKit) {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
         String prefix = messages.getString("prefix");
+        MessageHandler messageHandler = plugin.getMessageHandler();
 
         PlayerManager playerManager = plugin.getPlayerManager();
         PlayerData playerData = playerManager.getOrCreatePlayer(player);
@@ -637,11 +640,16 @@ public class KitManager {
             if (configKits.contains("Kits." + kit + ".cooldown")) {
                 if (playerData.hasCooldown(kit)) {
                     Cooldown cooldown = playerData.getCooldown(kit);
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeft())));
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftTimer())));
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftSeconds())));
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftPlainSeconds())));
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cooldown.wait").replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
+
+                    List<Placeholder> placeholderList = new ArrayList<>();
+                    placeholderList.add(new Placeholder("%kit%", kit));
+                    placeholderList.add(new Placeholder("%timeleft%", cooldown.getTimeLeft()));
+                    placeholderList.add(new Placeholder("%timer%", cooldown.getTimeLeftTimer()));
+                    placeholderList.add(new Placeholder("%seconds%", cooldown.getTimeLeftSeconds()));
+                    placeholderList.add(new Placeholder("%plainseconds%", cooldown.getTimeLeftPlainSeconds()));
+                    placeholderList.add(new Placeholder("%roundedseconds%", cooldown.getTimeLeftRoundedSeconds()));
+
+                    messageHandler.sendMessage(player, "cooldown.wait", placeholderList);
                     playErrorSound(player, config);
                     return;
                 }
@@ -806,11 +814,11 @@ public class KitManager {
             ejecutarComandos(configKits, kit, player);
         }
 
-        if (message) {
-            String kitReceived = messages.getString("kitReceived").replace("%name%", kit);
-            if (!kitReceived.equals("") && !kitReceived.isEmpty()) {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + kitReceived));
-            }
+
+        Placeholder placeholder = new Placeholder("%kit%", kit);
+        messageHandler.sendMessage(player, "kit.claim.success", placeholder);
+        if (notify) {
+            messageHandler.sendMessage(player, "kit.give.notify", placeholder);
         }
 
         if (config.getBoolean("close_inventory_on_claim")) {
