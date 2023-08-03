@@ -22,6 +22,7 @@ import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.tasks.PlayerDataSaveTask;
 import pk.ajneb97.listeners.PlayerListeners;
 import pk.ajneb97.managers.PlayerManager;
+import pk.ajneb97.utils.MessageHandler;
 import pk.ajneb97.utils.TimeUtils;
 import pk.ajneb97.utils.Utils;
 
@@ -50,6 +51,8 @@ public class PlayerKits extends JavaPlugin {
     private KitManager kitManager;
     private PlayerManager playerManager;
 
+    private MessageHandler messageHandler;
+
     public static final String pluginPrefix = ChatColor.translateAlternateColorCodes('&', "&8[&4PlayerKits&8] ");
 
     private PlayerDataSaveTask playerDataSaveTask;
@@ -60,6 +63,7 @@ public class PlayerKits extends JavaPlugin {
         registerMessages();
         registerPlayers();
         new TimeUtils().setStrings(getMessages());
+        this.messageHandler = new MessageHandler(this);
 
         registerEvents();
         registerCommands();
@@ -87,6 +91,10 @@ public class PlayerKits extends JavaPlugin {
             saveKits();
         }
         Bukkit.getConsoleSender().sendMessage(pluginPrefix + ChatColor.YELLOW + "Has been disabled! " + ChatColor.WHITE + "Version: " + getDescription().getVersion());
+    }
+
+    public MessageHandler getMessageHandler() {
+        return messageHandler;
     }
 
     public void registerCommands() {
