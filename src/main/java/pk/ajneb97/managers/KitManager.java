@@ -612,9 +612,7 @@ public class KitManager {
 
     public void claimKit(Player player, String kit, boolean notify, boolean ignoreValues, boolean comprandoKit) {
         FileConfiguration config = plugin.getConfig();
-        FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
-        String prefix = messages.getString("prefix");
         MessageHandler messageHandler = plugin.getMessageHandler();
 
         PlayerManager playerManager = plugin.getPlayerManager();
@@ -624,20 +622,23 @@ public class KitManager {
         if (!ignoreValues) {
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getBoolean("Kits." + kit + ".one_time")) {
                 if (playerKit.isOneTime()) {
-                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("oneTimeError")));
+                    messageHandler.sendMessage(player, "oneTimeError");
                     playErrorSound(player, config);
                     return;
                 }
             }
+
             if (configKits.contains("Kits." + kit + ".permission") && !player.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
-                player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("kitNoPermissions")));
+                messageHandler.sendMessage(player, "kitNoPermissions");
                 playErrorSound(player, config);
+
                 if (config.getBoolean("close_inventory_no_permission")) {
                     player.closeInventory();
                     player.updateInventory();
                 }
                 return;
             }
+
             if (configKits.contains("Kits." + kit + ".cooldown")) {
                 if (playerData.hasCooldown(kit)) {
                     Cooldown cooldown = playerData.getCooldown(kit);
@@ -662,7 +663,9 @@ public class KitManager {
                     Economy econ = plugin.getEconomy();
                     double balance = econ.getBalance(player);
                     if (balance < price) {
-                        player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noMoneyError").replace("%current_money%", balance + "").replace("%required_money%", price + "")));
+                        messageHandler.sendMessage(player, "noMoneyError",
+                                new Placeholder("%current_money%", balance),
+                                new Placeholder("%required_money%", price));
                         playErrorSound(player, config);
                     } else {
                         //Abrir inventario confirmacion
@@ -678,15 +681,9 @@ public class KitManager {
             }
         }
 
-        String version = Bukkit.getServer().getVersion();
 
         //Estos contents son solo del inventario, ignoran armadura y offhand
-        ItemStack[] contents = null;
-        if (version.contains("1.8")) {
-            contents = player.getInventory().getContents();
-        } else {
-            contents = player.getInventory().getStorageContents();
-        }
+        ItemStack[] contents = Utils.isLegacy() ? player.getInventory().getContents() : player.getInventory().getStorageContents();
         int espaciosUsados = 0;
         for (ItemStack content : contents) {
             if (content != null && !content.getType().equals(Material.AIR)) {
@@ -742,7 +739,7 @@ public class KitManager {
         boolean ejecutarComandosPrimero = config.getBoolean("commands_before_items");
 
         if (espaciosLibres < cantidadItems && !tirarItems) {
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noSpaceError")));
+            messageHandler.sendMessage(player, "noSpaceError");
             playErrorSound(player, config);
             return;
         }
