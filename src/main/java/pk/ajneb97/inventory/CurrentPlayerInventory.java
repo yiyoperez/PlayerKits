@@ -3,14 +3,14 @@ package pk.ajneb97.inventory;
 import org.bukkit.entity.Player;
 import pk.ajneb97.managers.InventarioManager;
 
-public class PlayerInventory {
+public class CurrentPlayerInventory {
 
     private Player jugador;
     private int pagina;
     private InventarioManager inventarioManager;
     private String tipoInventario;
 
-    public PlayerInventory(Player jugador, int pagina, InventarioManager inventarioManager, String tipoInventario) {
+    public CurrentPlayerInventory(Player jugador, int pagina, InventarioManager inventarioManager, String tipoInventario) {
         this.jugador = jugador;
         this.pagina = pagina;
         this.inventarioManager = inventarioManager;

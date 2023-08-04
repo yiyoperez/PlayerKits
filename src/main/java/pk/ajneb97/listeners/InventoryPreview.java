@@ -12,7 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.PlayerInventory;
+import pk.ajneb97.inventory.CurrentPlayerInventory;
 import pk.ajneb97.managers.InventarioManager;
 import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.utils.MessageUtils;
@@ -66,7 +66,7 @@ public class InventoryPreview implements Listener {
 
         player.openInventory(inv);
 
-        plugin.agregarInventarioJugador(new PlayerInventory(player, page, null, "preview"));
+        plugin.agregarInventarioJugador(new CurrentPlayerInventory(player, page, null, "preview"));
     }
 
     @EventHandler
@@ -74,7 +74,7 @@ public class InventoryPreview implements Listener {
         FileConfiguration config = plugin.getConfig();
         Player player = (Player) event.getWhoClicked();
 
-        PlayerInventory inv = plugin.getInventarioJugador(player.getName());
+        CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
         if (inv == null) return;
 
         if (event.getCurrentItem() == null) {

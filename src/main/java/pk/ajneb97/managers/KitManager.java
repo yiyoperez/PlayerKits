@@ -23,6 +23,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
@@ -38,7 +39,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.PlayerInventory;
+import pk.ajneb97.inventory.CurrentPlayerInventory;
 import pk.ajneb97.listeners.InventarioConfirmacionDinero;
 import pk.ajneb97.models.PlayerData;
 import pk.ajneb97.models.PlayerKit;
@@ -664,7 +665,7 @@ public class KitManager {
                         playErrorSound(player, config);
                     } else {
                         //Abrir inventario confirmacion
-                        PlayerInventory inv = plugin.getInventarioJugador(player.getName());
+                        CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
                         int pag = -1;
                         if (inv != null) {
                             pag = inv.getPagina();
@@ -692,9 +693,10 @@ public class KitManager {
             }
         }
 
-        org.bukkit.inventory.PlayerInventory invJ = player.getInventory();
+        PlayerInventory inventory = player.getInventory();
         int espaciosLibres = 36 - espaciosUsados;
         int cantidadItems = 0; //items normales
+
         String itemCabeza = null;
         String itemPechera = null;
         String itemPantalones = null;
@@ -704,28 +706,28 @@ public class KitManager {
             for (String i : configKits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
                 String name = configKits.getString("Kits." + kit + ".Items." + i + ".id");
                 if (configKits.contains("Kits." + kit + ".auto_armor") && configKits.getString("Kits." + kit + ".auto_armor").equals("true")) {
-                    if (name.contains("_HELMET") && itemCabeza == null && (invJ.getHelmet() == null || invJ.getHelmet().getType().equals(Material.AIR))) {
+                    if (name.contains("_HELMET") && itemCabeza == null && (inventory.getHelmet() == null || inventory.getHelmet().getType().equals(Material.AIR))) {
                         itemCabeza = i;
                         continue;
-                    } else if (name.contains("_CHESTPLATE") && itemPechera == null && (invJ.getChestplate() == null || invJ.getChestplate().getType().equals(Material.AIR))) {
+                    } else if (name.contains("_CHESTPLATE") && itemPechera == null && (inventory.getChestplate() == null || inventory.getChestplate().getType().equals(Material.AIR))) {
                         itemPechera = i;
                         continue;
-                    } else if (name.contains("_LEGGINGS") && itemPantalones == null && (invJ.getLeggings() == null || invJ.getLeggings().getType().equals(Material.AIR))) {
+                    } else if (name.contains("_LEGGINGS") && itemPantalones == null && (inventory.getLeggings() == null || inventory.getLeggings().getType().equals(Material.AIR))) {
                         itemPantalones = i;
                         continue;
-                    } else if (name.contains("_BOOTS") && itemBotas == null && (invJ.getBoots() == null || invJ.getBoots().getType().equals(Material.AIR))) {
+                    } else if (name.contains("_BOOTS") && itemBotas == null && (inventory.getBoots() == null || inventory.getBoots().getType().equals(Material.AIR))) {
                         itemBotas = i;
                         continue;
-                    } else if ((name.equals("SKULL_ITEM") || name.equals("PLAYER_HEAD")) && itemCabeza == null && (invJ.getHelmet() == null || invJ.getHelmet().getType().equals(Material.AIR))) {
+                    } else if ((name.equals("SKULL_ITEM") || name.equals("PLAYER_HEAD")) && itemCabeza == null && (inventory.getHelmet() == null || inventory.getHelmet().getType().equals(Material.AIR))) {
                         itemCabeza = i;
                         continue;
-                    } else if (!version.contains("1.8") && name.equals("ELYTRA") && itemPechera == null && (invJ.getChestplate() == null || invJ.getChestplate().getType().equals(Material.AIR))) {
+                    } else if (!Utils.isLegacy() && name.equals("ELYTRA") && itemPechera == null && (inventory.getChestplate() == null || inventory.getChestplate().getType().equals(Material.AIR))) {
                         itemPechera = i;
                         continue;
                     }
                 }
                 if (configKits.contains("Kits." + kit + ".Items." + i + ".offhand") && configKits.getString("Kits." + kit + ".Items." + i + ".offhand").equals("true")) {
-                    if (itemOffhand == null && (invJ.getItemInOffHand() == null || invJ.getItemInOffHand().getType().equals(Material.AIR))) {
+                    if (itemOffhand == null && (inventory.getItemInOffHand() == null || inventory.getItemInOffHand().getType().equals(Material.AIR))) {
                         itemOffhand = i;
                         continue;
                     }
@@ -791,15 +793,15 @@ public class KitManager {
 
                 // TODO: pleaseeee
                 if (itemCabeza != null && i.equals(itemCabeza)) {
-                    invJ.setHelmet(item);
+                    inventory.setHelmet(item);
                 } else if (itemPechera != null && i.equals(itemPechera)) {
-                    invJ.setChestplate(item);
+                    inventory.setChestplate(item);
                 } else if (itemPantalones != null && i.equals(itemPantalones)) {
-                    invJ.setLeggings(item);
+                    inventory.setLeggings(item);
                 } else if (itemBotas != null && i.equals(itemBotas)) {
-                    invJ.setBoots(item);
+                    inventory.setBoots(item);
                 } else if (itemOffhand != null && i.equals(itemOffhand)) {
-                    invJ.setItemInOffHand(item);
+                    inventory.setItemInOffHand(item);
                 } else {
                     if (tirarItems && player.getInventory().firstEmpty() == -1) {
                         player.getWorld().dropItemNaturally(player.getLocation(), item);

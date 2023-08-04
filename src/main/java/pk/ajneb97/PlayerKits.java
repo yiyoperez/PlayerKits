@@ -1,6 +1,5 @@
 package pk.ajneb97;
 
-
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,15 +12,15 @@ import pk.ajneb97.api.ExpansionPlayerKits;
 import pk.ajneb97.api.PlayerKitsAPI;
 import pk.ajneb97.commands.MainCommand;
 import pk.ajneb97.inventory.KitEditando;
-import pk.ajneb97.inventory.PlayerInventory;
+import pk.ajneb97.inventory.CurrentPlayerInventory;
 import pk.ajneb97.listeners.InventarioConfirmacionDinero;
 import pk.ajneb97.listeners.InventarioEditar;
 import pk.ajneb97.listeners.InventarioListener;
 import pk.ajneb97.listeners.InventoryPreview;
-import pk.ajneb97.managers.KitManager;
-import pk.ajneb97.tasks.PlayerDataSaveTask;
 import pk.ajneb97.listeners.PlayerListeners;
+import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.managers.PlayerManager;
+import pk.ajneb97.tasks.PlayerDataSaveTask;
 import pk.ajneb97.utils.MessageHandler;
 import pk.ajneb97.utils.TimeUtils;
 import pk.ajneb97.utils.Utils;
@@ -46,7 +45,7 @@ public class PlayerKits extends JavaPlugin {
     private KitEditando kitEditando;
     RegisteredServiceProvider<Economy> rsp;
     private static Economy economy = null;
-    private final ArrayList<PlayerInventory> playerInventories = new ArrayList<>();
+    private final ArrayList<CurrentPlayerInventory> playerInventories = new ArrayList<>();
 
     private KitManager kitManager;
     private PlayerManager playerManager;
@@ -118,12 +117,12 @@ public class PlayerKits extends JavaPlugin {
         return playerManager;
     }
 
-    public void agregarInventarioJugador(PlayerInventory inv) {
+    public void agregarInventarioJugador(CurrentPlayerInventory inv) {
         this.playerInventories.add(inv);
     }
 
-    public PlayerInventory getInventarioJugador(String jugador) {
-        for (PlayerInventory inv : playerInventories) {
+    public CurrentPlayerInventory getInventarioJugador(String jugador) {
+        for (CurrentPlayerInventory inv : playerInventories) {
             if (inv.getJugador().getName().equals(jugador)) {
                 return inv;
             }

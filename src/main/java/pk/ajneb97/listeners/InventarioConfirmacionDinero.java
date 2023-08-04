@@ -11,7 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import pk.ajneb97.inventory.PlayerInventory;
+import pk.ajneb97.inventory.CurrentPlayerInventory;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.managers.InventarioManager;
 import pk.ajneb97.managers.KitManager;
@@ -70,7 +70,7 @@ public class InventarioConfirmacionDinero implements Listener {
 
         jugador.openInventory(inv);
 
-        plugin.agregarInventarioJugador(new PlayerInventory(jugador, pagina, null, "buying: " + kit));
+        plugin.agregarInventarioJugador(new CurrentPlayerInventory(jugador, pagina, null, "buying: " + kit));
     }
 
     @EventHandler
@@ -79,7 +79,7 @@ public class InventarioConfirmacionDinero implements Listener {
         FileConfiguration messages = plugin.getMessages();
         Player jugador = (Player) event.getWhoClicked();
         KitManager kitManager = plugin.getKitManager();
-        PlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
+        CurrentPlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
 
         if (inv != null) {
             if (event.getCurrentItem() == null) {
