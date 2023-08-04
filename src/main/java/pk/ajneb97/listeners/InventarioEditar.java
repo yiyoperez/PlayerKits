@@ -210,7 +210,7 @@ public class InventarioEditar implements Listener {
         if (kits.contains("Kits." + kit + ".Items")) {
             for (String n : kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
                 String path = "Kits." + kit + ".Items." + n;
-                ItemStack itemN = KitManager.getItem(kits, path, config, jugador);
+                ItemStack itemN = KitManager.getItem(kits, path, jugador);
                 items.add("x" + itemN.getAmount() + " " + itemN.getType());
             }
         }
@@ -373,7 +373,7 @@ public class InventarioEditar implements Listener {
         if (kits.contains("Kits." + kit + ".Items")) {
             for (String n : kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
                 String path = "Kits." + kit + ".Items." + n;
-                item = KitManager.getItem(kits, path, plugin.getConfig(), jugador);
+                item = KitManager.getItem(kits, path, jugador);
 
                 List<String> loreOffhand = new ArrayList<>();
                 ItemMeta metaNuevo = item.getItemMeta();

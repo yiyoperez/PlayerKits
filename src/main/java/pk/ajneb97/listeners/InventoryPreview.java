@@ -50,7 +50,7 @@ public class InventoryPreview implements Listener {
         int slot = 0;
         for (String n : kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
             String path = "Kits." + kit + ".Items." + n;
-            ItemStack item = KitManager.getItem(kits, path, config, player);
+            ItemStack item = KitManager.getItem(kits, path,  player);
             try {
                 if (kits.contains(path + ".preview_slot")) {
                     inv.setItem(kits.getInt(path + ".preview_slot"), item);

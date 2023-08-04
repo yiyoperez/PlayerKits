@@ -332,7 +332,7 @@ public class KitManager {
         }
     }
 
-    public static ItemStack getItem(FileConfiguration kitConfig, String path, FileConfiguration config, Player jugador) {
+    public static ItemStack getItem(FileConfiguration kitConfig, String path, Player jugador) {
 //		if(config.getString("Config.item_serializer").equals("true")
 //				&& kitConfig.contains(path+".full_data")) {
 //			String serializedItem = kitConfig.getString(path+".full_data");
@@ -655,6 +655,7 @@ public class KitManager {
                     return;
                 }
             }
+
             if (!comprandoKit && configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
                 double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
@@ -789,7 +790,7 @@ public class KitManager {
         if (configKits.contains("Kits." + kit + ".Items")) {
             for (String i : configKits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
                 String path = "Kits." + kit + ".Items." + i;
-                ItemStack item = KitManager.getItem(configKits, path, config, player);
+                ItemStack item = KitManager.getItem(configKits, path, player);
 
                 // TODO: pleaseeee
                 if (itemCabeza != null && i.equals(itemCabeza)) {
@@ -815,7 +816,6 @@ public class KitManager {
         if (!ejecutarComandosPrimero) {
             ejecutarComandos(configKits, kit, player);
         }
-
 
         Placeholder placeholder = new Placeholder("%kit%", kit);
         messageHandler.sendMessage(player, "kit.claim.success", placeholder);
