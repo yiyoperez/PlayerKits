@@ -11,7 +11,7 @@ public class Placeholder {
         this.replacement = replacement;
     }
 
-    public Placeholder(final String replaced, final int amount) {
+    public Placeholder(final String replaced, final Number amount) {
         this.replaced = replaced;
         this.replacement = String.valueOf(amount);
     }
