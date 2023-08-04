@@ -24,11 +24,7 @@ public class PlayerManager {
     public void loadPlayer(Player player) {
         FileConfiguration players = plugin.getPlayers();
 
-
         // If player doesn't exists in players.yml
-
-        player.sendMessage(String.valueOf(players.contains(player.getUniqueId().toString())));
-
         if (!players.contains(player.getUniqueId().toString())) {
             // gets or create a new playerdata object
             getOrCreatePlayer(player);
@@ -51,6 +47,7 @@ public class PlayerManager {
 
         PlayerData playerData = getOrCreatePlayer(player);
         players.set(player.getUniqueId().toString(), playerData.serialize());
+
         plugin.savePlayers();
         plugin.reloadPlayers();
     }
@@ -66,11 +63,7 @@ public class PlayerManager {
                 .stream()
                 .filter(playerKit -> playerKit.getName().equalsIgnoreCase(kit))
                 .findFirst()
-                .orElseGet(() -> {
-                    PlayerKit pk = new PlayerKit(kit, false, false);
-                    kits.add(pk);
-                    return pk;
-                });
+                .orElse(new PlayerKit(kit, false, false));
     }
 
     public PlayerData getOrCreatePlayer(Player player) {
