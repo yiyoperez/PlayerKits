@@ -438,6 +438,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         PlayerData playerData = playerManager.getOrCreatePlayer(target);
         PlayerKit playerKit = playerManager.getOrCreatePlayerKit(target, args[1]);
 
+        playerKit.setOneTime(false);
         playerKit.setCooldown(-1);
         playerData.removeCooldown(args[1]);
         messageHandler.sendMessage(sender,
