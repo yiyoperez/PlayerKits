@@ -22,11 +22,23 @@ public class MessageHandler {
         this.pluginManager = plugin.getServer().getPluginManager();
     }
 
+    public String intercept(CommandSender sender, String message, List<Placeholder> placeholders) {
+        message = intercept(sender, message);
+
+        // Replace placeholders.
+        if (!placeholders.isEmpty()) {
+            message = StringUtils.replace(message, placeholders);
+        }
+
+        return MessageUtils.getMensajeColor(message);
+    }
+
     public String intercept(CommandSender sender, String message) {
+        // Replace PlaceholderAPI's placeholders if found.
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                message = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(player, message));
+                message = PlaceholderAPI.setPlaceholders(player, message);
             }
         }
 
@@ -34,8 +46,10 @@ public class MessageHandler {
         if (message.contains("%prefix%")) {
             FileConfiguration messages = plugin.getMessages();
             String prefix = messages.getString("prefix");
-            if (prefix != null || !prefix.isEmpty()) {
-                message = StringUtils.replace(message, new Placeholder("%prefix%", prefix));
+            if (prefix != null) {
+                if (!prefix.isEmpty()) {
+                    message = StringUtils.replace(message, new Placeholder("%prefix%", prefix));
+                }
             }
         }
 
@@ -56,13 +70,17 @@ public class MessageHandler {
         return getRawMessage(path, Arrays.asList(placeholders));
     }
 
+    public String getRawMessage(String path, Object... placeholders) {
+        return String.format(getRawMessage(path), placeholders);
+    }
+
     public String getRawMessage(String path, List<Placeholder> placeholders) {
         return StringUtils.replace(getRawMessage(path), placeholders);
     }
 
     public String getMessage(CommandSender sender, String path, List<Placeholder> placeholders) {
         String message = getRawMessage(path, placeholders);
-        return StringUtils.replace(intercept(sender, message), placeholders);
+        return intercept(sender, message, placeholders);
     }
 
     public List<String> getMessages(CommandSender sender, String path, List<Placeholder> placeholders) {
@@ -72,16 +90,27 @@ public class MessageHandler {
         }
 
         List<String> list = new ArrayList<>();
-
         for (String message : messages.getStringList(path)) {
-            list.add(StringUtils.replace(intercept(sender, message), placeholders));
+            list.add(intercept(sender, message, placeholders));
         }
 
         return list;
     }
 
+    public void sendManualMessage(CommandSender sender, String message, Object... placeholders) {
+        sender.sendMessage(String.format(intercept(sender, message), placeholders));
+    }
+
+    public void sendManualMessage(CommandSender sender, String message, Placeholder... placeholders){
+        this.sendManualMessage(sender, message, Arrays.asList(placeholders));
+    }
+
+    public void sendManualMessage(CommandSender sender, String message, List<Placeholder> placeholders) {
+        sender.sendMessage(intercept(sender, message, placeholders));
+    }
+
     public void sendMessage(CommandSender sender, String path, Placeholder... placeholders) {
-        sender.sendMessage(getMessage(sender, path, Arrays.asList(placeholders)));
+        this.sendMessage(sender, path, Arrays.asList(placeholders));
     }
 
     public void sendMessage(CommandSender sender, String path, List<Placeholder> placeholders) {
@@ -89,11 +118,10 @@ public class MessageHandler {
     }
 
     public void sendListMessage(CommandSender sender, String path, Placeholder... placeholders) {
-        getMessages(sender, path, Arrays.asList(placeholders)).forEach(sender::sendMessage);
+        this.sendListMessage(sender, path, Arrays.asList(placeholders));
     }
 
     public void sendListMessage(CommandSender sender, String path, List<Placeholder> placeholders) {
         getMessages(sender, path, placeholders).forEach(sender::sendMessage);
     }
-
 }
