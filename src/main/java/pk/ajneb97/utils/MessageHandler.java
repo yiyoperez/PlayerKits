@@ -26,7 +26,7 @@ public class MessageHandler {
         if (pluginManager.getPlugin("PlaceholderAPI") != null) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                return MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(player, message));
+                message = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(player, message));
             }
         }
 
