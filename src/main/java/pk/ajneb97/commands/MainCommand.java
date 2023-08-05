@@ -185,11 +185,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 pag = Integer.parseInt(args[2]);
                 int totalPages = InventarioManager.getCurrentPages(kits);
                 if (pag > totalPages) {
-                    messageHandler.sendMessage(sender, "errorPage");
+                    messageHandler.sendMessage(sender, "invalid-page");
                     return;
                 }
             } catch (NumberFormatException e) {
-                messageHandler.sendMessage(sender, "errorPage");
+                messageHandler.sendMessage(sender, "invalid-page");
                 return;
             }
         }
@@ -271,7 +271,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     private void listArgument(Player player) {
         FileConfiguration kits = plugin.getKits();
 
-        if (!player.isOp() && !player.hasPermission("playerkits.admin") && !player.hasPermission("playerkits.list")) {
+        if (!player.isOp() || !player.hasPermission("playerkits.list")) {
             messageHandler.sendMessage(player, "noPermissions");
             return;
         }
