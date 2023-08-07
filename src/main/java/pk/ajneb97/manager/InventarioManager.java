@@ -141,6 +141,7 @@ public class InventarioManager {
                             inv.setItem(slot, item);
                         } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getBoolean("Kits." + key + ".one_time_buy") && !playerKit.isBought()
                                 && configKits.contains("Kits." + key + ".noBuyItem")) {
+                            //TODO: also show its own item when kit is one-time-buy instead of nobuy item.
                             ItemStack item = crearItemBase("Kits." + key + ".noBuyItem", key, configKits);
                             inv.setItem(slot, item);
                         } else {
