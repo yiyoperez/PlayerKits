@@ -33,7 +33,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class PlayerKits extends JavaPlugin {
+public final class PlayerKits extends JavaPlugin {
 
     private File kitsFile;
     private File configFile;
