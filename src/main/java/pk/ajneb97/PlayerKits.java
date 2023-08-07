@@ -265,13 +265,23 @@ public class PlayerKits extends JavaPlugin {
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            PluginLogger.warn("Could NOT setup economy hook.");
+            PluginLogger.warn("Vault was not found!");
             return false;
         }
+
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
+            PluginLogger.warn("Not found any Registered Economy Service.");
             return false;
         }
+
         economy = rsp.getProvider();
+
+        if (economy != null) {
+            PluginLogger.info(economy.getName() + " has been set as economy service provider.");
+        }
+
         return economy != null;
     }
 
