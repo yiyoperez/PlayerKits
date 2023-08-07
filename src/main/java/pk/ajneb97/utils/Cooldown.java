@@ -38,9 +38,6 @@ public class Cooldown {
         return System.currentTimeMillis() - this.start;
     }
 
-    public long getRemainingSeconds() {
-        return getRemaining() / 1000L;
-    }
     public long getRemaining() {
         return this.expire - System.currentTimeMillis();
     }
