@@ -1,4 +1,4 @@
-package pk.ajneb97.utils;
+package pk.ajneb97.util;
 
 import net.md_5.bungee.api.ChatColor;
 

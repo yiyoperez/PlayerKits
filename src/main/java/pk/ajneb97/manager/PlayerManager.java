@@ -1,11 +1,11 @@
-package pk.ajneb97.managers;
+package pk.ajneb97.manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.models.PlayerData;
-import pk.ajneb97.models.PlayerKit;
+import pk.ajneb97.model.PlayerData;
+import pk.ajneb97.model.PlayerKit;
 
 import java.util.HashMap;
 import java.util.Map;

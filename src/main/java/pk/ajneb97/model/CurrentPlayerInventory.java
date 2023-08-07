@@ -1,7 +1,7 @@
-package pk.ajneb97.models;
+package pk.ajneb97.model;
 
 import org.bukkit.entity.Player;
-import pk.ajneb97.managers.InventarioManager;
+import pk.ajneb97.manager.InventarioManager;
 
 public class CurrentPlayerInventory {
 

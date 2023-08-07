@@ -1,4 +1,4 @@
-package pk.ajneb97.managers;
+package pk.ajneb97.manager;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -40,14 +40,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.inventory.PurchaseConfirmationMenu;
-import pk.ajneb97.models.CurrentPlayerInventory;
-import pk.ajneb97.models.PlayerData;
-import pk.ajneb97.models.PlayerKit;
-import pk.ajneb97.utils.Cooldown;
-import pk.ajneb97.utils.MessageHandler;
-import pk.ajneb97.utils.MessageUtils;
-import pk.ajneb97.utils.Placeholder;
-import pk.ajneb97.utils.Utils;
+import pk.ajneb97.model.CurrentPlayerInventory;
+import pk.ajneb97.model.PlayerData;
+import pk.ajneb97.model.PlayerKit;
+import pk.ajneb97.util.Cooldown;
+import pk.ajneb97.util.MessageHandler;
+import pk.ajneb97.util.MessageUtils;
+import pk.ajneb97.util.Placeholder;
+import pk.ajneb97.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

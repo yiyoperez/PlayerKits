@@ -1,12 +1,8 @@
-package pk.ajneb97.utils;
+package pk.ajneb97.util;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

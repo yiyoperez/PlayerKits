@@ -1,4 +1,4 @@
-package pk.ajneb97.listeners;
+package pk.ajneb97.listener;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -7,8 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.models.CurrentPlayerInventory;
-import pk.ajneb97.managers.InventarioManager;
+import pk.ajneb97.model.CurrentPlayerInventory;
+import pk.ajneb97.manager.InventarioManager;
 
 public class InventoryPreviewListener implements Listener {
 

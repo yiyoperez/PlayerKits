@@ -11,10 +11,10 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.managers.KitManager;
-import pk.ajneb97.models.KitModification;
-import pk.ajneb97.utils.TimeUtils;
-import pk.ajneb97.utils.Utils;
+import pk.ajneb97.manager.KitManager;
+import pk.ajneb97.model.KitModification;
+import pk.ajneb97.util.TimeUtils;
+import pk.ajneb97.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

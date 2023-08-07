@@ -1,4 +1,4 @@
-package pk.ajneb97.models;
+package pk.ajneb97.model;
 
 import org.bukkit.entity.Player;
 

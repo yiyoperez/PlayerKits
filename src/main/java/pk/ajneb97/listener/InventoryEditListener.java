@@ -1,4 +1,4 @@
-package pk.ajneb97.listeners;
+package pk.ajneb97.listener;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -18,10 +18,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.inventory.InventoryEdit;
-import pk.ajneb97.models.KitModification;
-import pk.ajneb97.managers.KitManager;
-import pk.ajneb97.utils.MessageHandler;
-import pk.ajneb97.utils.Utils;
+import pk.ajneb97.model.KitModification;
+import pk.ajneb97.manager.KitManager;
+import pk.ajneb97.util.MessageHandler;
+import pk.ajneb97.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

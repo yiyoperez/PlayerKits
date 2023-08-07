@@ -1,4 +1,4 @@
-package pk.ajneb97.listeners;
+package pk.ajneb97.listener;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -14,11 +14,11 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.models.CurrentPlayerInventory;
+import pk.ajneb97.model.CurrentPlayerInventory;
 import pk.ajneb97.inventory.InventoryPreview;
-import pk.ajneb97.managers.InventarioManager;
-import pk.ajneb97.managers.KitManager;
-import pk.ajneb97.utils.MessageUtils;
+import pk.ajneb97.manager.InventarioManager;
+import pk.ajneb97.manager.KitManager;
+import pk.ajneb97.util.MessageUtils;
 
 public class InventoryListener implements Listener {
 

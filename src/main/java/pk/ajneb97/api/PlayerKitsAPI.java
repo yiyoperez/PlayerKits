@@ -3,9 +3,9 @@ package pk.ajneb97.api;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.managers.PlayerManager;
-import pk.ajneb97.models.PlayerData;
-import pk.ajneb97.utils.Cooldown;
+import pk.ajneb97.manager.PlayerManager;
+import pk.ajneb97.model.PlayerData;
+import pk.ajneb97.util.Cooldown;
 
 public class PlayerKitsAPI {
 

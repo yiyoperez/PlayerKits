@@ -1,8 +1,8 @@
-package pk.ajneb97.tasks;
+package pk.ajneb97.task;
 
 import org.bukkit.scheduler.BukkitRunnable;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.utils.PluginLogger;
+import pk.ajneb97.util.PluginLogger;
 
 public class PlayerDataSaveTask {
 

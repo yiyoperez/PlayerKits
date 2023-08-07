@@ -4,7 +4,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.utils.PluginLogger;
 
 /**
  * This class will automatically register as a placeholder expansion

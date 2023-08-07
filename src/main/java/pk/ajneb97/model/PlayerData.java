@@ -1,10 +1,10 @@
-package pk.ajneb97.models;
+package pk.ajneb97.model;
 
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pk.ajneb97.utils.Cooldown;
+import pk.ajneb97.util.Cooldown;
 
 import java.util.HashMap;
 import java.util.HashSet;

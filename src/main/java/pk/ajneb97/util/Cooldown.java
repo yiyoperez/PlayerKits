@@ -1,4 +1,4 @@
-package pk.ajneb97.utils;
+package pk.ajneb97.util;
 
 public class Cooldown {
 

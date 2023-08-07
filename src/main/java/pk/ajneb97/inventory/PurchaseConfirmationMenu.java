@@ -8,11 +8,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.models.CurrentPlayerInventory;
-import pk.ajneb97.utils.MessageHandler;
-import pk.ajneb97.utils.MessageUtils;
-import pk.ajneb97.utils.Placeholder;
-import pk.ajneb97.utils.Utils;
+import pk.ajneb97.model.CurrentPlayerInventory;
+import pk.ajneb97.util.MessageHandler;
+import pk.ajneb97.util.MessageUtils;
+import pk.ajneb97.util.Placeholder;
+import pk.ajneb97.util.Utils;
 
 import java.util.List;
 

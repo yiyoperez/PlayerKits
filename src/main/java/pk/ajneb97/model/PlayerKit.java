@@ -1,8 +1,7 @@
-package pk.ajneb97.models;
+package pk.ajneb97.model;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
-import pk.ajneb97.utils.PluginLogger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

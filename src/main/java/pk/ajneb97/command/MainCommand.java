@@ -1,4 +1,4 @@
-package pk.ajneb97.commands;
+package pk.ajneb97.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -12,16 +12,16 @@ import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.inventory.InventoryEdit;
 import pk.ajneb97.inventory.InventoryPreview;
-import pk.ajneb97.managers.InventarioManager;
-import pk.ajneb97.managers.KitManager;
-import pk.ajneb97.managers.PlayerManager;
-import pk.ajneb97.models.PlayerData;
-import pk.ajneb97.models.PlayerKit;
-import pk.ajneb97.utils.Checks;
-import pk.ajneb97.utils.Cooldown;
-import pk.ajneb97.utils.MessageHandler;
-import pk.ajneb97.utils.MessageUtils;
-import pk.ajneb97.utils.Placeholder;
+import pk.ajneb97.manager.InventarioManager;
+import pk.ajneb97.manager.KitManager;
+import pk.ajneb97.manager.PlayerManager;
+import pk.ajneb97.model.PlayerData;
+import pk.ajneb97.model.PlayerKit;
+import pk.ajneb97.util.Checks;
+import pk.ajneb97.util.Cooldown;
+import pk.ajneb97.util.MessageHandler;
+import pk.ajneb97.util.MessageUtils;
+import pk.ajneb97.util.Placeholder;
 
 import java.util.ArrayList;
 import java.util.Collections;
