@@ -26,8 +26,8 @@ public class PlayerManager {
 
         // If player doesn't exists in players.yml
         if (!players.contains(player.getUniqueId().toString())) {
-            // gets or create a new playerdata object
-            getOrCreatePlayer(player);
+            // create a new playerdata object
+            playerDataMap.putIfAbsent(player.getUniqueId(), new PlayerData(player));
             return;
         }
 
@@ -57,25 +57,28 @@ public class PlayerManager {
     }
 
     public PlayerKit getOrCreatePlayerKit(Player player, String kit) {
-        Set<PlayerKit> kits = getOrCreatePlayer(player).getKits();
+        PlayerData playerData = getOrCreatePlayer(player);
+        Set<PlayerKit> kits = playerData.getKits();
 
-        return kits
-                .stream()
-                .filter(playerKit -> playerKit.getName().equalsIgnoreCase(kit))
+        return kits.stream()
+                .filter(data -> data.getName().equalsIgnoreCase(kit))
                 .findFirst()
-                .orElse(new PlayerKit(kit, false, false));
+                .orElseGet(() -> {
+                    PlayerKit newData = new PlayerKit(kit, false, false);
+                    kits.add(newData);
+                    return newData;
+                });
     }
 
     public PlayerData getOrCreatePlayer(Player player) {
-        boolean anyMatch = playerDataMap
-                .keySet()
+        return playerDataMap
+                .values()
                 .stream()
-                .anyMatch(uuid -> uuid == player.getUniqueId());
-
-        if (anyMatch) {
-            return playerDataMap.get(player.getUniqueId());
-        }
-
-        return new PlayerData(player);
+                .filter(data -> data.getUuid().equals(player.getUniqueId()))
+                .findFirst()
+                .orElseGet(() -> {
+                    // If somehow player data doesn't exist add it into map.
+                    return playerDataMap.putIfAbsent(player.getUniqueId(), new PlayerData(player));
+                });
     }
 }
