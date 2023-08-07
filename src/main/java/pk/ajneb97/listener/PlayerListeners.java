@@ -1,5 +1,6 @@
 package pk.ajneb97.listener;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,11 +41,13 @@ public class PlayerListeners implements Listener {
     public void giveFirstJoinKits(Player jugador) {
         FileConfiguration kitConfig = plugin.getKits();
         KitManager kitManager = plugin.getKitManager();
-        if (kitConfig.contains("Kits")) {
-            for (String key : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
-                if (kitConfig.contains("Kits." + key + ".first_join") && kitConfig.getBoolean("Kits." + key + ".first_join")) {
-                    kitManager.claimKit(jugador, key, false, false);
-                }
+
+        ConfigurationSection section = kitConfig.getConfigurationSection("Kits");
+        if (!section.getKeys(false).isEmpty()) return;
+
+        for (String key : section.getKeys(false)) {
+            if (kitConfig.contains("Kits." + key + ".first_join") && kitConfig.getBoolean("Kits." + key + ".first_join")) {
+                kitManager.claimKit(jugador, key, false, false);
             }
         }
     }
