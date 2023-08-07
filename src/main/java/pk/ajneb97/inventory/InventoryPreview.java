@@ -21,19 +21,19 @@ public class InventoryPreview {
         FileConfiguration messages = plugin.getMessages();
 
         int slots = config.getInt("preview-inventory.size");
-        Inventory inv = Bukkit.createInventory(null, slots, MessageUtils.getMensajeColor(messages.getString("previewInventoryName")));
+        Inventory inv = Bukkit.createInventory(null, slots, MessageUtils.translateColor(messages.getString("previewInventoryName")));
 
         if (config.getBoolean("preview-inventory.back-item")) {
             ItemStack item = new ItemStack(Material.ARROW);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(MessageUtils.getMensajeColor(messages.getString("backItemName")));
+            meta.setDisplayName(MessageUtils.translateColor(messages.getString("backItemName")));
             item.setItemMeta(meta);
             inv.setItem(config.getInt("preview-inventory.back-item-slot"), item);
         }
 
         if (kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false).isEmpty()) {
             String prefix = messages.getString("prefix");
-            player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("noPreviewError")));
+            player.sendMessage(MessageUtils.translateColor(prefix + messages.getString("noPreviewError")));
             return;
         }
 

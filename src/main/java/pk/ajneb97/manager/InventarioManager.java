@@ -51,7 +51,7 @@ public class InventarioManager {
         FileConfiguration messages = plugin.getMessages();
         FileConfiguration configKits = plugin.getKits();
 
-        String pathInventory = MessageUtils.getMensajeColor(getInventoryPageName(config, pagina));
+        String pathInventory = MessageUtils.translateColor(getInventoryPageName(config, pagina));
         String pathInventoryM = ChatColor.stripColor(pathInventory);
         Inventory inv = player.getOpenInventory().getTopInventory();
         if (inv == null || !ChatColor.stripColor(player.getOpenInventory().getTitle()).equals(pathInventoryM)) {
@@ -73,7 +73,7 @@ public class InventarioManager {
                     if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                         name = PlaceholderAPI.setPlaceholders(player, name);
                     }
-                    meta.setDisplayName(MessageUtils.getMensajeColor(name));
+                    meta.setDisplayName(MessageUtils.translateColor(name));
                 }
                 if (invSection.contains(key + ".lore")) {
                     List<String> lore = invSection.getStringList(key + ".lore");
@@ -82,7 +82,7 @@ public class InventarioManager {
                         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                             linea = PlaceholderAPI.setPlaceholders(player, linea);
                         }
-                        lore.set(i, MessageUtils.getMensajeColor(linea));
+                        lore.set(i, MessageUtils.translateColor(linea));
                     }
                     meta.setLore(lore);
                 }
@@ -150,7 +150,7 @@ public class InventarioManager {
                                 if (configKits.contains("Kits." + key + ".one_time") && configKits.getBoolean("Kits." + key + ".one_time")
                                         && playerKit.isOneTime()) {
                                     List<String> lore = messages.getStringList("kitOneTimeLore");
-                                    lore.replaceAll(MessageUtils::getMensajeColor);
+                                    lore.replaceAll(MessageUtils::translateColor);
                                     meta.setLore(lore);
                                 } else {
                                     if (configKits.contains("Kits." + key + ".cooldown")) {
@@ -158,7 +158,7 @@ public class InventarioManager {
                                         if (playerData.hasCooldown(key)) {
                                             List<String> lore = messages.getStringList("kitInCooldownLore");
                                             Cooldown cooldown = playerData.getCooldown(key);
-                                            lore.replaceAll(s -> MessageUtils.getMensajeColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
+                                            lore.replaceAll(s -> MessageUtils.translateColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
                                             meta.setLore(lore);
                                         }
                                     }
@@ -203,7 +203,7 @@ public class InventarioManager {
 
     public static void openMainInventory(FileConfiguration config, PlayerKits plugin, Player jugador, int pagina) {
         int size = config.getInt("inventory.size");
-        Inventory inv = Bukkit.createInventory(null, size, MessageUtils.getMensajeColor(getInventoryPageName(config, pagina)));
+        Inventory inv = Bukkit.createInventory(null, size, MessageUtils.translateColor(getInventoryPageName(config, pagina)));
         jugador.openInventory(inv);
         InventarioManager invM = new InventarioManager(plugin);
         plugin.agregarInventarioJugador(new CurrentPlayerInventory(jugador, pagina, invM, "main"));
@@ -219,21 +219,21 @@ public class InventarioManager {
         ItemStack item = Utils.getItem(configKits.getString(path + ".display_item"), 1, "");
         ItemMeta meta = item.getItemMeta();
         if (configKits.contains(path + ".display_name")) {
-            meta.setDisplayName(MessageUtils.getMensajeColor(configKits.getString(path + ".display_name")));
+            meta.setDisplayName(MessageUtils.translateColor(configKits.getString(path + ".display_name")));
         } else {
             if (configKits.contains("Kits." + kit + ".display_name")) {
-                meta.setDisplayName(MessageUtils.getMensajeColor(configKits.getString("Kits." + kit + ".display_name")));
+                meta.setDisplayName(MessageUtils.translateColor(configKits.getString("Kits." + kit + ".display_name")));
             }
 
         }
         if (configKits.contains(path + ".display_lore")) {
             List<String> lore = configKits.getStringList(path + ".display_lore");
-            lore.replaceAll(MessageUtils::getMensajeColor);
+            lore.replaceAll(MessageUtils::translateColor);
             meta.setLore(lore);
         } else {
             if (configKits.contains("Kits." + kit + ".display_lore")) {
                 List<String> lore = configKits.getStringList("Kits." + kit + ".display_lore");
-                lore.replaceAll(MessageUtils::getMensajeColor);
+                lore.replaceAll(MessageUtils::translateColor);
                 meta.setLore(lore);
             }
 

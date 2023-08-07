@@ -34,7 +34,7 @@ public class Checks {
             FileConfiguration messages = plugin.getMessages();
             String prefix = messages.getString("prefix");
             String message = prefix + messages.getString("materialNameError");
-            player.sendMessage(MessageUtils.getMensajeColor(message.replace("%material%", id).replace("%key%", key)));
+            player.sendMessage(MessageUtils.translateColor(message.replace("%material%", id).replace("%key%", key)));
             return true;
         }
 

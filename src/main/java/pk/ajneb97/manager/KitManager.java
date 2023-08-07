@@ -351,10 +351,10 @@ public class KitManager {
             for (int i = 0; i < lore.size(); i++) {
                 if (placeholderAPI) {
 
-                    String nueva = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i)).replace("%player%", jugador.getName()));
+                    String nueva = MessageUtils.translateColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i)).replace("%player%", jugador.getName()));
                     lore.set(i, nueva);
                 } else {
-                    lore.set(i, MessageUtils.getMensajeColor(lore.get(i).replace("%player%", jugador.getName())));
+                    lore.set(i, MessageUtils.translateColor(lore.get(i).replace("%player%", jugador.getName())));
                 }
             }
         }
@@ -472,11 +472,11 @@ public class KitManager {
         ItemMeta crafteosMeta = crafteos.getItemMeta();
         if (kitConfig.contains(path + ".name")) {
             if (placeholderAPI) {
-                String nombre = MessageUtils.getMensajeColor(kitConfig.getString(path + ".name"));
+                String nombre = MessageUtils.translateColor(kitConfig.getString(path + ".name"));
                 String nueva = PlaceholderAPI.setPlaceholders(jugador, nombre).replace("%player%", jugador.getName());
                 crafteosMeta.setDisplayName(nueva);
             } else {
-                crafteosMeta.setDisplayName(MessageUtils.getMensajeColor(kitConfig.getString(path + ".name").replace("%player%", jugador.getName())));
+                crafteosMeta.setDisplayName(MessageUtils.translateColor(kitConfig.getString(path + ".name").replace("%player%", jugador.getName())));
             }
 
         }
@@ -889,7 +889,7 @@ public class KitManager {
         for (String comando : comandos) {
             if (comando.startsWith("msg %player% ")) {
                 String mensaje = comando.replace("msg %player% ", "");
-                jugador.sendMessage(MessageUtils.getMensajeColor(mensaje));
+                jugador.sendMessage(MessageUtils.translateColor(mensaje));
             } else {
                 String comandoAEnviar = comando.replace("%player%", jugador.getName());
                 Bukkit.dispatchCommand(consola, comandoAEnviar);

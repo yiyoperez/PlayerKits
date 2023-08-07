@@ -83,7 +83,7 @@ public class InventoryListener implements Listener {
                                 boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
                                 if (permissionCheck && !hasPermission) {
                                     String prefix = messages.getString("prefix");
-                                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
+                                    player.sendMessage(MessageUtils.translateColor(prefix + messages.getString("cantPreviewError")));
                                     return;
                                 }
 

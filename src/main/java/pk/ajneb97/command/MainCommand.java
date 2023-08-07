@@ -321,7 +321,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
         }
 
-        player.sendMessage(MessageUtils.getMensajeColor(list.toString()));
+        player.sendMessage(MessageUtils.translateColor(list.toString()));
     }
 
     private void claimArgument(Player player, String[] args) {

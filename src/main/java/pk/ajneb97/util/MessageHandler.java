@@ -30,7 +30,7 @@ public class MessageHandler {
             message = StringUtils.replace(message, placeholders);
         }
 
-        return MessageUtils.getMensajeColor(message);
+        return MessageUtils.translateColor(message);
     }
 
     public String intercept(CommandSender sender, String message) {
@@ -53,7 +53,7 @@ public class MessageHandler {
             }
         }
 
-        return MessageUtils.getMensajeColor(message);
+        return MessageUtils.translateColor(message);
     }
 
     public String getRawMessage(String path) {
@@ -76,6 +76,10 @@ public class MessageHandler {
 
     public String getRawMessage(String path, List<Placeholder> placeholders) {
         return StringUtils.replace(getRawMessage(path), placeholders);
+    }
+
+    public String getMessage(CommandSender sender, String path, Placeholder... placeholders) {
+        return getMessage(sender, path, Arrays.asList(placeholders));
     }
 
     public String getMessage(CommandSender sender, String path, List<Placeholder> placeholders) {

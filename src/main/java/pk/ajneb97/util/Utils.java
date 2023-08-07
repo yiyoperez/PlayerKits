@@ -61,11 +61,11 @@ public class Utils {
         ItemStack item = getItem(kits.getString(path + ".display_item"), 1, "");
         ItemMeta meta = item.getItemMeta();
         if (kits.contains(path + ".display_name")) {
-            meta.setDisplayName(MessageUtils.getMensajeColor(kits.getString(path + ".display_name")));
+            meta.setDisplayName(MessageUtils.translateColor(kits.getString(path + ".display_name")));
         }
         if (kits.contains(path + ".display_lore")) {
             List<String> lore = kits.getStringList(path + ".display_lore");
-            lore.replaceAll(MessageUtils::getMensajeColor);
+            lore.replaceAll(MessageUtils::translateColor);
             meta.setLore(lore);
         }
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
