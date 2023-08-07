@@ -14,11 +14,11 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.model.CurrentPlayerInventory;
 import pk.ajneb97.inventory.InventoryPreview;
 import pk.ajneb97.manager.InventarioManager;
 import pk.ajneb97.manager.KitManager;
-import pk.ajneb97.util.MessageUtils;
+import pk.ajneb97.model.CurrentPlayerInventory;
+import pk.ajneb97.util.MessageHandler;
 
 public class InventoryListener implements Listener {
 
@@ -56,47 +56,43 @@ public class InventoryListener implements Listener {
 
         int slot = event.getSlot();
         int pagina = inv.getPage();
-        FileConfiguration configKits = plugin.getKits();
         FileConfiguration config = plugin.getConfig();
-        FileConfiguration messages = plugin.getMessages();
+        FileConfiguration configKits = plugin.getKits();
+        MessageHandler messageHandler = plugin.getMessageHandler();
 
         KitManager kitManager = plugin.getKitManager();
         ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
-        if (!kitsSection.getKeys(false).isEmpty()) {
-            for (String key : kitsSection.getKeys(false)) {
-                if (configKits.contains("Kits." + key + ".slot")) {
-                    if (slot == configKits.getInt("Kits." + key + ".slot")) {
-                        int page = 1;
-                        if (configKits.contains("Kits." + key + ".page")) {
-                            page = configKits.getInt("Kits." + key + ".page");
-                        }
-                        if (page == pagina) {
-                            if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
-                                //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
-                                boolean hasPermission = true;
+        if (kitsSection.getKeys(false).isEmpty()) return;
+
+        for (String key : kitsSection.getKeys(false)) {
+            if (configKits.contains("Kits." + key + ".slot")) {
+                if (slot == configKits.getInt("Kits." + key + ".slot")) {
+                    int page = 1;
+                    if (configKits.contains("Kits." + key + ".page")) {
+                        page = configKits.getInt("Kits." + key + ".page");
+                    }
+                    if (page == pagina) {
+                        if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
+                            //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
+                            boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
+                            if (permissionCheck) {
                                 if (configKits.contains("Kits." + key + ".permission")) {
                                     String permission = configKits.getString("Kits." + key + ".permission");
                                     if (!player.isOp() && !player.hasPermission(permission)) {
-                                        hasPermission = false;
+                                        messageHandler.sendMessage(player, "cantPreviewError");
                                     }
                                 }
-                                boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
-                                if (permissionCheck && !hasPermission) {
-                                    String prefix = messages.getString("prefix");
-                                    player.sendMessage(MessageUtils.translateColor(prefix + messages.getString("cantPreviewError")));
-                                    return;
-                                }
-
-                                InventoryPreview.openInventory(plugin, player, key, inv.getPage());
-                            } else {
-                                kitManager.claimKit(player, key, true, false);
+                                return;
                             }
-                            return;
+
+                            InventoryPreview.openInventory(plugin, player, key, inv.getPage());
+                        } else {
+                            kitManager.claimKit(player, key, false, false);
                         }
+                        return;
                     }
                 }
             }
-
         }
 
     }
@@ -134,51 +130,51 @@ public class InventoryListener implements Listener {
         int paginasTotales = InventarioManager.getCurrentPages(configKits);
 
         ConfigurationSection inventorySection = config.getConfigurationSection("inventory.items");
-        if (!inventorySection.getKeys(false).isEmpty()) {
-            for (String key : config.getConfigurationSection("inventory.items").getKeys(false)) {
-                int slotNuevo = Integer.parseInt(key);
-                if (slot == slotNuevo) {
+        if (inventorySection.getKeys(false).isEmpty()) return;
 
-                    if (config.contains("inventory.items." + key + ".type")) {
-                        if (config.getString("inventory.items." + key + ".type").equals("previous_page")) {
-                            if (pagina > 1) {
-                                if (!config.getString("sounds.page_sound").equals("none")) {
-                                    String[] separados = config.getString("sounds.page_sound").split(";");
-                                    try {
-                                        Sound sound = Sound.valueOf(separados[0]);
-                                        player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
-                                    } catch (Exception ex) {
-                                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
-                                    }
-                                }
+        for (String key : config.getConfigurationSection("inventory.items").getKeys(false)) {
+            int slotNuevo = Integer.parseInt(key);
+            if (slot == slotNuevo) {
 
-                                InventarioManager.openMainInventory(config, plugin, player, pagina - 1);
-                                return;
-                            }
-                        } else if (config.getString("inventory.items." + key + ".type").equals("next_page")) {
-                            if (paginasTotales > pagina) {
-                                if (!config.getString("sounds.page_sound").equals("none")) {
-                                    String[] separados = config.getString("sounds.page_sound").split(";");
-                                    try {
-                                        Sound sound = Sound.valueOf(separados[0]);
-                                        player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
-                                    } catch (Exception ex) {
-                                        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
-                                    }
+                if (config.contains("inventory.items." + key + ".type")) {
+                    if (config.getString("inventory.items." + key + ".type").equals("previous_page")) {
+                        if (pagina > 1) {
+                            if (!config.getString("sounds.page_sound").equals("none")) {
+                                String[] separados = config.getString("sounds.page_sound").split(";");
+                                try {
+                                    Sound sound = Sound.valueOf(separados[0]);
+                                    player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
+                                } catch (Exception ex) {
+                                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
                                 }
-                                InventarioManager.openMainInventory(config, plugin, player, pagina + 1);
-                                return;
                             }
+
+                            InventarioManager.openMainInventory(config, plugin, player, pagina - 1);
+                            return;
+                        }
+                    } else if (config.getString("inventory.items." + key + ".type").equals("next_page")) {
+                        if (paginasTotales > pagina) {
+                            if (!config.getString("sounds.page_sound").equals("none")) {
+                                String[] separados = config.getString("sounds.page_sound").split(";");
+                                try {
+                                    Sound sound = Sound.valueOf(separados[0]);
+                                    player.playSound(player.getLocation(), sound, Float.parseFloat(separados[1]), Float.parseFloat(separados[2]));
+                                } catch (Exception ex) {
+                                    Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
+                                }
+                            }
+                            InventarioManager.openMainInventory(config, plugin, player, pagina + 1);
+                            return;
                         }
                     }
+                }
 
-                    if (config.contains("inventory.items." + key + ".command")) {
-                        String comando = config.getString("inventory.items." + key + ".command");
-                        CommandSender console = Bukkit.getServer().getConsoleSender();
-                        String comandoAEnviar = comando.replaceAll("%player%", player.getName());
-                        Bukkit.dispatchCommand(console, comandoAEnviar);
-                        return;
-                    }
+                if (config.contains("inventory.items." + key + ".command")) {
+                    String comando = config.getString("inventory.items." + key + ".command");
+                    CommandSender console = Bukkit.getServer().getConsoleSender();
+                    String comandoAEnviar = comando.replaceAll("%player%", player.getName());
+                    Bukkit.dispatchCommand(console, comandoAEnviar);
+                    return;
                 }
             }
         }

@@ -6,61 +6,49 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import pk.ajneb97.PlayerKits;
 import pk.ajneb97.model.CurrentPlayerInventory;
+import pk.ajneb97.util.ItemStackBuilder;
 import pk.ajneb97.util.MessageHandler;
 import pk.ajneb97.util.MessageUtils;
 import pk.ajneb97.util.Placeholder;
 import pk.ajneb97.util.Utils;
 
-import java.util.List;
-
 public class PurchaseConfirmationMenu implements Listener {
 
 
-    //TODO: THIS
     @SuppressWarnings("deprecation")
     public static void openInventory(Player player, PlayerKits plugin, double price, String kit, int page) {
         MessageHandler messageHandler = plugin.getMessageHandler();
 
-        Inventory inv = Bukkit.createInventory(null, 9, MessageUtils.getMensajeColor(messageHandler.getRawMessage("moneyInventoryName")));
-        List<String> lore = messageHandler.getRawStringList("moneyInventoryConfirmationLore", new Placeholder("%price%", price));
+        Inventory inv = Bukkit.createInventory(null, 9, MessageUtils.translateColor(messageHandler.getRawMessage("purchase.inventory-name")));
+
+        ItemStack yesPanel = new ItemStackBuilder(Utils.isLegacy() ? Material.valueOf("STAINED_GLASS_PANE") : Material.LIME_STAINED_GLASS_PANE)
+                .name(messageHandler.getRawMessage("purchase.buy.name"))
+                .lore(messageHandler.getRawStringList("purchase.buy.lore"));
+        inv.setItem(0, yesPanel);
+        inv.setItem(1, yesPanel);
+        inv.setItem(2, yesPanel);
+        inv.setItem(3, yesPanel);
 
 
-        ItemStack item = applyMetaChanges(Utils.isLegacy() ? Material.valueOf("STAINED_GLASS_PANE") : Material.LIME_STAINED_GLASS_PANE,
-                MessageUtils.getMensajeColor(messageHandler.getRawMessage("moneyInventoryYes")), lore);
-
-        inv.setItem(0, item);
-        inv.setItem(1, item);
-        inv.setItem(2, item);
-        inv.setItem(3, item);
-
-
-        item = applyMetaChanges(Utils.isLegacy() ? Material.valueOf("STAINED_GLASS_PANE") : Material.RED_STAINED_GLASS_PANE,
-                MessageUtils.getMensajeColor(messageHandler.getRawMessage("moneyInventoryNo")), lore);
-        inv.setItem(5, item);
-        inv.setItem(6, item);
-        inv.setItem(7, item);
-        inv.setItem(8, item);
+        ItemStack noPanel = new ItemStackBuilder(Utils.isLegacy() ? Material.valueOf("STAINED_GLASS_PANE") : Material.RED_STAINED_GLASS_PANE)
+                .name(messageHandler.getRawMessage("purchase.cancel.name"))
+                .lore(messageHandler.getRawStringList("purchase.cancel.lore"));
+        inv.setItem(5, noPanel);
+        inv.setItem(6, noPanel);
+        inv.setItem(7, noPanel);
+        inv.setItem(8, noPanel);
 
 
-        item = applyMetaChanges(Material.COAL_BLOCK, MessageUtils.getMensajeColor(messageHandler.getRawMessage("moneyInventoryConfirmationName")), lore);
-        inv.setItem(4, item);
+        ItemStack confirmation = new ItemStackBuilder(Material.COAL_BLOCK)
+                .name(messageHandler.getRawMessage("purchase.confirmation.name"))
+                .lore(messageHandler.getRawStringList("purchase.confirmation.lore",
+                        new Placeholder("%price%", price)));
+        inv.setItem(4, confirmation);
 
         player.openInventory(inv);
 
         plugin.agregarInventarioJugador(new CurrentPlayerInventory(player, page, null, "buying: " + kit));
     }
-
-    private static ItemStack applyMetaChanges(Material material, String displayName, List<String> lore) {
-        ItemStack item = new ItemStack(material, 1);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(displayName);
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-
-        return item;
-    }
-
 }

@@ -19,16 +19,24 @@ noPreviewError: "&cThere is nothing to preview for this kit."
 materialNameError: "&cThere is an error on your config. Material: &7&l%material% &cis not valid at section %key%."
 
 purchase:
+  inventory-name: "&9Buy Kit Confirmation"
+  success: "&aYou have successfully buy the kit %name%!"
+  failed: "&aYou have CANCELED the purchase of the kit %name%!"
   error:
-    not-enough: "&cYou don't have enough money to claim this kit. &8(&a$&c%current_money%&7/&a$&c%required_money%&8) %needed_money%"
+    one-time-buy: "&6This kit can only be bought one time!"
+    not-enough-money: "&cYou don't have enough money to claim this kit. &8(&a$&c%current_money%&7/&a$&c%required_money%&8) %needed_money%"
+  buy:
+    name: "&a&lYES"
+    lore:
+      - "&7Click to MAKE the purchase."
+  cancel:
+    name: "&c&lNO"
+    lore:
+      - "&7Click to CANCEL the purchase."
   confirmation:
     name: "&6Are you sure?"
     lore:
       - "&7This will cost you: &a$%price%"
-  inventory:
-    name: "&9Buy Kit Confirmation"
-    yes: "&a&lYES"
-    no: "&c&lNO"
 
 cooldown:
   days: ' days'

@@ -277,11 +277,11 @@ public class InventoryEdit {
         item.setItemMeta(meta);
         inv.setItem(16, item);
 
-        String oneTimeBuy = "false";
+        boolean oneTimeBuy = false;
         if (kits.contains("Kits." + kit + ".one_time_buy")) {
-            oneTimeBuy = kits.getString("Kits." + kit + ".one_time_buy");
+            oneTimeBuy = kits.getBoolean("Kits." + kit + ".one_time_buy");
         }
-        if (oneTimeBuy.equals("true")) {
+        if (oneTimeBuy) {
             if (!Utils.isLegacy()) {
                 item = new ItemStack(Material.LIME_DYE);
             } else {

@@ -627,34 +627,44 @@ public class KitManager {
 
     }
 
-    public void giveKit(Player player, String kit, boolean notify) {
-
-    }
-
-    public boolean attemptBuyKit(Player player, String kit) {
-        FileConfiguration config = plugin.getConfig();
+    public void attemptBuyKit(Player player, String kit) {
         FileConfiguration configKits = plugin.getKits();
 
         // Kit cannot be purchased.
-        if (!configKits.contains("Kits." + kit + ".price")) return false;
+        if (!configKits.contains("Kits." + kit + ".price")) return;
 
+        FileConfiguration config = plugin.getConfig();
         PlayerManager playerManager = plugin.getPlayerManager();
+        MessageHandler messageHandler = plugin.getMessageHandler();
         PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, kit);
 
-
-        if (configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
-            double price = configKits.getDouble("Kits." + kit + ".price");
-            if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-                Economy econ = plugin.getEconomy();
-                econ.withdrawPlayer(player, price);
-            }
-            if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getString("Kits." + kit + ".one_time_buy").equals("true")) {
-                playerKit.setBought(true);
-                return true;
-            }
+        Economy eco = plugin.getEconomy();
+        if (eco == null) {
+            messageHandler.sendManualMessage(player, "There isn't any economy provider available.");
+            return;
         }
 
-        return false;
+        double balance = eco.getBalance(player);
+        double price = configKits.getDouble("Kits." + kit + ".price");
+
+        if (balance < price) {
+            messageHandler.sendMessage(player, "purchase.error.not-enough-money",
+                    new Placeholder("%required_money%", price),
+                    new Placeholder("%current_money%", balance),
+                    new Placeholder("%needed_money%", price - balance));
+            playErrorSound(player, config);
+            player.closeInventory();
+            return;
+        }
+
+        if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getBoolean("Kits." + kit + ".one_time_buy")) {
+            playerKit.setOneTimeBuy(true);
+        }
+
+        playerKit.setBought(true);
+        messageHandler.sendMessage(player, "purchase.success", new Placeholder("%name%", kit));
+        claimKit(player, kit, false, true);
+        eco.withdrawPlayer(player, price);
     }
 
     public void claimKit(Player player, String kit, boolean notify, boolean ignoreValues) {
@@ -667,6 +677,7 @@ public class KitManager {
         PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, kit);
 
         if (!ignoreValues) {
+            // If kit has permissions.
             if (configKits.contains("Kits." + kit + ".permission") && !player.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
                 messageHandler.sendMessage(player, "kit.error.noPermissions");
                 playErrorSound(player, config);
@@ -678,6 +689,7 @@ public class KitManager {
                 return;
             }
 
+            // If kit is on-time use.
             if (configKits.contains("Kits." + kit + ".one_time") && configKits.getBoolean("Kits." + kit + ".one_time")) {
                 if (playerKit.isOneTime()) {
                     messageHandler.sendMessage(player, "kit.error.one-time");
@@ -686,6 +698,7 @@ public class KitManager {
                 }
             }
 
+            // If kit has cooldown.
             if (configKits.contains("Kits." + kit + ".cooldown")) {
                 if (playerData.hasCooldown(kit)) {
                     Cooldown cooldown = playerData.getCooldown(kit);
@@ -704,30 +717,29 @@ public class KitManager {
                 }
             }
 
-            if (configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
-                double price = configKits.getDouble("Kits." + kit + ".price");
-                if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-                    Economy econ = plugin.getEconomy();
-                    double balance = econ.getBalance(player);
-                    if (balance < price) {
-                        messageHandler.sendMessage(player, "noMoneyError",
-                                new Placeholder("%required_money%", price),
-                                new Placeholder("%current_money%", balance),
-                                new Placeholder("%needed_money%", price - balance));
-                        playErrorSound(player, config);
-                    } else {
-                        //Abrir inventario confirmacion
-                        CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
-                        int pag = -1;
-                        if (inv != null) {
-                            pag = inv.getPage();
-                        }
-                        PurchaseConfirmationMenu.openInventory(player, plugin, price, kit, pag);
+            // If kit require to be purchased.
+            if (configKits.contains("Kits." + kit + ".price")) {
+
+                if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getBoolean("Kits." + kit + ".one_time_buy")) {
+                    if (playerKit.isOneTimeBuy()) {
+                        messageHandler.sendMessage(player, "purchase.error.one-time-buy");
+                        return;
                     }
+                }
+
+                if (!playerKit.isBought()) {
+                    //Abrir inventario confirmacion
+                    CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
+                    int pag = -1;
+                    if (inv != null) {
+                        pag = inv.getPage();
+                    }
+
+                    double price = configKits.getDouble("Kits." + kit + ".price");
+                    PurchaseConfirmationMenu.openInventory(player, plugin, price, kit, pag);
                     return;
                 }
             }
-
         }
 
         //Estos contents son solo del inventario, ignoran armadura y offhand
