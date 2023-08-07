@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.CurrentPlayerInventory;
+import pk.ajneb97.models.CurrentPlayerInventory;
 import pk.ajneb97.models.PlayerData;
 import pk.ajneb97.models.PlayerKit;
 import pk.ajneb97.utils.Cooldown;

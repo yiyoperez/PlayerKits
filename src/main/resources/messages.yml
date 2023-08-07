@@ -3,6 +3,7 @@ prefix: "&8[&4PlayerKits&8] "
 configReload: "%prefix% &aConfig Reloaded."
 noPermissions: "%prefix% &cYou don't have permissions for that."
 inventoryEmpty: "&cYou need at least 1 item on your inventory to create a kit."
+noSpaceError: "&cYou don't have enough space in your inventory."
 
 kitInCooldownLore:
   - "&cYou need to wait &7%time%"
@@ -10,22 +11,24 @@ kitInCooldownLore:
 kitOneTimeLore:
   - "&cYou can't claim this kit again."
 
-noSpaceError: "&cYou don't have enough space in your inventory."
-oneTimeError: "&cYou can't claim this kit again."
+backItemName: "&7Back"
+invalid-page: "&cWrite a valid page."
+previewInventoryName: "&9Kit Preview"
+playerNotOnline: "&cPlayer &7%player% &cis not online."
+noPreviewError: "&cThere is nothing to preview for this kit."
 materialNameError: "&cThere is an error on your config. Material: &7&l%material% &cis not valid at section %key%."
 
-noPreviewError: "&cThere is nothing to preview for this kit."
-previewInventoryName: "&9Kit Preview"
-backItemName: "&7Back"
-playerNotOnline: "&cPlayer &7%player% &cis not online."
-noMoneyError: "&cYou don't have enough money to claim this kit. &8(&a$&c%current_money%&7/&a$&c%required_money%&8)"
-moneyInventoryName: "&9Buy Kit Confirmation"
-moneyInventoryYes: "&a&lYES"
-moneyInventoryNo: "&c&lNO"
-moneyInventoryConfirmationName: "&6Are you sure?"
-moneyInventoryConfirmationLore:
-  - "&7This will cost you: &a$%price%"
-errorPage: "&cWrite a valid page."
+purchase:
+  error:
+    not-enough: "&cYou don't have enough money to claim this kit. &8(&a$&c%current_money%&7/&a$&c%required_money%&8) %needed_money%"
+  confirmation:
+    name: "&6Are you sure?"
+    lore:
+      - "&7This will cost you: &a$%price%"
+  inventory:
+    name: "&9Buy Kit Confirmation"
+    yes: "&a&lYES"
+    no: "&c&lNO"
 
 cooldown:
   days: ' days'
@@ -66,6 +69,7 @@ kit:
     notify: "&aYou have given kit &f\"%name%\"&a!"
   error:
     cantPreview: "&cYou can't preview this kit."
+    one-time: "&cYou can't claim this kit again."
     notFound: "%prefix% &cThe kit &7%name% &cdoesn't exists."
     noPermissions: "&cYou don't have permissions to claim this kit."
     alreadyExists: "&cThe kit &7%name% &calready exists on the config."

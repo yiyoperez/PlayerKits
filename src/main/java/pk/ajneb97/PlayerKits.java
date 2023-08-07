@@ -11,13 +11,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pk.ajneb97.api.ExpansionPlayerKits;
 import pk.ajneb97.api.PlayerKitsAPI;
 import pk.ajneb97.commands.MainCommand;
-import pk.ajneb97.inventory.KitEditando;
-import pk.ajneb97.inventory.CurrentPlayerInventory;
-import pk.ajneb97.listeners.InventarioConfirmacionDinero;
-import pk.ajneb97.listeners.InventarioEditar;
-import pk.ajneb97.listeners.InventarioListener;
-import pk.ajneb97.listeners.InventoryPreview;
+import pk.ajneb97.models.CurrentPlayerInventory;
+import pk.ajneb97.models.KitModification;
+import pk.ajneb97.listeners.InventoryEditListener;
+import pk.ajneb97.listeners.InventoryListener;
+import pk.ajneb97.listeners.InventoryPreviewListener;
 import pk.ajneb97.listeners.PlayerListeners;
+import pk.ajneb97.listeners.PurchaseListener;
 import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.managers.PlayerManager;
 import pk.ajneb97.tasks.PlayerDataSaveTask;
@@ -43,8 +43,7 @@ public final class PlayerKits extends JavaPlugin {
     private FileConfiguration players;
     private FileConfiguration messages;
 
-    private KitEditando kitEditando;
-    RegisteredServiceProvider<Economy> rsp;
+    private KitModification kitModification;
     private static Economy economy = null;
     private final ArrayList<CurrentPlayerInventory> playerInventories = new ArrayList<>();
 
@@ -103,11 +102,11 @@ public final class PlayerKits extends JavaPlugin {
 
     public void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new InventarioListener(this), this);
-        pm.registerEvents(new InventoryPreview(this), this);
         pm.registerEvents(new PlayerListeners(this), this);
-        pm.registerEvents(new InventarioEditar(this), this);
-        pm.registerEvents(new InventarioConfirmacionDinero(this), this);
+        pm.registerEvents(new PurchaseListener(this), this);
+        pm.registerEvents(new InventoryListener(this), this);
+        pm.registerEvents(new InventoryEditListener(this), this);
+        pm.registerEvents(new InventoryPreviewListener(this), this);
     }
 
     public KitManager getKitManager() {
@@ -124,7 +123,7 @@ public final class PlayerKits extends JavaPlugin {
 
     public CurrentPlayerInventory getInventarioJugador(String jugador) {
         for (CurrentPlayerInventory inv : playerInventories) {
-            if (inv.getJugador().getName().equals(jugador)) {
+            if (inv.getPlayer().getName().equals(jugador)) {
                 return inv;
             }
         }
@@ -133,7 +132,7 @@ public final class PlayerKits extends JavaPlugin {
 
     public void removerInventarioJugador(String jugador) {
         for (int i = 0; i < playerInventories.size(); i++) {
-            if (playerInventories.get(i).getJugador().getName().equals(jugador)) {
+            if (playerInventories.get(i).getPlayer().getName().equals(jugador)) {
                 playerInventories.remove(i);
             }
         }
@@ -252,16 +251,16 @@ public final class PlayerKits extends JavaPlugin {
         return this.players;
     }
 
-    public void setKitEditando(KitEditando p) {
-        this.kitEditando = p;
+    public void setKitEditando(KitModification p) {
+        this.kitModification = p;
     }
 
     public void removerKitEditando() {
-        this.kitEditando = null;
+        this.kitModification = null;
     }
 
-    public KitEditando getKitEditando() {
-        return this.kitEditando;
+    public KitModification getKitEditando() {
+        return this.kitModification;
     }
 
     private boolean setupEconomy() {

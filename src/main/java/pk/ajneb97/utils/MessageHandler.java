@@ -101,7 +101,7 @@ public class MessageHandler {
         sender.sendMessage(String.format(intercept(sender, message), placeholders));
     }
 
-    public void sendManualMessage(CommandSender sender, String message, Placeholder... placeholders){
+    public void sendManualMessage(CommandSender sender, String message, Placeholder... placeholders) {
         this.sendManualMessage(sender, message, Arrays.asList(placeholders));
     }
 
@@ -115,6 +115,24 @@ public class MessageHandler {
 
     public void sendMessage(CommandSender sender, String path, List<Placeholder> placeholders) {
         sender.sendMessage(getMessage(sender, path, placeholders));
+    }
+
+    public List<String> getRawStringList(String path, Placeholder... placeholders) {
+        return getRawStringList(path, Arrays.asList(placeholders));
+    }
+
+    public List<String> getRawStringList(String path, List<Placeholder> placeholders) {
+        FileConfiguration messages = plugin.getMessages();
+        if (!messages.isList(path)) {
+            return Collections.singletonList(getRawMessage(path, placeholders));
+        }
+
+        List<String> list = new ArrayList<>();
+        for (String message : messages.getStringList(path)) {
+            list.add(StringUtils.replace(message, placeholders));
+        }
+
+        return list;
     }
 
     public void sendListMessage(CommandSender sender, String path, Placeholder... placeholders) {

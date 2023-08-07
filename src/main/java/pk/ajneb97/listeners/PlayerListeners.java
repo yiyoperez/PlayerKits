@@ -43,7 +43,7 @@ public class PlayerListeners implements Listener {
         if (kitConfig.contains("Kits")) {
             for (String key : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
                 if (kitConfig.contains("Kits." + key + ".first_join") && kitConfig.getBoolean("Kits." + key + ".first_join")) {
-                    kitManager.claimKit(jugador, key, false, false, false);
+                    kitManager.claimKit(jugador, key, false, false);
                 }
             }
         }

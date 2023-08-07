@@ -39,8 +39,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.CurrentPlayerInventory;
-import pk.ajneb97.listeners.InventarioConfirmacionDinero;
+import pk.ajneb97.inventory.PurchaseConfirmationMenu;
+import pk.ajneb97.models.CurrentPlayerInventory;
 import pk.ajneb97.models.PlayerData;
 import pk.ajneb97.models.PlayerKit;
 import pk.ajneb97.utils.Cooldown;
@@ -332,6 +332,7 @@ public class KitManager {
         }
     }
 
+    //TODO: Ion wanna do this no more
     public static ItemStack getItem(FileConfiguration kitConfig, String path, Player jugador) {
 //		if(config.getString("Config.item_serializer").equals("true")
 //				&& kitConfig.contains(path+".full_data")) {
@@ -349,6 +350,7 @@ public class KitManager {
             lore = kitConfig.getStringList(path + ".lore");
             for (int i = 0; i < lore.size(); i++) {
                 if (placeholderAPI) {
+
                     String nueva = MessageUtils.getMensajeColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i)).replace("%player%", jugador.getName()));
                     lore.set(i, nueva);
                 } else {
@@ -417,6 +419,7 @@ public class KitManager {
             meta.setColor(Color.fromRGB(color));
             crafteos.setItemMeta(meta);
         }
+
         String book_enchants = path + ".book-enchants";
         if (kitConfig.contains(book_enchants)) {
             List<String> bookEnchantsList = kitConfig.getStringList(book_enchants);
@@ -429,6 +432,7 @@ public class KitManager {
             }
             crafteos.setItemMeta(meta);
         }
+
         String book_properties = path + ".book-title";
         if (kitConfig.contains(book_properties)) {
             BookMeta meta = (BookMeta) crafteos.getItemMeta();
@@ -459,103 +463,11 @@ public class KitManager {
             meta.setTitle(title);
             crafteos.setItemMeta(meta);
         }
-        String firework_effects = path + ".firework-effects";
-        if (kitConfig.contains(firework_effects)) {
-            List<String> fireworkEffectsList = kitConfig.getStringList(firework_effects);
-            FireworkMeta meta = (FireworkMeta) crafteos.getItemMeta();
-            for (String s : fireworkEffectsList) {
-                String[] sep = s.split(";");
-                String type = sep[0];
-                String[] colores = sep[1].split(",");
-                List<Color> coloresList = new ArrayList<>();
-                for (String colore : colores) {
-                    coloresList.add(Color.fromRGB(Integer.parseInt(colore)));
-                }
-                List<Color> coloresListFade = new ArrayList<>();
-                if (!sep[2].equals("")) {
-                    String[] coloresFade = sep[2].split(",");
-                    for (String value : coloresFade) {
-                        coloresListFade.add(Color.fromRGB(Integer.parseInt(value)));
-                    }
-                }
 
-                boolean flicker = Boolean.parseBoolean(sep[3]);
-                boolean trail = Boolean.parseBoolean(sep[4]);
-                meta.addEffect(FireworkEffect.builder().flicker(flicker).trail(trail).with(Type.valueOf(type)).withColor(coloresList).withFade(coloresListFade).build());
-            }
-            int power = kitConfig.getInt(path + ".firework-power");
-            meta.setPower(power);
-            crafteos.setItemMeta(meta);
-        }
+        //TODO: THIS!
+        attemptFireworkFormatting(kitConfig, path, crafteos);
 
-        if (kitConfig.contains(path + ".banner-pattern")) {
-            boolean esBanner = false;
-            boolean esEscudo = false;
-            if (!Utils.isLegacy()) {
-                if (crafteos.getType().name().contains("BANNER")) {
-                    esBanner = true;
-                } else if (crafteos.getType() == Material.SHIELD) {
-                    esEscudo = true;
-                }
-            } else {
-                if (crafteos.getType() == Material.valueOf("BANNER")) {
-                    esBanner = true;
-                } else {
-                    if (!Bukkit.getVersion().contains("1.8")) {
-                        if (crafteos.getType() == Material.SHIELD) {
-                            esEscudo = true;
-                        }
-                    }
-                }
-            }
-            if (esBanner) {
-                BannerMeta meta = (BannerMeta) crafteos.getItemMeta();
-                List<Pattern> patterns = new ArrayList<>();
-                String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
-                if (!patternsPath.equals("")) {
-                    String[] patternsSeparados = patternsPath.split(";");
-                    for (String patternsSeparado : patternsSeparados) {
-                        String[] lineaSep = patternsSeparado.split(":");
-                        String tipoB = lineaSep[1];
-                        String colorB = lineaSep[0];
-                        patterns.add(new Pattern(DyeColor.valueOf(colorB), PatternType.valueOf(tipoB)));
-                    }
-                    meta.setPatterns(patterns);
-                }
-
-//		  		  	if(!Bukkit.getVersion().contains("1.13")){
-//		  		  		String mainColor = config.getString(path+".banner-color");
-//		  		  		meta.setBaseColor(DyeColor.valueOf(mainColor));
-//		  		  	}
-
-                crafteos.setItemMeta(meta);
-            } else if (esEscudo) {
-                BlockStateMeta meta = (BlockStateMeta) crafteos.getItemMeta();
-                Banner banner = (Banner) meta.getBlockState();
-                if (Utils.isLegacy()) {
-                    String mainColor = kitConfig.getString(path + ".banner-color");
-                    banner.setBaseColor(DyeColor.valueOf(mainColor));
-                } else {
-                    String mainColor = kitConfig.getString(path + ".banner-color");
-                    banner.setBaseColor(Utils.getBannerColor(mainColor));
-                }
-                String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
-                if (!patternsPath.equals("")) {
-                    String[] patternsSeparados = patternsPath.split(";");
-                    for (String patternsSeparado : patternsSeparados) {
-                        String[] lineaSep = patternsSeparado.split(":");
-                        String tipoB = lineaSep[1];
-                        String colorB = lineaSep[0];
-                        banner.addPattern(new Pattern(DyeColor.valueOf(colorB), PatternType.valueOf(tipoB)));
-                    }
-                }
-
-                banner.update();
-                meta.setBlockState(banner);
-                crafteos.setItemMeta(meta);
-            }
-
-        }
+        attemptBannerFormatting(kitConfig, path, crafteos);
 
         ItemMeta crafteosMeta = crafteos.getItemMeta();
         if (kitConfig.contains(path + ".name")) {
@@ -610,7 +522,142 @@ public class KitManager {
         return crafteos;
     }
 
-    public void claimKit(Player player, String kit, boolean notify, boolean ignoreValues, boolean comprandoKit) {
+    private static void attemptFireworkFormatting(FileConfiguration kitConfig, String path, ItemStack crafteos) {
+        String firework_effects = path + ".firework-effects";
+        if (!kitConfig.contains(firework_effects)) return;
+
+        List<String> fireworkEffectsList = kitConfig.getStringList(firework_effects);
+        FireworkMeta meta = (FireworkMeta) crafteos.getItemMeta();
+        for (String s : fireworkEffectsList) {
+            String[] sep = s.split(";");
+            String type = sep[0];
+            String[] colores = sep[1].split(",");
+            List<Color> coloresList = new ArrayList<>();
+            for (String colore : colores) {
+                coloresList.add(Color.fromRGB(Integer.parseInt(colore)));
+            }
+            List<Color> coloresListFade = new ArrayList<>();
+            if (!sep[2].equals("")) {
+                String[] coloresFade = sep[2].split(",");
+                for (String value : coloresFade) {
+                    coloresListFade.add(Color.fromRGB(Integer.parseInt(value)));
+                }
+            }
+
+            boolean flicker = Boolean.parseBoolean(sep[3]);
+            boolean trail = Boolean.parseBoolean(sep[4]);
+            meta.addEffect(FireworkEffect.builder().flicker(flicker).trail(trail).with(Type.valueOf(type)).withColor(coloresList).withFade(coloresListFade).build());
+        }
+        int power = kitConfig.getInt(path + ".firework-power");
+        meta.setPower(power);
+        crafteos.setItemMeta(meta);
+    }
+
+    private static void attemptBannerFormatting(FileConfiguration kitConfig, String path, ItemStack crafteos) {
+
+        if (!kitConfig.contains(path + ".banner-pattern")) return;
+
+        boolean esBanner = false;
+        boolean esEscudo = false;
+
+        if (!Utils.isLegacy()) {
+            if (crafteos.getType().name().contains("BANNER")) {
+                esBanner = true;
+            } else if (crafteos.getType() == Material.SHIELD) {
+                esEscudo = true;
+            }
+        } else {
+            if (crafteos.getType() == Material.valueOf("BANNER")) {
+                esBanner = true;
+            } else {
+                if (!Bukkit.getVersion().contains("1.8")) {
+                    if (crafteos.getType() == Material.SHIELD) {
+                        esEscudo = true;
+                    }
+                }
+            }
+        }
+
+        if (esBanner) {
+            BannerMeta meta = (BannerMeta) crafteos.getItemMeta();
+            List<Pattern> patterns = new ArrayList<>();
+            String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
+            if (!patternsPath.equals("")) {
+                String[] patternsSeparados = patternsPath.split(";");
+                for (String patternsSeparado : patternsSeparados) {
+                    String[] lineaSep = patternsSeparado.split(":");
+                    String tipoB = lineaSep[1];
+                    String colorB = lineaSep[0];
+                    patterns.add(new Pattern(DyeColor.valueOf(colorB), PatternType.valueOf(tipoB)));
+                }
+                meta.setPatterns(patterns);
+            }
+
+//		  		  	if(!Bukkit.getVersion().contains("1.13")){
+//		  		  		String mainColor = config.getString(path+".banner-color");
+//		  		  		meta.setBaseColor(DyeColor.valueOf(mainColor));
+//		  		  	}
+
+            crafteos.setItemMeta(meta);
+        } else if (esEscudo) {
+            BlockStateMeta meta = (BlockStateMeta) crafteos.getItemMeta();
+            Banner banner = (Banner) meta.getBlockState();
+            if (Utils.isLegacy()) {
+                String mainColor = kitConfig.getString(path + ".banner-color");
+                banner.setBaseColor(DyeColor.valueOf(mainColor));
+            } else {
+                String mainColor = kitConfig.getString(path + ".banner-color");
+                banner.setBaseColor(Utils.getBannerColor(mainColor));
+            }
+            String patternsPath = kitConfig.getString(path + ".banner-pattern"); // COLOR:TIPO;COLOR:TIPO
+            if (!patternsPath.equals("")) {
+                String[] patternsSeparados = patternsPath.split(";");
+                for (String patternsSeparado : patternsSeparados) {
+                    String[] lineaSep = patternsSeparado.split(":");
+                    String tipoB = lineaSep[1];
+                    String colorB = lineaSep[0];
+                    banner.addPattern(new Pattern(DyeColor.valueOf(colorB), PatternType.valueOf(tipoB)));
+                }
+            }
+
+            banner.update();
+            meta.setBlockState(banner);
+            crafteos.setItemMeta(meta);
+        }
+
+    }
+
+    public void giveKit(Player player, String kit, boolean notify) {
+
+    }
+
+    public boolean attemptBuyKit(Player player, String kit) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration configKits = plugin.getKits();
+
+        // Kit cannot be purchased.
+        if (!configKits.contains("Kits." + kit + ".price")) return false;
+
+        PlayerManager playerManager = plugin.getPlayerManager();
+        PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, kit);
+
+
+        if (configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
+            double price = configKits.getDouble("Kits." + kit + ".price");
+            if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+                Economy econ = plugin.getEconomy();
+                econ.withdrawPlayer(player, price);
+            }
+            if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getString("Kits." + kit + ".one_time_buy").equals("true")) {
+                playerKit.setBought(true);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void claimKit(Player player, String kit, boolean notify, boolean ignoreValues) {
         FileConfiguration config = plugin.getConfig();
         FileConfiguration configKits = plugin.getKits();
         MessageHandler messageHandler = plugin.getMessageHandler();
@@ -620,16 +667,8 @@ public class KitManager {
         PlayerKit playerKit = playerManager.getOrCreatePlayerKit(player, kit);
 
         if (!ignoreValues) {
-            if (configKits.contains("Kits." + kit + ".one_time") && configKits.getBoolean("Kits." + kit + ".one_time")) {
-                if (playerKit.isOneTime()) {
-                    messageHandler.sendMessage(player, "oneTimeError");
-                    playErrorSound(player, config);
-                    return;
-                }
-            }
-
             if (configKits.contains("Kits." + kit + ".permission") && !player.hasPermission(configKits.getString("Kits." + kit + ".permission"))) {
-                messageHandler.sendMessage(player, "kitNoPermissions");
+                messageHandler.sendMessage(player, "kit.error.noPermissions");
                 playErrorSound(player, config);
 
                 if (config.getBoolean("close_inventory_no_permission")) {
@@ -637,6 +676,14 @@ public class KitManager {
                     player.updateInventory();
                 }
                 return;
+            }
+
+            if (configKits.contains("Kits." + kit + ".one_time") && configKits.getBoolean("Kits." + kit + ".one_time")) {
+                if (playerKit.isOneTime()) {
+                    messageHandler.sendMessage(player, "kit.error.one-time");
+                    playErrorSound(player, config);
+                    return;
+                }
             }
 
             if (configKits.contains("Kits." + kit + ".cooldown")) {
@@ -657,30 +704,31 @@ public class KitManager {
                 }
             }
 
-            if (!comprandoKit && configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
+            if (configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
                 double price = configKits.getDouble("Kits." + kit + ".price");
                 if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
                     Economy econ = plugin.getEconomy();
                     double balance = econ.getBalance(player);
                     if (balance < price) {
                         messageHandler.sendMessage(player, "noMoneyError",
+                                new Placeholder("%required_money%", price),
                                 new Placeholder("%current_money%", balance),
-                                new Placeholder("%required_money%", price));
+                                new Placeholder("%needed_money%", price - balance));
                         playErrorSound(player, config);
                     } else {
                         //Abrir inventario confirmacion
                         CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
                         int pag = -1;
                         if (inv != null) {
-                            pag = inv.getPagina();
+                            pag = inv.getPage();
                         }
-                        InventarioConfirmacionDinero.crearInventario(player, plugin, price, kit, pag);
+                        PurchaseConfirmationMenu.openInventory(player, plugin, price, kit, pag);
                     }
                     return;
                 }
             }
-        }
 
+        }
 
         //Estos contents son solo del inventario, ignoran armadura y offhand
         ItemStack[] contents = Utils.isLegacy() ? player.getInventory().getContents() : player.getInventory().getStorageContents();
@@ -745,18 +793,6 @@ public class KitManager {
         }
 
         if (!ignoreValues) {
-            if (comprandoKit && configKits.contains("Kits." + kit + ".price") && !playerKit.isBought()) {
-                double price = configKits.getDouble("Kits." + kit + ".price");
-                if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
-                    Economy econ = plugin.getEconomy();
-                    econ.withdrawPlayer(player, price);
-                }
-                if (configKits.contains("Kits." + kit + ".one_time_buy") && configKits.getString("Kits." + kit + ".one_time_buy").equals("true")) {
-                    playerKit.setBought(true);
-                    return;
-                }
-            }
-
             if (configKits.contains("Kits." + kit + ".cooldown")) {
                 if (!player.hasPermission("playerkits.bypasscooldown")) {
                     playerData.registerCooldown(kit, new Cooldown(configKits.getInt("Kits." + kit + ".cooldown") * 1000L));
@@ -814,7 +850,7 @@ public class KitManager {
             ejecutarComandos(configKits, kit, player);
         }
 
-        Placeholder placeholder = new Placeholder("%kit%", kit);
+        Placeholder placeholder = new Placeholder("%name%", kit);
         messageHandler.sendMessage(player, "kit.claim.success", placeholder);
         if (notify) {
             messageHandler.sendMessage(player, "kit.give.notify", placeholder);

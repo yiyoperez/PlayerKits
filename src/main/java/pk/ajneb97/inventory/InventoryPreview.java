@@ -1,31 +1,21 @@
-package pk.ajneb97.listeners;
+package pk.ajneb97.inventory;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.CurrentPlayerInventory;
-import pk.ajneb97.managers.InventarioManager;
 import pk.ajneb97.managers.KitManager;
+import pk.ajneb97.models.CurrentPlayerInventory;
 import pk.ajneb97.utils.MessageUtils;
 
-public class InventoryPreview implements Listener {
+public class InventoryPreview {
 
-    private final PlayerKits plugin;
-
-    public InventoryPreview(PlayerKits plugin) {
-        this.plugin = plugin;
-    }
-
-    public static void abrirInventarioPreview(PlayerKits plugin, Player player, String kit, int page) {
+    public static void openInventory(PlayerKits plugin, Player player, String kit, int page) {
         FileConfiguration kits = plugin.getKits();
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
@@ -50,7 +40,7 @@ public class InventoryPreview implements Listener {
         int slot = 0;
         for (String n : kits.getConfigurationSection("Kits." + kit + ".Items").getKeys(false)) {
             String path = "Kits." + kit + ".Items." + n;
-            ItemStack item = KitManager.getItem(kits, path,  player);
+            ItemStack item = KitManager.getItem(kits, path, player);
             try {
                 if (kits.contains(path + ".preview_slot")) {
                     inv.setItem(kits.getInt(path + ".preview_slot"), item);
@@ -67,30 +57,5 @@ public class InventoryPreview implements Listener {
         player.openInventory(inv);
 
         plugin.agregarInventarioJugador(new CurrentPlayerInventory(player, page, null, "preview"));
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        FileConfiguration config = plugin.getConfig();
-        Player player = (Player) event.getWhoClicked();
-
-        CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
-        if (inv == null) return;
-
-        if (event.getCurrentItem() == null) {
-            event.setCancelled(true);
-            return;
-        }
-
-        int slot = event.getSlot();
-        event.setCancelled(true);
-        if (event.getClickedInventory() == player.getOpenInventory().getTopInventory()) {
-            if (inv.getTipoInventario().equals("preview")) {
-                int slotAClickear = config.getInt("preview-inventory.back-item-slot");
-                if (slot == slotAClickear && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-                    InventarioManager.openMainInventory(config, plugin, player, inv.getPagina());
-                }
-            }
-        }
     }
 }

@@ -5,12 +5,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.listeners.InventarioEditar;
-import pk.ajneb97.listeners.InventoryPreview;
+import pk.ajneb97.inventory.InventoryEdit;
+import pk.ajneb97.inventory.InventoryPreview;
 import pk.ajneb97.managers.InventarioManager;
 import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.managers.PlayerManager;
@@ -24,14 +25,17 @@ import pk.ajneb97.utils.Placeholder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
     private final PlayerKits plugin;
     private final MessageHandler messageHandler;
-
 
     public MainCommand(PlayerKits plugin) {
         this.plugin = plugin;
@@ -141,7 +145,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
 
             if (kits.contains("Kits." + args[0] + ".slot") || player.isOp() || player.hasPermission("playerkits.admin")) {
-                kitManager.claimKit(player, args[0], true, false, false);
+                kitManager.claimKit(player, args[0], true, false);
             }
             return true;
         }
@@ -265,7 +269,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        InventarioEditar.crearInventario(player, args[1], plugin);
+        InventoryEdit.crearInventario(player, args[1], plugin);
     }
 
     private void listArgument(Player player) {
@@ -332,7 +336,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        kitManager.claimKit(player, args[1], true, false, false);
+        kitManager.claimKit(player, args[1], true, false);
     }
 
     private void previewArgument(Player player, String[] args) {
@@ -367,7 +371,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 }
             }
 
-            InventoryPreview.abrirInventarioPreview(plugin, player, args[1], 1);
+            InventoryPreview.openInventory(plugin, player, args[1], 1);
         }
     }
 
@@ -398,7 +402,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        kitManager.claimKit(player, args[1], true, true, false);
+        kitManager.claimKit(player, args[1], true, true);
         messageHandler.sendMessage(sender,
                 "kit.give.success",
                 new Placeholder("%player%", args[2]),
@@ -468,81 +472,76 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         FileConfiguration kits = plugin.getKits();
         FileConfiguration config = plugin.getConfig();
 
+        String commandArg = args[0].toLowerCase();
         List<String> completions = new ArrayList<>();
-        if (args.length == 1) {
-            List<String> commands = new ArrayList<>();
-            commands.add("preview");
-            if (!config.getBoolean("claim_kit_short_command")) {
-                commands.add("claim");
-            } else {
-                String argKit = args[0];
-                for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
-                    if (kits.contains("Kits." + key + ".slot") || sender.isOp() || sender.hasPermission("playerkits.admin")) {
-                        if (argKit.toLowerCase().isEmpty() || key.toLowerCase().startsWith(argKit.toLowerCase())) {
-                            completions.add(key);
+        ConfigurationSection kitsSection = kits.getConfigurationSection("Kits");
+        if (config.getBoolean("claim_kit_short_command") && args.length == 1) {
+
+            if (kitsSection.getKeys(false).isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            suggestKits(kitsSection, commandArg, completions);
+
+            return completions;
+        }
+
+        Map<String, int[]> argumentMap = new HashMap<>();
+        argumentMap.put("open", new int[]{1});
+        argumentMap.put("list", new int[]{1});
+        argumentMap.put("create", new int[]{1});
+        argumentMap.put("reload", new int[]{1});
+        argumentMap.put("edit", new int[]{1, 2});
+        argumentMap.put("give", new int[]{1, 2});
+        argumentMap.put("reset", new int[]{1, 2});
+        argumentMap.put("delete", new int[]{1, 2});
+        argumentMap.put("preview", new int[]{1, 2});
+        argumentMap.put("claim", new int[]{1, 2});
+
+        // Adds basic commands.
+        Set<String> suggestions = argumentMap.keySet();
+        suggestions.forEach(suggestion -> {
+
+            if (sender.hasPermission("playerkits." + suggestion)) {
+
+                for (int i : argumentMap.get(suggestion)) {
+                    if (i == args.length) {
+                        Set<String> commandSelector = new HashSet<>();
+                        commandSelector.add("edit");
+                        commandSelector.add("give");
+                        commandSelector.add("claim");
+                        commandSelector.add("reset");
+                        commandSelector.add("delete");
+                        commandSelector.add("preview");
+
+                        if (commandSelector.contains(commandArg)) {
+                            String kitArg = args[1].toLowerCase();
+
+                            if (kitsSection != null) {
+                                suggestKits(kitsSection, kitArg, completions);
+                            }
+                        } else {
+                            if (commandArg.isEmpty() || suggestion.startsWith(commandArg.toLowerCase())) {
+                                completions.add(suggestion);
+                            }
                         }
                     }
                 }
             }
-
-            for (String c : commands) {
-                if (args[0].isEmpty() || c.startsWith(args[0].toLowerCase())) {
-                    completions.add(c);
-                }
-            }
-        } else {
-            if ((args[0].equalsIgnoreCase("claim") || args[0].equalsIgnoreCase("preview")) && args.length == 2) {
-                String argKit = args[1];
-                for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
-                    if (argKit.toLowerCase().isEmpty() || key.toLowerCase().startsWith(argKit.toLowerCase())) {
-                        if (kits.contains("Kits." + key + ".slot") || sender.isOp() || sender.hasPermission("playerkits.admin")) {
-                            completions.add(key);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (sender.isOp() || sender.hasPermission("playerkits.admin") || sender.hasPermission("playerkits.list")) {
-            if (args.length == 1) {
-                String c = "list";
-                if (args[0].isEmpty() || c.startsWith(args[0].toLowerCase())) {
-                    completions.add(c);
-                }
-            }
-        }
-
-        if (sender.isOp() || sender.hasPermission("playerkits.admin")) {
-            if (args.length == 1) {
-                List<String> commands = new ArrayList<>();
-                commands.add("open");
-                commands.add("create");
-                commands.add("delete");
-                commands.add("edit");
-                commands.add("give");
-                commands.add("reset");
-                commands.add("reload");
-                for (String c : commands) {
-                    if (args[0].isEmpty() || c.startsWith(args[0].toLowerCase())) {
-                        completions.add(c);
-                    }
-                }
-            } else {
-                if ((args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("reset")) && args.length == 2) {
-                    String argKit = args[1].toLowerCase();
-                    for (String key : kits.getConfigurationSection("Kits").getKeys(false)) {
-                        if (argKit.isEmpty() || key.toLowerCase().startsWith(argKit.toLowerCase())) {
-                            completions.add(key);
-                        }
-                    }
-                }
-            }
-        }
+        });
 
         if (completions.isEmpty()) {
             return Collections.emptyList();
         }
 
         return completions;
+    }
+
+    private void suggestKits(ConfigurationSection kits, String kitArg, List<String> completions) {
+        for (String key : kits.getKeys(false)) {
+            if (kitArg.isEmpty() || key.toLowerCase().startsWith(kitArg.toLowerCase())) {
+                completions.add(key);
+            }
+        }
     }
 }

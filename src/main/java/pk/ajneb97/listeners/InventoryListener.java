@@ -14,21 +14,22 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import pk.ajneb97.PlayerKits;
-import pk.ajneb97.inventory.CurrentPlayerInventory;
+import pk.ajneb97.models.CurrentPlayerInventory;
+import pk.ajneb97.inventory.InventoryPreview;
 import pk.ajneb97.managers.InventarioManager;
 import pk.ajneb97.managers.KitManager;
 import pk.ajneb97.utils.MessageUtils;
 
-public class InventarioListener implements Listener {
+public class InventoryListener implements Listener {
 
     private final PlayerKits plugin;
 
-    public InventarioListener(PlayerKits plugin) {
+    public InventoryListener(PlayerKits plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
+    public void onKitsInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
         if (inv == null) return;
@@ -50,14 +51,86 @@ public class InventarioListener implements Listener {
 
         event.setCancelled(true);
 
-        String tipoInventario = inv.getTipoInventario();
+        String tipoInventario = inv.getInventoryType();
         if (!tipoInventario.equals("main")) return;
 
         int slot = event.getSlot();
-        int pagina = inv.getPagina();
+        int pagina = inv.getPage();
         FileConfiguration configKits = plugin.getKits();
         FileConfiguration config = plugin.getConfig();
         FileConfiguration messages = plugin.getMessages();
+
+        KitManager kitManager = plugin.getKitManager();
+        ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
+        if (!kitsSection.getKeys(false).isEmpty()) {
+            for (String key : kitsSection.getKeys(false)) {
+                if (configKits.contains("Kits." + key + ".slot")) {
+                    if (slot == configKits.getInt("Kits." + key + ".slot")) {
+                        int page = 1;
+                        if (configKits.contains("Kits." + key + ".page")) {
+                            page = configKits.getInt("Kits." + key + ".page");
+                        }
+                        if (page == pagina) {
+                            if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
+                                //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
+                                boolean hasPermission = true;
+                                if (configKits.contains("Kits." + key + ".permission")) {
+                                    String permission = configKits.getString("Kits." + key + ".permission");
+                                    if (!player.isOp() && !player.hasPermission(permission)) {
+                                        hasPermission = false;
+                                    }
+                                }
+                                boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
+                                if (permissionCheck && !hasPermission) {
+                                    String prefix = messages.getString("prefix");
+                                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
+                                    return;
+                                }
+
+                                InventoryPreview.openInventory(plugin, player, key, inv.getPage());
+                            } else {
+                                kitManager.claimKit(player, key, true, false);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    @EventHandler
+    public void onMainInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        CurrentPlayerInventory inv = plugin.getInventarioJugador(player.getName());
+        if (inv == null) return;
+
+        if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) {
+            event.setCancelled(true);
+            return;
+        }
+
+        //TODO: ...
+        if (event.getSlotType() == null) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (event.getClickedInventory() != player.getOpenInventory().getTopInventory()) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        String tipoInventario = inv.getInventoryType();
+        if (!tipoInventario.equals("main")) return;
+
+        int slot = event.getSlot();
+        int pagina = inv.getPage();
+        FileConfiguration configKits = plugin.getKits();
+        FileConfiguration config = plugin.getConfig();
         int paginasTotales = InventarioManager.getCurrentPages(configKits);
 
         ConfigurationSection inventorySection = config.getConfigurationSection("inventory.items");
@@ -109,57 +182,16 @@ public class InventarioListener implements Listener {
                 }
             }
         }
-
-        KitManager kitManager = plugin.getKitManager();
-        ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
-        if (!kitsSection.getKeys(false).isEmpty()) {
-            for (String key : kitsSection.getKeys(false)) {
-                if (configKits.contains("Kits." + key + ".slot")) {
-                    if (slot == configKits.getInt("Kits." + key + ".slot")) {
-                        int page = 1;
-                        if (configKits.contains("Kits." + key + ".page")) {
-                            page = configKits.getInt("Kits." + key + ".page");
-                        }
-                        if (page == pagina) {
-                            if (event.getClick() == ClickType.RIGHT && config.getBoolean("preview-inventory.enabled")) {
-                                //Comprobar si tiene permiso y si esta activada la opcion de requerir permiso
-                                boolean hasPermission = true;
-                                if (configKits.contains("Kits." + key + ".permission")) {
-                                    String permission = configKits.getString("Kits." + key + ".permission");
-                                    if (!player.isOp() && !player.hasPermission(permission)) {
-                                        hasPermission = false;
-                                    }
-                                }
-                                boolean permissionCheck = config.getBoolean("preview_inventory_requires_permission");
-                                if (permissionCheck && !hasPermission) {
-                                    String prefix = messages.getString("prefix");
-                                    player.sendMessage(MessageUtils.getMensajeColor(prefix + messages.getString("cantPreviewError")));
-                                    return;
-                                }
-
-                                InventoryPreview.abrirInventarioPreview(plugin, player, key, inv.getPagina());
-                            } else {
-                                kitManager.claimKit(player, key, true, false, false);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
-
-        }
-
     }
 
     @EventHandler
-    public void alCerrar(InventoryCloseEvent event) {
+    public void onClose(InventoryCloseEvent event) {
         Player jugador = (Player) event.getPlayer();
         CurrentPlayerInventory inv = plugin.getInventarioJugador(jugador.getName());
-        if (inv != null && inv.getInventarioManager() != null) {
-            Bukkit.getScheduler().cancelTask(inv.getInventarioManager().getTaskID());
+        if (inv != null && inv.getInventoryManager() != null) {
+            Bukkit.getScheduler().cancelTask(inv.getInventoryManager().getTaskID());
         }
 
-        //remover
         plugin.removerInventarioJugador(jugador.getName());
     }
 }
