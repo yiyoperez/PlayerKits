@@ -57,7 +57,6 @@ public class Checks {
         }
 
         Material material = Material.matchMaterial(materialID);
-        if (material == null) return false;
 
         try {
             new ItemStack(material, 1, dataValue);
