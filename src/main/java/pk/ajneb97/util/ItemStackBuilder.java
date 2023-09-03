@@ -61,7 +61,7 @@ public class ItemStackBuilder extends ItemStack {
         return this;
     }
 
-    public ItemStackBuilder enchantments(HashMap<Enchantment, Integer> enchantments) {
+    public ItemStackBuilder enchantments(Map<Enchantment, Integer> enchantments) {
         getEnchantments().keySet().forEach(this::removeEnchantment);
         addUnsafeEnchantments(enchantments);
         return this;
