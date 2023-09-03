@@ -62,48 +62,6 @@ public class KitManager {
         this.plugin = plugin;
     }
 
-    public boolean save(Player player, String kitName) {
-        FileConfiguration config = plugin.getConfig();
-        FileConfiguration configKits = plugin.getKits();
-
-        ItemStack[] contents = player.getInventory().getContents();
-        int c = 1;
-        for (ItemStack content : contents) {
-            if (content != null && !content.getType().equals(Material.AIR)) {
-                String path = "Kits." + kitName + ".Items." + c;
-                KitManager.saveItem(content, configKits, path, config);
-                c++;
-            }
-        }
-        if (c == 1) {
-            return false;
-        } else {
-            int slot = Utils.getSlotDisponible(configKits, config);
-            if (slot != -1) {
-                configKits.set("Kits." + kitName + ".slot", slot);
-            }
-
-            configKits.set("Kits." + kitName + ".display_item", "IRON_SWORD");
-            configKits.set("Kits." + kitName + ".display_name", "&6&l" + kitName + " &aKit");
-            List<String> lore = new ArrayList<>();
-            lore.add("&7This is a description of the kit.");
-            lore.add("&7You can add multiples &alines&7.");
-            configKits.set("Kits." + kitName + ".display_lore", lore);
-            configKits.set("Kits." + kitName + ".cooldown", 3600);
-
-            configKits.set("Kits." + kitName + ".permission", "playerkits.kit." + kitName);
-            configKits.set("Kits." + kitName + ".noPermissionsItem.display_item", "BARRIER");
-            configKits.set("Kits." + kitName + ".noPermissionsItem.display_name", "&6&l" + kitName + " &aKit");
-            lore = new ArrayList<>();
-            lore.add("&cYou don't have permissions to claim");
-            lore.add("&cthis kit.");
-            configKits.set("Kits." + kitName + ".noPermissionsItem.display_lore", lore);
-
-            return true;
-        }
-
-    }
-
     @SuppressWarnings("deprecation")
     public static void saveItem(ItemStack item, FileConfiguration kitConfig, String path, FileConfiguration config) {
 //		if(config.getString("Config.item_serializer").equals("true")) {
@@ -111,7 +69,7 @@ public class KitManager {
 //			if(serializedItem != null) {
 //				kitConfig.set(path+".full_data", serializedItem);
 //			}
-//		}	
+//		}
 
         Material id = item.getType();
         int datavalue = 0;
@@ -350,7 +308,6 @@ public class KitManager {
             lore = kitConfig.getStringList(path + ".lore");
             for (int i = 0; i < lore.size(); i++) {
                 if (placeholderAPI) {
-
                     String nueva = MessageUtils.translateColor(PlaceholderAPI.setPlaceholders(jugador, lore.get(i)).replace("%player%", jugador.getName()));
                     lore.set(i, nueva);
                 } else {
@@ -365,7 +322,8 @@ public class KitManager {
         if (kitConfig.contains(pathamount)) {
             pathamountInt = kitConfig.getInt(pathamount);
         }
-        ItemStack crafteos = Utils.getItem(id, pathamountInt, "");
+        // TODO: get rid of getItem method.
+        ItemStack crafteos = Utils.getItem(id);
         String pathdurability = path + ".durability";
         if (!Utils.isLegacy() && kitConfig.contains(pathdurability)) {
             crafteos.setDurability((short) kitConfig.getDouble(pathdurability));
@@ -627,6 +585,53 @@ public class KitManager {
 
     }
 
+    public static boolean getArmadura(ItemStack item) {
+        String name = item.getType().name();
+        return name.contains("_HELMET") || name.contains("_CHESTPLATE") || name.contains("_LEGGINGS") || name.contains("_BOOTS");
+    }
+
+    public boolean save(Player player, String kitName) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration configKits = plugin.getKits();
+
+        ItemStack[] contents = player.getInventory().getContents();
+        int c = 1;
+        for (ItemStack content : contents) {
+            if (content != null && !content.getType().equals(Material.AIR)) {
+                String path = "Kits." + kitName + ".Items." + c;
+                KitManager.saveItem(content, configKits, path, config);
+                c++;
+            }
+        }
+        if (c == 1) {
+            return false;
+        } else {
+            int slot = Utils.getSlotDisponible(configKits, config);
+            if (slot != -1) {
+                configKits.set("Kits." + kitName + ".slot", slot);
+            }
+
+            configKits.set("Kits." + kitName + ".display_item", "IRON_SWORD");
+            configKits.set("Kits." + kitName + ".display_name", "&6&l" + kitName + " &aKit");
+            List<String> lore = new ArrayList<>();
+            lore.add("&7This is a description of the kit.");
+            lore.add("&7You can add multiples &alines&7.");
+            configKits.set("Kits." + kitName + ".display_lore", lore);
+            configKits.set("Kits." + kitName + ".cooldown", 3600);
+
+            configKits.set("Kits." + kitName + ".permission", "playerkits.kit." + kitName);
+            configKits.set("Kits." + kitName + ".noPermissionsItem.display_item", "BARRIER");
+            configKits.set("Kits." + kitName + ".noPermissionsItem.display_name", "&6&l" + kitName + " &aKit");
+            lore = new ArrayList<>();
+            lore.add("&cYou don't have permissions to claim");
+            lore.add("&cthis kit.");
+            configKits.set("Kits." + kitName + ".noPermissionsItem.display_lore", lore);
+
+            return true;
+        }
+
+    }
+
     public void attemptBuyKit(Player player, String kit) {
         FileConfiguration configKits = plugin.getKits();
 
@@ -884,11 +889,6 @@ public class KitManager {
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PlayerKits.pluginPrefix + "&7Sound Name: &c" + separados[0] + " &7is not valid. Change the name of the sound corresponding to your Minecraft version."));
         }
-    }
-
-    public static boolean getArmadura(ItemStack item) {
-        String name = item.getType().name();
-        return name.contains("_HELMET") || name.contains("_CHESTPLATE") || name.contains("_LEGGINGS") || name.contains("_BOOTS");
     }
 
     public void ejecutarComandos(FileConfiguration configKits, String kit, Player jugador) {
