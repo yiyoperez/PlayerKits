@@ -32,7 +32,7 @@ public class MessageUtils {
     }
 
     public static List<String> translateColor(List<String> list) {
-        list.forEach(MessageUtils::translateColor);
+        list.replaceAll(MessageUtils::translateColor);
         return list;
     }
 }
