@@ -20,9 +20,6 @@ Kits:
       - '&8- &7x1 Iron Sword'
       - ''
       - '&7Cooldown: &c3 hours'
-      - ''
-      - '&aLeft Click to claim!'
-      - '&bRight Click to preview!'
     cooldown: 10800
   diamond:
     Items:
@@ -56,8 +53,6 @@ Kits:
       - '&7Cooldown: &c12 hours'
       - '&7Price: &a$5000'
       - ''
-      - '&aLeft Click to buy!'
-      - '&bRight Click to preview!'
     display_item_glowing: true
     cooldown: 43200
     price: 5000
