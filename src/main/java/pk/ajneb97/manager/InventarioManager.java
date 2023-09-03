@@ -1,6 +1,5 @@
 package pk.ajneb97.manager;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -19,6 +18,8 @@ import pk.ajneb97.model.CurrentPlayerInventory;
 import pk.ajneb97.model.PlayerData;
 import pk.ajneb97.model.PlayerKit;
 import pk.ajneb97.util.Cooldown;
+import pk.ajneb97.util.ItemStackBuilder;
+import pk.ajneb97.util.MessageHandler;
 import pk.ajneb97.util.MessageUtils;
 import pk.ajneb97.util.Utils;
 
@@ -26,164 +27,11 @@ import java.util.List;
 
 public class InventarioManager {
 
-    private int taskID;
     private final PlayerKits plugin;
+    private int taskID;
 
     public InventarioManager(PlayerKits plugin) {
         this.plugin = plugin;
-    }
-
-    public int getTaskID() {
-        return this.taskID;
-    }
-
-    public void actualizarInventario(final Player player, final int pagina) {
-        BukkitScheduler sh = Bukkit.getServer().getScheduler();
-        taskID = sh.scheduleSyncRepeatingTask(plugin, () -> {
-            if (!update(player, pagina)) {
-                Bukkit.getScheduler().cancelTask(taskID);
-            }
-        }, 0L, 20L);
-    }
-
-    protected boolean update(Player player, int pagina) {
-        FileConfiguration config = plugin.getConfig();
-        FileConfiguration messages = plugin.getMessages();
-        FileConfiguration configKits = plugin.getKits();
-
-        String pathInventory = MessageUtils.translateColor(getInventoryPageName(config, pagina));
-        String pathInventoryM = ChatColor.stripColor(pathInventory);
-        Inventory inv = player.getOpenInventory().getTopInventory();
-        if (inv == null || !ChatColor.stripColor(player.getOpenInventory().getTitle()).equals(pathInventoryM)) {
-            return false;
-        }
-
-        int paginasTotales = getCurrentPages(configKits);
-
-        // TODO: Move away.
-        ConfigurationSection invSection = config.getConfigurationSection("inventory.items");
-        if (!invSection.getKeys(false).isEmpty()) {
-            for (String key : invSection.getKeys(false)) {
-                int slot = Integer.parseInt(key);
-
-                ItemStack item = Utils.getItem(invSection.getString(key + ".id"), 1, "");
-                ItemMeta meta = item.getItemMeta();
-                if (invSection.contains(key + ".name")) {
-                    String name = invSection.getString(key + ".name");
-                    if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                        name = PlaceholderAPI.setPlaceholders(player, name);
-                    }
-                    meta.setDisplayName(MessageUtils.translateColor(name));
-                }
-                if (invSection.contains(key + ".lore")) {
-                    List<String> lore = invSection.getStringList(key + ".lore");
-                    for (int i = 0; i < lore.size(); i++) {
-                        String linea = lore.get(i);
-                        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-                            linea = PlaceholderAPI.setPlaceholders(player, linea);
-                        }
-                        lore.set(i, MessageUtils.translateColor(linea));
-                    }
-                    meta.setLore(lore);
-                }
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-                if (Utils.isNew()) {
-                    if (invSection.contains(key + ".custom_model_data")) {
-                        int customModelData = invSection.getInt(key + ".custom_model_data");
-                        meta.setCustomModelData(customModelData);
-                    }
-                }
-                item.setItemMeta(meta);
-
-                if (invSection.contains(key + ".skulldata")) {
-                    String skulldata = invSection.getString(key + ".skulldata");
-                    item = Utils.setSkull(item, skulldata);
-                }
-
-                if (invSection.contains(key + ".type")) {
-                    if (invSection.getString(key + ".type").equals("previous_page")) {
-                        if (pagina == 1) {
-                            continue;
-                        }
-                    } else if (invSection.getString(key + ".type").equals("next_page")) {
-                        if (paginasTotales <= pagina) {
-                            continue;
-                        }
-                    }
-                }
-                inv.setItem(slot, item);
-            }
-        }
-
-        PlayerManager playerManager = plugin.getPlayerManager();
-
-        ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
-        if (!kitsSection.getKeys(false).isEmpty()) {
-            for (String key : kitsSection.getKeys(false)) {
-                if (configKits.contains("Kits." + key + ".slot")) {
-                    int slot = configKits.getInt("Kits." + key + ".slot");
-                    int page = 1;
-                    if (configKits.contains("Kits." + key + ".page")) {
-                        page = configKits.getInt("Kits." + key + ".page");
-                    }
-                    if (page == pagina) {
-                        if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
-                            if (config.getBoolean("hide_kits_with_permissions")) {
-                                continue;
-                            }
-                        }
-                        PlayerData playerData = playerManager.getOrCreatePlayer(player);
-                        PlayerKit playerKit = playerData.getPlayerKit(key);
-
-                        if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))
-                                && configKits.contains("Kits." + key + ".noPermissionsItem")) {
-                            ItemStack item = crearItemBase("Kits." + key + ".noPermissionsItem", key, configKits);
-                            inv.setItem(slot, item);
-                        } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getBoolean("Kits." + key + ".one_time_buy") && !playerKit.isBought()
-                                && configKits.contains("Kits." + key + ".noBuyItem")) {
-                            //TODO: also show its own item when kit is one-time-buy instead of nobuy item.
-                            ItemStack item = crearItemBase("Kits." + key + ".noBuyItem", key, configKits);
-                            inv.setItem(slot, item);
-                        } else {
-                            if (configKits.contains("Kits." + key + ".display_item")) {
-                                ItemStack item = crearItemBase("Kits." + key, key, configKits);
-                                ItemMeta meta = item.getItemMeta();
-                                if (configKits.contains("Kits." + key + ".one_time") && configKits.getBoolean("Kits." + key + ".one_time")
-                                        && playerKit.isOneTime()) {
-                                    List<String> lore = messages.getStringList("kitOneTimeLore");
-                                    lore.replaceAll(MessageUtils::translateColor);
-                                    meta.setLore(lore);
-                                } else {
-                                    if (configKits.contains("Kits." + key + ".cooldown")) {
-                                        //TODO
-                                        if (playerData.hasCooldown(key)) {
-                                            List<String> lore = messages.getStringList("kitInCooldownLore");
-                                            Cooldown cooldown = playerData.getCooldown(key);
-                                            lore.replaceAll(s -> MessageUtils.translateColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
-                                            meta.setLore(lore);
-                                        }
-                                    }
-                                }
-                                item.setItemMeta(meta);
-
-                                if (configKits.contains("Kits." + key + ".display_item_leathercolor")) {
-                                    LeatherArmorMeta meta2 = (LeatherArmorMeta) meta;
-                                    int color = configKits.getInt("Kits." + key + ".display_item_leathercolor");
-                                    meta2.setColor(Color.fromRGB(color));
-                                    item.setItemMeta(meta2);
-                                }
-
-                                inv.setItem(slot, item);
-                            }
-
-                        }
-                    }
-
-                }
-            }
-        }
-
-        return true;
     }
 
     public static int getCurrentPages(FileConfiguration kitsConfig) {
@@ -209,7 +57,171 @@ public class InventarioManager {
         InventarioManager invM = new InventarioManager(plugin);
         plugin.agregarInventarioJugador(new CurrentPlayerInventory(jugador, pagina, invM, "main"));
 
-        invM.actualizarInventario(jugador, pagina);
+        invM.updateInventory(jugador, pagina);
+    }
+
+    public static String getInventoryPageName(FileConfiguration config, int page) {
+        String defaultPage = config.getString("inventory.pages_names.1");
+        for (String key : config.getConfigurationSection("inventory.pages_names").getKeys(false)) {
+            if (key.equals(String.valueOf(page))) {
+                return config.getString("inventory.pages_names." + key);
+            }
+        }
+        return defaultPage;
+    }
+
+    public int getTaskID() {
+        return this.taskID;
+    }
+
+    // TODO: Globalize task.
+    public void updateInventory(final Player player, final int pagina) {
+        BukkitScheduler sh = Bukkit.getServer().getScheduler();
+        taskID = sh.scheduleSyncRepeatingTask(plugin, () -> {
+            if (!update(player, pagina)) {
+                Bukkit.getScheduler().cancelTask(taskID);
+            }
+        }, 0L, 20L);
+    }
+
+    protected boolean update(Player player, int pagina) {
+        FileConfiguration config = plugin.getConfig();
+
+        String pathInventory = MessageUtils.translateColor(getInventoryPageName(config, pagina));
+        String pathInventoryM = ChatColor.stripColor(pathInventory);
+
+        Inventory inv = player.getOpenInventory().getTopInventory();
+        if (inv == null || !ChatColor.stripColor(player.getOpenInventory().getTitle()).equals(pathInventoryM)) {
+            return false;
+        }
+
+        updateMainItems(player, pagina, inv);
+        updateKitsItems(player, pagina, inv);
+
+        return true;
+    }
+
+    private void updateMainItems(Player player, int pagina, Inventory inv) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration configKits = plugin.getKits();
+        MessageHandler messageHandler = plugin.getMessageHandler();
+
+        ConfigurationSection invSection = config.getConfigurationSection("inventory.items");
+
+        if (invSection.getKeys(false).isEmpty()) return;
+
+        for (String key : invSection.getKeys(false)) {
+            int slot = Integer.parseInt(key);
+
+            ItemStack item = new ItemStackBuilder()
+                    .from(Utils.getItem(invSection.getString(key + ".id")))
+                    .amount(1)
+                    .name(messageHandler.intercept(player, invSection.getString(key + ".name")))
+                    .lore(invSection.getStringList(key + ".lore"))
+                    .setCustomModelData(invSection.getInt(key + ".custom_model_data"))
+                    .addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+
+            if (invSection.contains(key + ".skulldata")) {
+                String skulldata = invSection.getString(key + ".skulldata");
+                item = Utils.setSkull(item, skulldata);
+            }
+
+            int paginasTotales = getCurrentPages(configKits);
+            if (invSection.contains(key + ".type")) {
+                if (invSection.getString(key + ".type").equals("previous_page")) {
+                    if (pagina == 1) {
+                        continue;
+                    }
+                } else if (invSection.getString(key + ".type").equals("next_page")) {
+                    if (paginasTotales <= pagina) {
+                        continue;
+                    }
+                }
+            }
+            inv.setItem(slot, item);
+        }
+    }
+
+    private void updateKitsItems(Player player, int pagina, Inventory inv) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration messages = plugin.getMessages();
+        FileConfiguration configKits = plugin.getKits();
+        PlayerManager playerManager = plugin.getPlayerManager();
+
+        ConfigurationSection kitsSection = configKits.getConfigurationSection("Kits");
+        if (kitsSection.getKeys(false).isEmpty()) return;
+
+        for (String key : kitsSection.getKeys(false)) {
+            // Ignore if kit item doesn't have a valid slot.
+            if (!configKits.contains("Kits." + key + ".slot")) continue;
+
+            int slot = configKits.getInt("Kits." + key + ".slot");
+            int page = 1;
+            if (configKits.contains("Kits." + key + ".page")) {
+                page = configKits.getInt("Kits." + key + ".page");
+            }
+            if (page == pagina) {
+                if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
+                    if (config.getBoolean("hide_kits_with_permissions")) {
+                        continue;
+                    }
+                }
+                PlayerData playerData = playerManager.getOrCreatePlayer(player);
+                PlayerKit playerKit = playerData.getPlayerKit(key);
+
+                if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))
+                        && configKits.contains("Kits." + key + ".noPermissionsItem")) {
+                    ItemStack item = crearItemBase("Kits." + key + ".noPermissionsItem", key, configKits);
+
+                    inv.setItem(slot, item);
+                } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getBoolean("Kits." + key + ".one_time_buy") && !playerKit.isBought()
+                        && configKits.contains("Kits." + key + ".noBuyItem")) {
+                    //TODO: also show its own item when kit is one-time-buy instead of nobuy item.
+                    ItemStack item = crearItemBase("Kits." + key + ".noBuyItem", key, configKits);
+                    inv.setItem(slot, item);
+                } else {
+                    if (configKits.contains("Kits." + key + ".display_item")) {
+                        ItemStack item = crearItemBase("Kits." + key, key, configKits);
+                        ItemMeta meta = item.getItemMeta();
+                        if (configKits.contains("Kits." + key + ".one_time") && configKits.getBoolean("Kits." + key + ".one_time")
+                                && playerKit.isOneTime()) {
+                            List<String> lore = messages.getStringList("kitOneTimeLore");
+                            lore.replaceAll(MessageUtils::translateColor);
+                            meta.setLore(lore);
+                        } else {
+                            if (configKits.contains("Kits." + key + ".cooldown")) {
+                                //TODO
+                                if (playerData.hasCooldown(key)) {
+                                    List<String> lore = messages.getStringList("kitInCooldownLore");
+                                    Cooldown cooldown = playerData.getCooldown(key);
+                                    lore.replaceAll(s -> MessageUtils.translateColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
+                                    meta.setLore(lore);
+                                }
+                            }
+                        }
+                        item.setItemMeta(meta);
+
+                        if (configKits.contains("Kits." + key + ".display_item_leathercolor")) {
+                            LeatherArmorMeta meta2 = (LeatherArmorMeta) meta;
+                            int color = configKits.getInt("Kits." + key + ".display_item_leathercolor");
+                            meta2.setColor(Color.fromRGB(color));
+                            item.setItemMeta(meta2);
+                        }
+
+                        inv.setItem(slot, item);
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    public ItemStack createBaseItem(String path, String kit){
+
+        ItemStack item = new ItemStackBuilder();
+
+        return item;
     }
 
     public ItemStack crearItemBase(String path, String kit, FileConfiguration configKits) {
@@ -217,7 +229,7 @@ public class InventarioManager {
         // Kits.kit.noPermissionsItem
         // Kits.kit
         // Kits.kit.noBuyItem
-        ItemStack item = Utils.getItem(configKits.getString(path + ".display_item"), 1, "");
+        ItemStack item = Utils.getItem(configKits.getString(path + ".display_item"));
         ItemMeta meta = item.getItemMeta();
         if (configKits.contains(path + ".display_name")) {
             meta.setDisplayName(MessageUtils.translateColor(configKits.getString(path + ".display_name")));
@@ -260,15 +272,5 @@ public class InventarioManager {
 //			}
 //		}
         return item;
-    }
-
-    public static String getInventoryPageName(FileConfiguration config, int page) {
-        String defaultPage = config.getString("inventory.pages_names.1");
-        for (String key : config.getConfigurationSection("inventory.pages_names").getKeys(false)) {
-            if (key.equals(String.valueOf(page))) {
-                return config.getString("inventory.pages_names." + key);
-            }
-        }
-        return defaultPage;
     }
 }
