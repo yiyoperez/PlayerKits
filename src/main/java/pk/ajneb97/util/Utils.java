@@ -33,32 +33,28 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static ItemStack getItem(String id, int amount, String skulldata) {
-        String[] idsplit = new String[2];
-        int DataValue = 0;
-
-        ItemStack stack = null;
+    public static ItemStack getItem(String id) {
+        ItemStack stack;
 
         if (id.contains(":")) {
-            idsplit = id.split(":");
-            String stringDataValue = idsplit[1];
-            DataValue = Integer.parseInt(stringDataValue);
+            String[] idsplit = id.split(":");
+            int dataValue = 0;
+
+            String material = idsplit[1];
+            dataValue = Integer.parseInt(material);
+
             Material mat = Material.getMaterial(idsplit[0].toUpperCase());
-            stack = new ItemStack(mat, amount, (short) DataValue);
+            stack = new ItemStack(mat, 1, (short) dataValue);
         } else {
             Material mat = Material.getMaterial(id.toUpperCase());
-            stack = new ItemStack(mat, amount);
-        }
-
-        if (!skulldata.isEmpty()) {
-            stack = Utils.setSkull(stack, skulldata);
+            stack = new ItemStack(mat, 1);
         }
 
         return stack;
     }
 
     public static ItemStack getDisplayItem(FileConfiguration kits, String path) {
-        ItemStack item = getItem(kits.getString(path + ".display_item"), 1, "");
+        ItemStack item = getItem(kits.getString(path + ".display_item"));
         ItemMeta meta = item.getItemMeta();
         if (kits.contains(path + ".display_name")) {
             meta.setDisplayName(MessageUtils.translateColor(kits.getString(path + ".display_name")));
