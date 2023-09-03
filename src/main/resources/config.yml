@@ -3,9 +3,11 @@ commands_before_items: false
 claim_kit_short_command: false
 close_inventory_on_claim: false
 nbt_alternative_data_save: false
+add_buy_lore_automatically: true
 hide_kits_with_permissions: false
 drop_items_if_full_inventory: false
 close_inventory_no_permission: true
+add_preview_lore_automatically: true
 preview_inventory_requires_permission: false
 
 sounds: {}

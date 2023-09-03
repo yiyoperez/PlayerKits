@@ -25,6 +25,7 @@ import pk.ajneb97.util.Utils;
 
 import java.util.List;
 
+@SuppressWarnings("DataFlowIssue")
 public class InventarioManager {
 
     private final PlayerKits plugin;
@@ -35,7 +36,7 @@ public class InventarioManager {
     }
 
     public static int getCurrentPages(FileConfiguration kitsConfig) {
-        //Deberia retornar la pagina maxima desde el archivo de kits
+        //Should return the max amount of pages from kits file.
         int paginaMaxima = 1;
         if (kitsConfig.contains("Kits")) {
             for (String key : kitsConfig.getConfigurationSection("Kits").getKeys(false)) {
@@ -160,117 +161,94 @@ public class InventarioManager {
             if (configKits.contains("Kits." + key + ".page")) {
                 page = configKits.getInt("Kits." + key + ".page");
             }
-            if (page == pagina) {
-                if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
-                    if (config.getBoolean("hide_kits_with_permissions")) {
-                        continue;
-                    }
+            // Ignore if item doesn't belong in the page-
+            if (page != pagina) continue;
+
+            if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))) {
+                if (config.getBoolean("hide_kits_with_permissions")) {
+                    continue;
                 }
-                PlayerData playerData = playerManager.getOrCreatePlayer(player);
-                PlayerKit playerKit = playerData.getPlayerKit(key);
+            }
+            PlayerData playerData = playerManager.getOrCreatePlayer(player);
+            PlayerKit playerKit = playerData.getPlayerKit(key);
 
-                if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))
-                        && configKits.contains("Kits." + key + ".noPermissionsItem")) {
-                    ItemStack item = crearItemBase("Kits." + key + ".noPermissionsItem", key, configKits);
+            if (configKits.contains("Kits." + key + ".permission") && !player.hasPermission(configKits.getString("Kits." + key + ".permission"))
+                    && configKits.contains("Kits." + key + ".noPermissionsItem")) {
+                ItemStack item = createBaseItem("Kits." + key + ".noPermissionsItem");
 
-                    inv.setItem(slot, item);
-                } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getBoolean("Kits." + key + ".one_time_buy") && !playerKit.isBought()
-                        && configKits.contains("Kits." + key + ".noBuyItem")) {
-                    //TODO: also show its own item when kit is one-time-buy instead of nobuy item.
-                    ItemStack item = crearItemBase("Kits." + key + ".noBuyItem", key, configKits);
-                    inv.setItem(slot, item);
-                } else {
-                    if (configKits.contains("Kits." + key + ".display_item")) {
-                        ItemStack item = crearItemBase("Kits." + key, key, configKits);
-                        ItemMeta meta = item.getItemMeta();
-                        if (configKits.contains("Kits." + key + ".one_time") && configKits.getBoolean("Kits." + key + ".one_time")
-                                && playerKit.isOneTime()) {
-                            List<String> lore = messages.getStringList("kitOneTimeLore");
-                            lore.replaceAll(MessageUtils::translateColor);
-                            meta.setLore(lore);
-                        } else {
-                            if (configKits.contains("Kits." + key + ".cooldown")) {
-                                //TODO
-                                if (playerData.hasCooldown(key)) {
-                                    List<String> lore = messages.getStringList("kitInCooldownLore");
-                                    Cooldown cooldown = playerData.getCooldown(key);
-                                    lore.replaceAll(s -> MessageUtils.translateColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
-                                    meta.setLore(lore);
-                                }
+                inv.setItem(slot, item);
+            } else if (configKits.contains("Kits." + key + ".one_time_buy") && configKits.getBoolean("Kits." + key + ".one_time_buy") && !playerKit.isBought()
+                    && configKits.contains("Kits." + key + ".noBuyItem")) {
+                //TODO: also show its own item when kit is one-time-buy instead of nobuy item.
+                ItemStack item = createBaseItem("Kits." + key + ".noBuyItem");
+                inv.setItem(slot, item);
+            } else {
+                if (configKits.contains("Kits." + key + ".display_item")) {
+                    ItemStack item = createBaseItem("Kits." + key);
+                    ItemMeta meta = item.getItemMeta();
+                    if (configKits.contains("Kits." + key + ".one_time") && configKits.getBoolean("Kits." + key + ".one_time")
+                            && playerKit.isOneTime()) {
+                        List<String> lore = messages.getStringList("kitOneTimeLore");
+                        lore.replaceAll(MessageUtils::translateColor);
+                        meta.setLore(lore);
+                    } else {
+                        if (configKits.contains("Kits." + key + ".cooldown")) {
+                            //TODO
+                            if (playerData.hasCooldown(key)) {
+                                List<String> lore = messages.getStringList("kitInCooldownLore");
+                                Cooldown cooldown = playerData.getCooldown(key);
+                                lore.replaceAll(s -> MessageUtils.translateColor(s.replace("%time%", cooldown.getTimeLeftRoundedSeconds())));
+                                meta.setLore(lore);
                             }
                         }
-                        item.setItemMeta(meta);
+                    }
+                    item.setItemMeta(meta);
 
-                        if (configKits.contains("Kits." + key + ".display_item_leathercolor")) {
-                            LeatherArmorMeta meta2 = (LeatherArmorMeta) meta;
-                            int color = configKits.getInt("Kits." + key + ".display_item_leathercolor");
-                            meta2.setColor(Color.fromRGB(color));
-                            item.setItemMeta(meta2);
-                        }
-
-                        inv.setItem(slot, item);
+                    if (configKits.contains("Kits." + key + ".display_item_leathercolor")) {
+                        LeatherArmorMeta meta2 = (LeatherArmorMeta) meta;
+                        int color = configKits.getInt("Kits." + key + ".display_item_leathercolor");
+                        meta2.setColor(Color.fromRGB(color));
+                        item.setItemMeta(meta2);
                     }
 
+                    inv.setItem(slot, item);
                 }
+
             }
 
         }
     }
 
-    public ItemStack createBaseItem(String path, String kit){
+    public ItemStack createBaseItem(String path) {
+        FileConfiguration config = plugin.getConfig();
+        FileConfiguration configKits = plugin.getKits();
+        MessageHandler messageHandler = plugin.getMessageHandler();
 
-        ItemStack item = new ItemStackBuilder();
+        ConfigurationSection section = configKits.getConfigurationSection(path);
 
-        return item;
-    }
+        ItemStackBuilder builder = new ItemStackBuilder()
+                .from(Utils.getItem(section.getString("display_item")))
+                .name(section.getString("display_name"))
+                .lore(section.getStringList("display_lore"));
 
-    public ItemStack crearItemBase(String path, String kit, FileConfiguration configKits) {
-        //paths:
-        // Kits.kit.noPermissionsItem
-        // Kits.kit
-        // Kits.kit.noBuyItem
-        ItemStack item = Utils.getItem(configKits.getString(path + ".display_item"));
-        ItemMeta meta = item.getItemMeta();
-        if (configKits.contains(path + ".display_name")) {
-            meta.setDisplayName(MessageUtils.translateColor(configKits.getString(path + ".display_name")));
-        } else {
-            if (configKits.contains("Kits." + kit + ".display_name")) {
-                meta.setDisplayName(MessageUtils.translateColor(configKits.getString("Kits." + kit + ".display_name")));
-            }
-
+        // TODO: Detect if kit can be buy or/and preview.
+        if (config.getBoolean("add_buy_lore_automatically")) {
+            builder.addLore(messageHandler.getRawStringList("purchase.lore"));
         }
-        if (configKits.contains(path + ".display_lore")) {
-            List<String> lore = configKits.getStringList(path + ".display_lore");
-            lore.replaceAll(MessageUtils::translateColor);
-            meta.setLore(lore);
-        } else {
-            if (configKits.contains("Kits." + kit + ".display_lore")) {
-                List<String> lore = configKits.getStringList("Kits." + kit + ".display_lore");
-                lore.replaceAll(MessageUtils::translateColor);
-                meta.setLore(lore);
-            }
-
-        }
-        if (configKits.contains(path + ".display_item_glowing") && configKits.getString(path + ".display_item_glowing").equals("true")) {
-            meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
-        }
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
-        if (configKits.contains(path + ".display_item_custom_model_data")) {
-            int customModelData = configKits.getInt(path + ".display_item_custom_model_data");
-            meta.setCustomModelData(customModelData);
-        }
-        item.setItemMeta(meta);
-        if (configKits.contains(path + ".display_item_skulldata")) {
-            String skulldata = configKits.getString(path + ".display_item_skulldata");
-            item = Utils.setSkull(item, skulldata);
+        if (config.getBoolean("add_preview_lore_automatically")) {
+            builder.addLore(messageHandler.getRawStringList("preview.lore"));
         }
 
-//		else {
-//			if(configKits.contains("Kits."+kit+".display_item_skulldata")) {
-//				String[] skulldata = configKits.getString("Kits."+kit+".display_item_skulldata").split(";");
-//				item = Utilidades.setSkull(item, skulldata[0], skulldata[1]);
-//			}
-//		}
-        return item;
+        if (config.getBoolean("display_item_glowing")) {
+            builder.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
+        }
+        builder.addFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+
+        if (section.contains("display_item_skulldata")) {
+            String skullData = configKits.getString(path + ".display_item_skulldata");
+            return Utils.setSkull(builder, skullData);
+        }
+
+        return builder;
     }
 }
