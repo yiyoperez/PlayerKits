@@ -17,7 +17,6 @@ import pk.ajneb97.util.Utils;
 public class PurchaseConfirmationMenu implements Listener {
 
 
-    @SuppressWarnings("deprecation")
     public static void openInventory(Player player, PlayerKits plugin, double price, String kit, int page) {
         MessageHandler messageHandler = plugin.getMessageHandler();
 
@@ -48,7 +47,6 @@ public class PurchaseConfirmationMenu implements Listener {
         inv.setItem(4, confirmation);
 
         player.openInventory(inv);
-
         plugin.agregarInventarioJugador(new CurrentPlayerInventory(player, page, null, "buying: " + kit));
     }
 }
