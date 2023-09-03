@@ -137,8 +137,28 @@ public class ItemStackBuilder extends ItemStack {
         if (lore == null) return this;
 
         ItemMeta itemMeta = getItemMeta();
-        List<String> coloredLore = MessageUtils.translateColor(lore);
-        itemMeta.setLore(coloredLore);
+        itemMeta.setLore(MessageUtils.translateColor(lore));
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    public ItemStackBuilder setCustomModelData(Integer modelData){
+        if (modelData == null) return this;
+        if (modelData <= 0) return this;
+
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.setCustomModelData(modelData);
+
+        setItemMeta(itemMeta);
+        return this;
+    }
+
+    public ItemStackBuilder addFlags(ItemFlag... itemFlags) {
+        if (itemFlags == null) return this;
+
+        ItemMeta itemMeta = getItemMeta();
+        itemMeta.addItemFlags(itemFlags);
+
         setItemMeta(itemMeta);
 
         return this;
