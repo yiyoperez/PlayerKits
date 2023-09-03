@@ -116,61 +116,87 @@ You can also edit the kit directly from Minecraft without touching the config, u
 
 ### More
 
+WIKI is located **[HERE](https://github.com/yiyoperez/PlayerKits/wiki)**.  
+
   <details>
   <summary>Config options</summary>
 
-<!> Please don't use this, it needs to get updated.
-
   ```yaml
-# Here you can define the sound name for specific events. 
-# Use these sounds for 1.8: https://github.com/Attano/Spigot-1.8/blob/master/org/bukkit/Sound.java
-# And these sounds for newer versions: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-# Format: Sound;Volume;Pitch
-# You can set the options to 'none' for not setting any sound.
-kit_error_sound: BLOCK_NOTE_BLOCK_PLING;10;0.1
-kit_claim_sound: ENTITY_PLAYER_LEVELUP;10;1.5
-
 # This will define the time in seconds in which player kit data is saved automatically.
 player_data_save_time: 300
-
-# If this option is enabled, players without permissions to claim certain kit will not be able to preview it.
-preview_inventory_requires_permission: false
-
-# If this option is enabled, players will be able to use /kit <name> command instead of /kit claim <name>
+# This will run command before giving items to player.
+commands_before_items: false
+# When true allow player to use /kit <name> to claim kits instead of /kit claim <name>
 claim_kit_short_command: false
-
-# Here you need to define the title of the kits inventory per page.
-inventory_pages_names:
-1: "&9Kits"
-2: "&bVIP Kits"
-
+# Close inventory after claiming kit.
+close_inventory_on_claim: false
+# No idea if this is even working rn.
 # Enabling this will fix some nbt issues especially with AdvancedEnchantments plugin. If you modify this option you must save your kits again.
 nbt_alternative_data_save: false
+# If true "purchase > lore" message will be added automatically to lore.
+add_buy_lore_automatically: true
+# Hides kits with permissions if player doesn't have them.
+hide_kits_with_permissions: false
+# Drop items to ground if inventory is full.
+drop_items_if_full_inventory: false
+# Close inventory when claiming kit if player doesn't have permissions.
+close_inventory_no_permission: true
+# If true "preview > lore" message will be added automatically to lore.
+add_preview_lore_automatically: true
+# If true players will need a permission to preview kit items.
+preview_inventory_requires_permission: false
 
-# You can modify the GUI Inventory as you like by adding items here. 
-# The section name (in this case 0) is the slot.
-# You can also add a command to the item if you want. You can also use skulldata. You can use PlaceholderAPI variables on the name and lore.
-# You can use the custom_model_data option if you need to
-0:
-id: BLACK_STAINED_GLASS_PANE
-name: "&6Go Back"
-lore:
-  - "line1"
-  - "line2"
-command: chestcommands open %player% mainmenu
-custom_model_data: 5
+# Sounds Section, these are created when starting the server.
+# Here you can define the sound name for specific events.
+# Format: Sound;Volume;Pitch
+# Please check the sounds for your version here https://docs.andre601.ch/Spigot-Sounds/sounds/
+sounds: { }
 
-# Here you can modify the slot and properties of the next page and previous page items. Just remember to leave the "type" intact.
-18:
-id: PLAYER_HEAD
-skulldata: "2391d533-ab09-434d-9980-adafde4057a3;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ=="
-type: previous_page
-name: "&6Previous Page"
-26:
-id: PLAYER_HEAD
-skulldata: "d513d666-0992-42c7-9aa6-e518a83e0b38;eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19"
-type: next_page
-name: "&6Next Page"
+# Preview Section
+preview-inventory:
+  # Enable preview inventory.
+  enabled: true
+  # Preview inventory size
+  size: 54
+  # Enable back item
+  back-item: true
+  # Back item slot
+  back-item-slot: 45
+
+# Database Section, Currently NOT supported.
+mysql_database:
+  enabled: false
+  host: localhost
+  port: 3306
+  username: root
+  password: root
+  database: database
+
+# Inventory Section.
+inventory:
+  # Inventory size
+  size: 45
+  # Inventory pages name. Format: page: "Title"
+  # Here you need to define the title of the kits inventory per page.
+  # If not set the plugin will NOT open the inventory page!
+  pages_names:
+    1: "&9Kits"
+    2: "&bVIP Kits"
+  # Default items will be created when starting the plugin.
+  # Here you can modify the slot and properties of the next page and previous page items.
+  # Just remember to leave the "type" intact.
+  items: { }
+  # You can modify the GUI Inventory as you like by adding items here. 
+  # You can set command, skulldata, custom_model_data & PlaceholderAPI variables on the name and lore.
+  # Example
+  # '0':
+  #   id: STONE
+  #   name: "&8Stone"
+  #   command: "tell %player% Hello!"
+  #   custom_model_data: 69420
+  #   lore: 
+  #     - "&aYup this is an stone."
+
 ```
 
 ---
@@ -179,22 +205,32 @@ name: "&6Next Page"
 <details>
 <summary>Kit options</summary>
 
-<!> Please don't use this, it needs to get updated.
-
 ```yaml
+# These are options that you can add or modify in kits options.
 
-#The position of the kit in the GUI Inventory. If you don't want to show the kit you can remove this option.
+# The position of the kit in the GUI Inventory.
+# If you don't want to show the kit you can remove this option.
 slot: 10
 
-#The page of the inventory where the kit will show. If you want to show the item in the first page, you don't need to add this option.
+# The page of the inventory where the kit will show.
+# If you want to show the item in the first page, you don't need to add this option.
 page: 2
 
-#Attributes of the item in the inventory. For the display_name you need to use a valid item name.
-# For latest Minecraft version use this link as reference: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
-#If you want to set a textured skull the display_item must be "PLAYER HEAD" or "SKULL_ITEM:3" for 1.8-1.12 and add :
-#display_item_skulldata: "id;texture"
+# Attributes of the item in the inventory. 
+
+# Kit item.
+# For Minecraft version use these link as references
+# 1.8.8 https://helpch.at/docs/1.8.8/org/bukkit/Material.html
+# 1.12.2 https://helpch.at/docs/1.12.2/org/bukkit/Material.html
+# 1.13.2 https://helpch.at/docs/1.13.2/org/bukkit/Material.html
+# 1.14.4 https://helpch.at/docs/1.14.4/org/bukkit/Material.html
+# Latest (1.20.1) https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 display_item: IRON_AXE
-display_name: '&6&lIron &aKit'
+# Kit item display name.
+# If you don't want to shown a display name leave it empty such as display_name: " "
+display_name: "&6&lIron &aKit"
+# Kit item display lore.
+# You can remove this option if you don't want it.
 display_lore:
   - '&eThis kit includes:'
   - '&8- &7x1 Iron Axe'
@@ -205,54 +241,61 @@ display_lore:
   - ''
   - '&aClick to claim!'
 
-#If is set to true, the display item will be enchanted.
+# If is set to true, the display item will be enchanted.
 display_item_glowing: true
 
-#Cooldown of the kit in seconds. How much time the player will have to wait to claim this kit again.
+# Cooldown of the kit in seconds.
+# How much time the player will have to wait to claim this kit again.
 cooldown: 10800
 
-#You can add a price for the kit. For this option to work you need Vault: https://dev.bukkit.org/projects/vault
+# You can add a price for the kit.
+# For this option to work you need Vault and an Economy plugin suchs as Essentials, XConomy or any that hooks with vault. 
+# Vault: https://dev.bukkit.org/projects/vault
+# Essentials: https://essentialsx.net/downloads.html
+# XConomy: https://www.spigotmc.org/resources/75669/
 price: 5000
 
-#If is set to true, players will need to buy the kit just one time before claiming it.
+# If is set to true, players will only be able to buy this kit ONCE!
 one_time_buy: true
 
-#Besides giving items in kits, you can execute commands from the console, remember to use %player% variable.
+# If this option is set to true, players will receive this kit when joining for the first time.
+first_join: true
+
+# If this option is set to true, players can claim this kit just one time.
+one_time: true
+
+# You can add a permission for the kit.
+# You can remove this option if you don't want it.
+permission: playerkits.kit.diamond
+
+# Besides giving items in kits, you can execute commands from the console, remember to use %player% variable.
+# You can remove this option if you don't want it.
 Commands:
   - "bc &6%player% &ejust claimed a &aDIAMOND KIT&e!"
 
-#You can add a permission for the kit.
-permission: playerkits.kit.diamond
-
-#If the player doesn't have the correct permission, this item will show in the inventory instead of the original one.
+# If the player doesn't have the correct permission, this item will show in the inventory instead of the original one.
 noPermissionsItem:
-display_item: BARRIER
-display_name: "&6&lDiamond &aKit"
-display_lore:
-  - "&cYou don't have permissions to claim"
-  - "&cthis kit."
-  - ""
-  - "&7You need: &bVIP&6+ &7rank."
+  display_item: BARRIER
+  display_name: "&6&lDiamond &aKit"
+  display_lore:
+    - "&cYou don't have permissions to claim"
+    - "&cthis kit."
+    - ""
+    - "&7You need: &bVIP&6+ &7rank."
 
-#If the player hasn't buyed a kit with one_time_buy option, this item will show in the inventory instead of the original one.
+# If the player hasn't buyed a kit with one_time_buy option, this item will show in the inventory instead of the original one.
 noBuyItem:
-display_item: BARRIER
-display_name: "&6&lIron &aKit"
-display_lore:
-  - '&eThis kit includes:'
-  - '&8- &7x1 Iron Axe'
-  - '&8- &7x1 Iron Pickaxe'
-  - '&8- &7x1 Iron Sword'
-  - ''
-  - '&7Price: &$5000'
-  - ''
-  - '&aClick to buy!'
-
-#If this option is set to true, players will receive this kit when joining for the first time.
-first_join: true
-
-#If this option is set to true, players can claim this kit just one time.
-one_time: true
+  display_item: BARRIER
+  display_name: "&6&lIron &aKit"
+  display_lore:
+    - '&eThis kit includes:'
+    - '&8- &7x1 Iron Axe'
+    - '&8- &7x1 Iron Pickaxe'
+    - '&8- &7x1 Iron Sword'
+    - ''
+    - '&7Price: &$5000'
+    - ''
+    - '&aClick to buy!'
 ```
 
 ---
@@ -300,10 +343,10 @@ one_time: true
 >
 > The plugin has the following placeholder format `%playerkits_<identifier>_<kit>%`
 
-| Identifier 	  | Description 	                                                                                                |
-|---------------|--------------------------------------------------------------------------------------------------------------|
-| cooldown    	 | Returns kit cooldown string in plain seconds.             	                                                  |
-| waiting       | Returns yes or no if player is waiting/in cooldown for that kit.	<br/>(Configured at placeholderapi config.) |
+| Identifier 	  | Description 	                                                                                                                                                 |
+|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| cooldown    	 | Returns kit cooldown string in plain seconds.             	                                                                                                   |
+| waiting       | Returns yes or no if player is waiting/in cooldown for that kit.	<br/>Defined at PlaceholderAPI config.<br>Path (plugins/PlaceholderAPI/config.yml > boolean) |
 
 ---
 
@@ -312,25 +355,23 @@ one_time: true
 <details>
 <summary>Command and permissions</summary>
 
-| Command 	 | Permission 	 | Description 	 |
-|-----------|--------------|---------------|
-| 	         | 	            | 	             |
-| 	         | 	            | 	             |
-| 	         | 	            | 	             |
-| 	         | 	            | 	             |
+| Command 	             | Permission 	       | Description 	                                     |
+|-----------------------|--------------------|---------------------------------------------------|
+| /kit                  | none               | Open the Kits GUI.                                |
+| /kit kit              | none               | Claim a kit. (if claim_kit_short_command enabled) |
+| /kit open player      | playerkits.open    | Open the Kits GUI to a player.                    |
+| /kit create kit       | playerkits.create  | Creates a new kit.                                |
+| /kit delete kit       | playerkits.delete  | Removed a created kit.                            |
+| /kit list             | playerkits.list    | Show all available kits.                          |
+| /kit claim kit        | none               | Claim a kit.                                      |
+| /kit preview kit      | playerkits.preview | Previews a kit.                                   |
+| /kit edit kit         | playerkits.edit    | Open kit editor GUI.                              |
+| /kit give kit player  | playerkits.give    | Gives a kit to a player.                          |
+| /kit reset kit player | playerkits.reset   | Resets kit data to a player.                      |
+| /kit reload           | playerkits.reload  | Reload the config.                                |
+|                       |                    |                                                   |
 
-- /kit Open the Kits GUI.
-- /kit open <player> <page> Opens the Kits GUI to a player.
-- /kit create <kit> Creates a new kit.
-- /kit delete <kit> Removes a created kit.
-- /kit list Shows all kits.
-- /kit claim <kit> Claims a kit. (Or /kit <kit> if claim_kit_short_command option is enabled)
-- /kit preview <kit> Previews a kit.
-- /kit edit <kit> Edits a kit.
-- /kit give <kit> <player> Gives a kit to the player.
-- /kit reset <kit> <player> Resets a kit data from the player.
-- /kit reload Reloads the config.
-  (alias: /kits)
+> ℹ Command alias: kits
 
 ---
 
