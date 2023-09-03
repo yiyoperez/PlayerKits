@@ -11,8 +11,8 @@ import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemStackBuilder extends ItemStack {
 
@@ -21,10 +21,18 @@ public class ItemStackBuilder extends ItemStack {
         amount(1);
     }
 
+    public ItemStackBuilder(ItemStack itemStack){
+        super(itemStack);
+    }
+
     public ItemStackBuilder(Material type) {
         super(type);
         amount(1);
         lore(new ArrayList<>());
+    }
+
+    public ItemStackBuilder from(ItemStack itemStack){
+        return new ItemStackBuilder(itemStack);
     }
 
     public ItemStackBuilder material(Material material) {
@@ -132,6 +140,7 @@ public class ItemStackBuilder extends ItemStack {
         List<String> coloredLore = MessageUtils.translateColor(lore);
         itemMeta.setLore(coloredLore);
         setItemMeta(itemMeta);
+
         return this;
     }
 }
