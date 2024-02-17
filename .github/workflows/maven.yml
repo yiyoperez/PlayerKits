@@ -19,7 +19,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots package
       - name: Upload Artifacts
         run: mkdir staging && cp jars/*.jar staging
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: PlayerKits
           path: staging
